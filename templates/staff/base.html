@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+{% with url_name=request.resolver_match.url_name %}
+<div class="page-header"><div class="container">
+  <p class="small" style="margin-bottom:8px">Staff area · {{ user.get_role_display }}</p>
+  <h1>{% block heading %}{% endblock %}</h1>
+  {% block subheading %}{% endblock %}
+</div></div>
+<div class="container layout-sidebar staff-layout">
+  <div>{% block staff %}{% endblock %}</div>
+  <aside class="sidenav" aria-label="Staff">
+    <h2>Staff</h2>
+    <ul>
+      <li><a href="{% url 'staff:dashboard' %}"{% if url_name == "dashboard" %} aria-current="page"{% endif %}>Dashboard</a></li>
+      <li><a href="{% url 'staff:reports' %}"{% if url_name == "reports" %} aria-current="page"{% endif %}>Reports</a></li>
+      {% if user.is_platform_admin or user.role == "support" %}<li><a href="{% url 'staff:support' %}"{% if url_name == "support" or url_name == "support_detail" %} aria-current="page"{% endif %}>Support desk</a></li>{% endif %}
+      {% if user.is_platform_admin or user.role == "operator" %}<li><a href="{% url 'operator:index' %}">Operator portal</a></li>{% endif %}
+      {% if user.is_platform_admin %}<li><a href="{% url 'admin:index' %}">Administration</a></li>{% endif %}
+    </ul>
+  </aside>
+</div>
+{% endwith %}
+{% endblock %}

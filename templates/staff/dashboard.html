@@ -1,0 +1,35 @@
+{% extends "staff/base.html" %}{% load site %}
+{% block title %}Staff dashboard · Ship Booking{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+{% block staff %}
+<div class="stat-grid">
+  <div class="stat"><span class="stat-label">Bookings confirmed, last 7 days</span><span class="stat-value">{{ confirmed_7d }}</span></div>
+  <div class="stat"><span class="stat-label">Unpaid reservations now</span><span class="stat-value">{{ pending_now }}</span></div>
+  {% if sees_money %}<div class="stat"><span class="stat-label">Payments received, last 7 days</span><span class="stat-value">{{ revenue_7d|inr }}</span></div>{% endif %}
+  {% if is_support %}
+    <a class="stat" href="{% url 'staff:support' %}"><span class="stat-label">Open support requests</span><span class="stat-value">{{ open_tickets }}</span></a>
+    <a class="stat" href="{% url 'admin:bookings_cancellationrequest_changelist' %}?status__exact=requested"><span class="stat-label">Cancellations to decide</span><span class="stat-value">{{ pending_cancellations }}</span></a>
+  {% endif %}
+  {% if user.is_platform_admin %}
+    <a class="stat" href="{% url 'admin:payments_refund_changelist' %}"><span class="stat-label">Refunds to send</span><span class="stat-value">{{ pending_refunds }}</span></a>
+    <a class="stat" href="{% url 'admin:schedules_schedule_changelist' %}?status__exact=pending_approval"><span class="stat-label">Sailings awaiting approval</span><span class="stat-value">{{ awaiting_approval }}</span></a>
+  {% endif %}
+</div>
+
+<h2 style="margin-top:40px">Sailings in the next 7 days</h2>
+{% if upcoming %}
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Departs</th><th scope="col">Route</th><th scope="col">Vessel</th><th scope="col">Status</th><th scope="col">Occupancy</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+    <tbody>{% for s in upcoming %}<tr>
+      <td>{{ s.departure_at|date:"D j M, H:i" }}</td>
+      <td>{{ s.route.origin.name }} to {{ s.route.destination.name }}</td>
+      <td>{{ s.vessel.name }}</td>
+      <td>{% if s.status == "delayed" %}<span class="badge badge-warn">Delayed</span>{% else %}<span class="badge badge-ok">On sale</span>{% endif %}</td>
+      <td>{% include "staff/_meter.html" with sold=s.sold capacity=s.capacity %}</td>
+      <td><a href="{% url 'staff:manifest' s.pk %}">Passengers</a></td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+{% else %}
+  <div class="card"><p class="muted" style="margin:0">No sailings on sale in the next 7 days{% if user.role == "operator" %} for your operators{% endif %}.</p></div>
+{% endif %}
+{% endblock %}

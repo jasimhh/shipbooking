@@ -1,0 +1,27 @@
+{% extends "staff/base.html" %}
+{% block title %}{{ ticket.reference }} · Support desk{% endblock %}
+{% block heading %}{{ ticket.subject }}{% endblock %}
+{% block subheading %}<p>{{ ticket.reference }} · {{ ticket.get_category_display }} · {{ ticket.get_status_display }} · {{ ticket.contact_email }}{% if ticket.booking %} · Booking {{ ticket.booking.reference }}{% endif %}</p>{% endblock %}
+{% block staff %}
+<p><a href="{% url 'staff:support' %}">Back to the support desk</a></p>
+{% if ticket.category == "grievance" %}
+  <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p>Grievance: handle within the timelines in the Grievance Redressal Policy.</p></div>
+{% endif %}
+<ol class="thread">
+  {% for m in thread %}
+    <li class="{% if m.is_staff_reply %}from-staff{% endif %}">
+      <div class="small muted">{% if m.is_staff_reply %}Ship Booking ({{ m.author.get_full_name|default:m.author.email }}){% else %}Customer{% endif %} · {{ m.created_at|date:"j M Y, H:i" }}</div>
+      <p>{{ m.body|linebreaksbr }}</p>
+    </li>
+  {% endfor %}
+</ol>
+<form method="post" class="card form-stack">{% csrf_token %}
+  <div class="field">{{ form.body.as_field_group }}</div>
+  <div class="field" style="max-width:280px">{{ form.status.as_field_group }}</div>
+  <p class="small muted">A reply is emailed to {{ ticket.contact_email }}.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:12px">
+    <button class="btn btn-primary" type="submit">Send and update</button>
+    {% if ticket.assigned_to != user %}<button class="btn btn-secondary" type="submit" name="assign" value="1" formnovalidate>Assign to me</button>{% endif %}
+  </div>
+</form>
+{% endblock %}

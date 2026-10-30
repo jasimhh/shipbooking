@@ -40,6 +40,7 @@
       </nav>
       <div class="nav-actions">
         {% if user.is_authenticated %}
+          {% if user.is_platform_admin or user.role == "support" or user.role == "operator" %}<a class="btn btn-secondary" href="{% url 'staff:dashboard' %}">Staff</a>{% endif %}
           <a class="btn btn-secondary" href="{% url 'accounts:dashboard' %}">Account</a>
           <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="btn btn-secondary" type="submit">Sign out</button></form>
         {% else %}

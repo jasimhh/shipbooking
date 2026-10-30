@@ -1,0 +1,35 @@
+{% extends "staff/base.html" %}
+{% block title %}Support desk · Ship Booking{% endblock %}
+{% block heading %}Support desk{% endblock %}
+{% block staff %}
+<form method="get" class="card report-filters">
+  <div class="field"><label for="s-status">Status</label>
+    <select id="s-status" name="status"><option value="active"{% if status == "active" %} selected{% endif %}>Needs attention</option><option value="all"{% if status == "all" %} selected{% endif %}>All</option>
+      {% for v, l in statuses %}<option value="{{ v }}"{% if status == v %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="s-cat">Topic</label>
+    <select id="s-cat" name="category"><option value="">All topics</option>{% for v, l in categories %}<option value="{{ v }}"{% if request.GET.category == v %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="s-q">Search</label><input id="s-q" name="q" value="{{ request.GET.q }}" placeholder="Reference, email or subject"></div>
+  <button class="btn btn-primary" type="submit">Filter</button>
+</form>
+<p style="margin:16px 0"><a href="?mine=1">Assigned to me</a></p>
+{% if page.object_list %}
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Reference</th><th scope="col">Subject</th><th scope="col">Topic</th><th scope="col">Status</th><th scope="col">Assigned</th><th scope="col">Updated</th></tr></thead>
+    <tbody>{% for t in page.object_list %}<tr>
+      <td><a href="{% url 'staff:support_detail' t.reference %}">{{ t.reference }}</a></td>
+      <td>{{ t.subject|truncatechars:60 }}<div class="small muted">{{ t.contact_email }}</div></td>
+      <td>{% if t.category == "grievance" or t.category == "complaint" %}<span class="badge badge-warn">{{ t.get_category_display }}</span>{% else %}{{ t.get_category_display }}{% endif %}</td>
+      <td>{{ t.get_status_display }}</td><td>{{ t.assigned_to|default:"—" }}</td><td>{{ t.updated_at|date:"j M, H:i" }}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% if page.has_other_pages %}
+    <nav class="pager" aria-label="Pages">
+      {% if page.has_previous %}<a class="btn btn-secondary" href="?{{ request.GET.urlencode }}&amp;page={{ page.previous_page_number }}">Previous</a>{% endif %}
+      <span class="small muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}<a class="btn btn-secondary" href="?{{ request.GET.urlencode }}&amp;page={{ page.next_page_number }}">Next</a>{% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="card"><p class="muted" style="margin:0">No requests match.</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Your support requests · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'accounts:dashboard' %}">Your account</a></nav>
+  <h1>Your support requests</h1>
+</div></div>
+<div class="container section narrow">
+  {% if tickets %}
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Reference</th><th scope="col">Subject</th><th scope="col">Status</th><th scope="col">Updated</th></tr></thead>
+      <tbody>{% for t in tickets %}<tr><td><a href="{% url 'support:ticket' t.reference %}">{{ t.reference }}</a></td><td>{{ t.subject }}</td><td>{{ t.get_status_display }}</td><td>{{ t.updated_at|date:"j M Y" }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+  {% else %}
+    <div class="card"><p class="muted" style="margin:0">You haven't contacted support yet.</p></div>
+  {% endif %}
+  <p style="margin-top:24px"><a class="btn btn-secondary" href="{% url 'pages:contact' %}">Start a new request</a></p>
+</div>
+{% endblock %}

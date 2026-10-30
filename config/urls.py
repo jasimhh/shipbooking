@@ -6,6 +6,8 @@ from apps.operators.portal import operator_site
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("operator/", operator_site.urls),
+    path("staff/", include("apps.staff.urls")),
+    path("account/support/", include("apps.support.urls")),
     path("account/", include("apps.accounts.urls")),
     path("", include("apps.payments.urls")),
     path("", include("apps.tickets.urls")),

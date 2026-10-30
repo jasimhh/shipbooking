@@ -1,0 +1,8 @@
+Hello,
+
+{{ message }}
+
+Request: {{ ticket.reference }} · {{ ticket.subject }}
+{% if ticket.user %}See the full conversation and reply: {{ site_url }}{% url 'support:ticket' ticket.reference %}{% else %}To reply, use the contact form and quote {{ ticket.reference }}: {{ site_url }}{% url 'pages:contact' %}{% endif %}
+
+Ship Booking support

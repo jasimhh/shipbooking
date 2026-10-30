@@ -1,0 +1,5 @@
+{% widthratio sold capacity|default:1 100 as pct %}
+<div class="meter" role="img" aria-label="{{ sold }} of {{ capacity }} places sold or held ({{ pct }}%)">
+  <span class="meter-bar"><span style="width:{{ pct }}%"></span></span>
+  <span class="small">{{ sold }}/{{ capacity }}</span>
+</div>

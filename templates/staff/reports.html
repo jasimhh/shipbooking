@@ -1,0 +1,58 @@
+{% extends "staff/base.html" %}{% load site %}
+{% block title %}Reports · Ship Booking{% endblock %}
+{% block heading %}Reports{% endblock %}
+{% block staff %}
+<form method="get" class="card report-filters">
+  {% if form.non_field_errors %}<div class="alert alert-error" style="grid-column:1/-1">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="field">{{ form.start.as_field_group }}</div>
+  <div class="field">{{ form.end.as_field_group }}</div>
+  <div class="field">{{ form.operator.as_field_group }}</div>
+  <button class="btn btn-primary" type="submit">Show</button>
+</form>
+
+{% if form.is_valid %}
+  <div class="stat-grid" style="margin-top:32px">
+    {% if money %}
+      <div class="stat"><span class="stat-label">Payments received ({{ money.payments }})</span><span class="stat-value">{{ money.captured|inr }}</span></div>
+      <div class="stat"><span class="stat-label">Refunded</span><span class="stat-value">{{ money.refunded|inr }}</span></div>
+      <div class="stat"><span class="stat-label">Net</span><span class="stat-value">{{ money.net|inr }}</span></div>
+    {% endif %}
+    <div class="stat"><span class="stat-label">Average occupancy</span><span class="stat-value">{{ occupancy }}%</span></div>
+  </div>
+  <p class="small muted" style="margin-top:8px">Bookings and cancellations are counted by the date they were made; payments by the date received; sailings by departure date.</p>
+
+  <div class="report-cols">
+    <section>
+      <h2>Bookings by status</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th scope="col">Status</th><th scope="col" class="num">Bookings</th><th scope="col" class="num">Passengers</th></tr></thead>
+        <tbody>{% for r in by_status %}<tr><td>{{ r.label }}</td><td class="num">{{ r.n }}</td><td class="num">{{ r.pax }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">No bookings in this period.</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </section>
+    <section>
+      <h2>Cancellation requests</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th scope="col">Status</th><th scope="col" class="num">Requests</th></tr></thead>
+        <tbody>{% for r in cancellations %}<tr><td>{{ r.status|capfirst }}</td><td class="num">{{ r.n }}</td></tr>{% empty %}<tr><td colspan="2" class="muted">None in this period.</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:40px 0 12px">
+    <h2 style="margin:0">Occupancy by sailing</h2>
+    <a class="btn btn-secondary" href="?{{ query }}&amp;format=csv">Download CSV</a>
+  </div>
+  {% if sailings %}
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Departs</th><th scope="col">Route</th><th scope="col">Vessel</th><th scope="col">Status</th><th scope="col">Occupancy</th></tr></thead>
+      <tbody>{% for s in sailings %}<tr>
+        <td>{{ s.departure_at|date:"j M Y, H:i" }}</td><td>{{ s.route }}</td><td>{{ s.vessel.name }}</td><td>{{ s.get_status_display }}</td>
+        <td>{% include "staff/_meter.html" with sold=s.sold capacity=s.capacity %}</td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    {% if sailings|length == 300 %}<p class="small muted">Showing the first 300 sailings. Narrow the dates to see the rest.</p>{% endif %}
+  {% else %}
+    <div class="card"><p class="muted" style="margin:0">No sailings departing in this period.</p></div>
+  {% endif %}
+{% endif %}
+{% endblock %}

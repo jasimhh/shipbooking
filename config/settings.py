@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "apps.support",
     "apps.compliance",
     "apps.pages",
+    "apps.staff",
 ]
 
 MIDDLEWARE = [

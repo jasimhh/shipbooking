@@ -110,7 +110,7 @@ class Schedule(TimeStampedModel):
         return self.arrival_at - self.departure_at
 
     def __str__(self):
-        return f"{self.route} {self.departure_at:%Y-%m-%d %H:%M}"
+        return f"{self.route} {timezone.localtime(self.departure_at):%Y-%m-%d %H:%M}"
 
 
 class Fare(TimeStampedModel):

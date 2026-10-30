@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ ticket.reference }} · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'support:mine' %}">Your support requests</a></nav>
+  <h1>{{ ticket.subject }}</h1>
+  <p>{{ ticket.reference }} · {{ ticket.get_category_display }} · {{ ticket.get_status_display }}</p>
+</div></div>
+<div class="container section narrow">
+  <ol class="thread">
+    {% for m in thread %}
+      <li class="{% if m.is_staff_reply %}from-staff{% endif %}">
+        <div class="small muted">{% if m.is_staff_reply %}Ship Booking support{% else %}You{% endif %} · {{ m.created_at|date:"j M Y, H:i" }}</div>
+        <p>{{ m.body|linebreaksbr }}</p>
+      </li>
+    {% endfor %}
+  </ol>
+  {% if ticket.status != "closed" %}
+    <form method="post" action="{% url 'support:reply' ticket.reference %}" class="card form-stack">{% csrf_token %}
+      <div class="field"><label for="reply">Add a message</label><textarea id="reply" name="body" rows="4" maxlength="5000" required></textarea></div>
+      <div><button class="btn btn-primary" type="submit">Send</button></div>
+    </form>
+  {% else %}
+    <p class="muted">This request is closed. <a href="{% url 'pages:contact' %}">Start a new one</a> if you need more help.</p>
+  {% endif %}
+</div>
+{% endblock %}

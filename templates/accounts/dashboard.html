@@ -62,7 +62,8 @@
       <li><a href="{% url 'accounts:dashboard' %}" aria-current="page">Overview</a></li>
       <li><a href="{% url 'accounts:profile' %}">Your details</a></li>
       <li><a href="{% url 'accounts:password_change' %}">Change password</a></li>
-      {% if user.is_platform_admin %}<li><a href="{% url 'admin:index' %}">Administration</a></li>{% endif %}
+      <li><a href="{% url 'support:mine' %}">Support requests</a></li>
+      {% if user.is_platform_admin or user.role == "support" or user.role == "operator" %}<li><a href="{% url 'staff:dashboard' %}">Staff area</a></li>{% endif %}
       <li><a href="{% url 'pages:contact' %}">Contact support</a></li>
     </ul>
     <form method="post" action="{% url 'accounts:logout' %}" style="margin-top:16px">{% csrf_token %}<button class="btn btn-secondary" type="submit" style="width:100%">Sign out</button></form>

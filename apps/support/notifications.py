@@ -58,6 +58,17 @@ def notify(key, booking, **extra):
     return notification
 
 
+def notify_support(ticket, subject, message):
+    """Email a support customer (who may not have an account) about their request."""
+    body = render_to_string("emails/support_update.txt", {"ticket": ticket, "message": message, "site_url": settings.SITE_URL})
+    notification = Notification.objects.create(
+        user=ticket.user, booking=ticket.booking, channel=Channel.EMAIL, recipient=ticket.contact_email,
+        template_key="support_reply", subject=subject[:200], body=body,
+    )
+    transaction.on_commit(lambda: _send(notification.pk))
+    return notification
+
+
 def _send(pk):
     n = Notification.objects.get(pk=pk)
     try:

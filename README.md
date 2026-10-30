@@ -2,7 +2,7 @@
 
 Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 7 of 10** done: everything up to e-tickets with QR codes, ticket checks at the port, booking look-up, cancellations and refunds, and email notifications. Dashboards and reports come in Phase 8.
+Status: **Phase 8 of 10** done: everything up to the staff area (role-based dashboards, passenger lists, reports with CSV export, support desk) and passenger support conversations. Legal pages, cookie consent, accessibility and SEO come in Phase 9.
 
 ## Setup (Windows)
 
@@ -102,6 +102,26 @@ Leave `PAYMENTS_LIVE_MODE=false`. The app refuses to start with a live key while
 **Notifications.** Passengers are emailed when places are reserved, payment fails, a booking is confirmed (with the ticket link), a sailing is delayed or cancelled, and when a cancellation is requested, approved or rejected or a refund is sent or fails. Every email is stored under Support → Notifications with its status, is sent only after the change is saved, and appears under "Recent messages" on the account page. To change wording, add a Notification template with the same key (for example `booking_confirmed`). Set `SITE_URL` so links in emails and QR codes point to the real site. SMS isn't connected.
 
 Not built yet: operator staff deciding cancellations (admins only for now), and choosing seats.
+
+## Staff area (`/staff/`)
+
+Operator staff, support staff and admins get a **Staff** button in the header. What each role sees:
+
+| | Operator staff | Support staff | Admins |
+|---|---|---|---|
+| Dashboard: sailings in the next 7 days with occupancy, bookings, unpaid reservations | Own operators only | All | All |
+| Money (payments received, refunds, net) | Own operators only | Hidden | All |
+| Passenger lists per sailing (view, print, CSV) | Own operators, with "can view manifests" | Yes | Yes |
+| Reports: bookings by status, cancellations, occupancy per sailing, CSV | Own operators only | Yes, without money | Yes |
+| Support desk | No | Yes | Yes |
+| Counts of cancellations to decide, refunds to send, sailings awaiting approval | No | Cancellations | All, with links into the admin |
+
+- Every passenger-list view and download, and every report export, is written to the audit log. Lists contain only confirmed passengers.
+- Reports default to the last 30 days of sales and the next 30 days of sailings. Operators can't widen a report to another operator, even by editing the address.
+
+**Support desk** (`/staff/support/`): filter by status, topic or search; open a request to read the conversation, reply (the customer is emailed), change the status, or assign it to yourself. Complaints and grievances are highlighted. Every change is audited.
+
+**Passengers** see their requests under Account → Support requests (`/account/support/`), read replies and answer back. Requests sent from the contact form before they registered appear once their email is confirmed.
 
 ## Tests
 
