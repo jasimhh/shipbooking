@@ -15,8 +15,8 @@ class ScheduleQuerySet(models.QuerySet):
         """Sailings the public may view (not drafts or unapproved)."""
         return self.exclude(status__in=[Schedule.Status.DRAFT, Schedule.Status.PENDING_APPROVAL])
 
-    def bookable(self):
-        """Published sailings that are open for booking right now."""
+    def upcoming(self):
+        """Published future sailings on active routes, vessels and operators (verified or not)."""
         now = timezone.now()
         return self.filter(
             status__in=[Schedule.Status.PUBLISHED, Schedule.Status.DELAYED],
@@ -24,6 +24,17 @@ class ScheduleQuerySet(models.QuerySet):
             route__is_active=True,
             vessel__is_active=True,
             route__operator__is_active=True,
+        )
+
+    def listed(self):
+        """What search shows: bookable sailings, plus timetable-only ones from public sources."""
+        return self.upcoming().filter(
+            Q(route__operator__verification_status=Operator.Verification.VERIFIED) | ~Q(route__operator__public_source=""))
+
+    def bookable(self):
+        """Sailings open for booking right now: only verified operators can be booked."""
+        now = timezone.now()
+        return self.upcoming().filter(
             route__operator__verification_status=Operator.Verification.VERIFIED,
         ).filter(Q(booking_closes_at__isnull=True) | Q(booking_closes_at__gt=now))
 

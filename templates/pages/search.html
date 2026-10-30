@@ -51,7 +51,7 @@
               </div>
               <div class="meta">
                 {{ s.vessel.name }} · {{ s.route.operator.name }}
-                {% if s.route.operator.is_demo %}<span class="badge badge-demo">Demo</span>{% endif %}
+                {% if s.route.operator.is_demo %}<span class="badge badge-demo">Demo</span>{% endif %}{% if s.route.operator.public_source %}<span class="badge badge-warn" title="{{ s.route.operator.public_source }}">Public timetable</span>{% endif %}
                 {% if s.status == "delayed" %}<span class="badge badge-warn">Delayed</span>{% endif %}
               </div>
             </div>
@@ -60,7 +60,7 @@
               <div class="small muted">From</div>
               <div class="price">{{ r.from_price|inr }}</div>
               <div class="small">
-                {% if not r.bookable %}<span class="badge badge-bad">Not enough places</span>
+                {% if r.timetable_only %}<span class="badge badge-warn">Timetable only</span>{% elif not r.bookable %}<span class="badge badge-bad">Not enough places</span>
                 {% elif r.available <= 10 %}<span class="badge badge-warn">{{ r.available }} left</span>
                 {% else %}<span class="badge badge-ok">Available</span>{% endif %}
               </div>

@@ -41,7 +41,7 @@ def route_cards():
     cards = []
     # ponytail: two queries per route; fine for a handful of routes, aggregate in one query if there are dozens.
     for route in Route.objects.filter(is_active=True).select_related("operator", "origin", "destination"):
-        sailings = Schedule.objects.bookable().filter(route=route)
+        sailings = Schedule.objects.listed().filter(route=route)
         upcoming = sailings.select_related("vessel").order_by("departure_at").first()
         if not upcoming:
             continue
@@ -75,7 +75,7 @@ def search(request):
     sort = request.GET.get("sort") if request.GET.get("sort") in SORTS else "departure"
     time = request.GET.get("time") if request.GET.get("time") in TIME_WINDOWS else ""
 
-    on_route = Schedule.objects.bookable().filter(route__origin=origin, route__destination=destination)
+    on_route = Schedule.objects.listed().filter(route__origin=origin, route__destination=destination)
     sailings = (
         on_route.filter(departure_at__date=date)
         .select_related("route__operator", "route__origin", "route__destination", "vessel")
@@ -92,11 +92,13 @@ def search(request):
             if not start <= timezone.localtime(schedule.departure_at).hour < end:
                 continue
         open_fares = [f for f in fares if f.available >= passengers]
+        timetable_only = schedule.route.operator.verification_status != schedule.route.operator.Verification.VERIFIED
         results.append({
+            "timetable_only": timetable_only,
             "schedule": schedule,
             "from_price": min(f.unit_total for f in (open_fares or fares)),
             "available": sum(f.available for f in fares),
-            "bookable": bool(open_fares),
+            "bookable": bool(open_fares) and not timetable_only,
         })
     results.sort(key=SORTS[sort][1])
 

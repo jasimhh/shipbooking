@@ -134,3 +134,16 @@ class PublicPagesTest(TestCase):
         PolicyVersion.objects.create(policy_type="privacy", version="1.0", body="Policy text here.",
                                      effective_from=timezone.now(), is_published=True)
         self.assertContains(self.client.get(reverse("pages:policy", args=["privacy"])), "Policy text here.")
+
+
+class PublicTimetableTest(TestCase):
+    def test_public_source_sailings_are_listed_but_never_bookable(self):
+        call_command("load_public_timetables", stdout=StringIO())
+        tomorrow = (timezone.localdate() + timedelta(days=1)).isoformat()
+        page = self.client.get(reverse("pages:search"), {"origin": "KWM-HC", "destination": "KWM-VYP", "date": tomorrow, "passengers": 1})
+        self.assertContains(page, "Timetable only")
+        sailing = Schedule.objects.listed().filter(route__origin__code="KWM-HC").first()
+        self.assertFalse(Schedule.objects.bookable().filter(pk=sailing.pk).exists())
+        detail = self.client.get(reverse("pages:sailing", args=[sailing.pk]))
+        self.assertContains(detail, "not an official partner")
+        self.assertNotContains(detail, "Book this sailing")

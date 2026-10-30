@@ -21,6 +21,8 @@ class Operator(TimeStampedModel):
     )
     # Fictional demo data must never reach a live booking/payment flow.
     is_demo = models.BooleanField(default=False)
+    public_source = models.TextField(
+        blank=True, help_text="Set when routes, times or fares come from public sources rather than the operator. Shown on every sailing.")
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

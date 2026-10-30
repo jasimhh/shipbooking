@@ -19,10 +19,15 @@
     {% if schedule.route.operator.is_demo %}
       <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>This is a fictional demo sailing. The ports are real, but the operator, vessel, timings and fares are invented.</p></div>
     {% endif %}
+    {% if schedule.route.operator.public_source %}
+      <div class="alert alert-info"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>{{ schedule.route.operator.public_source }}</p></div>
+    {% endif %}
     {% if schedule.status == "cancelled" %}
       <div class="alert alert-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>This sailing is cancelled.</strong> {{ schedule.status_note }}</p></div>
     {% elif schedule.status == "delayed" %}
       <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>This sailing is delayed.</strong> {{ schedule.status_note }}</p></div>
+    {% elif not is_bookable and schedule.route.operator.public_source %}
+      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-ticket"/></svg><p><strong>Timetable only.</strong> Tickets for this service are sold by {{ schedule.route.operator.name }}, not through Ship Booking.</p></div>
     {% elif not is_bookable %}
       <div class="alert alert-info"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>This sailing is not open for booking.</p></div>
     {% endif %}
