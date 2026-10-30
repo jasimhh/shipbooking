@@ -1,0 +1,20 @@
+{% if regions %}
+<figure class="chart journey" data-journey>
+  {% for r in regions %}
+  <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" data-region="{{ r.key }}"{% if not forloop.first %} hidden{% endif %} role="img" aria-label="Map of {{ r.label }}">
+    {% if r.art %}
+      <g class="chart-land">{% for d in r.art.land %}<path d="{{ d }}"/>{% endfor %}</g>
+      {% for p in r.art.places %}<text class="chart-place" x="{{ p.1 }}" y="{{ p.2 }}">{{ p.0 }}</text>{% endfor %}
+      {% for p in r.art.depths %}<text class="chart-depth" x="{{ p.0 }}" y="{{ p.1 }}">{{ p.2 }}</text>{% endfor %}
+    {% endif %}
+    <path class="chart-route on journey-line" d="" hidden/>
+    {% for p in r.ports %}
+      <g class="chart-port" data-code="{{ p.code }}" data-x="{{ p.x }}" data-y="{{ p.y }}"><circle cx="{{ p.x }}" cy="{{ p.y }}" r="8"/>
+        <text x="{% if p.left %}{{ p.x|add:-16 }}{% else %}{{ p.x|add:16 }}{% endif %}" y="{{ p.y|add:24 }}"{% if p.left %} text-anchor="end"{% endif %}>{{ p.name }}</text></g>
+    {% endfor %}
+    <g class="chart-boat journey-boat" hidden aria-hidden="true">{% include "pages/_boat.svg" %}</g>
+  </svg>
+  {% endfor %}
+  <figcaption><span class="chart-status" data-journey-text aria-live="polite">Pick where you're leaving from and going to, and your crossing appears here.</span></figcaption>
+</figure>
+{% endif %}

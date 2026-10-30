@@ -478,3 +478,23 @@ a.stat:hover { border-color: var(--info-line); color: var(--text); }
 @keyframes header-waves { to { -webkit-mask-position: 80px 0; mask-position: 80px 0; } }
 @media (prefers-reduced-motion: reduce) { .boat-bob, .chart-route.on, .page-header::after { animation: none; } }
 @media (max-width: 600px) { .chart svg { aspect-ratio: 4 / 3; } }
+
+/* Hero blueprint drawing */
+.hero-contours { color: var(--accent); }
+.hero-top { display: grid; gap: 24px; align-items: center; }
+@media (min-width: 960px) { .hero-top { grid-template-columns: 1.05fr 1fr; } }
+.blueprint { width: 100%; max-width: 560px; height: auto; justify-self: end; border: 1px solid var(--line); border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent); }
+.bp-grid path { stroke: var(--grid); stroke-width: 1; fill: none; }
+.bp-line path, .bp-line circle { fill: none; stroke: var(--text); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.bp-line .bp-thin, .bp-line .bp-thin path, .bp-line .bp-thin circle { stroke-width: 1; opacity: .7; }
+.bp-water { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-dasharray: 6 5; animation: chart-flow 3s linear infinite; }
+.bp-call path { fill: none; stroke: var(--accent); stroke-width: 1; }
+.bp-call text, .bp-title text { fill: var(--muted); font: 600 11px var(--mono); letter-spacing: .08em; }
+.bp-title text { fill: var(--text); font-size: 12px; } .bp-title .bp-small { fill: var(--muted); font-size: 10px; }
+@media (max-width: 600px) { .blueprint { justify-self: stretch; } }
+@media (prefers-reduced-motion: reduce) { .bp-water { animation: none; } }
+.journey { margin: 16px 0 0; }
+.journey { max-width: 760px; }
+.journey svg { max-height: none; }
+.chart-port.picked circle { fill: var(--accent); stroke: var(--text); r: 11; }

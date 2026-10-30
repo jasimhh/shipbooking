@@ -92,3 +92,34 @@ document.querySelectorAll("[data-live]").forEach((boat) => {
   tick();
   setInterval(tick, 30000);
 });
+
+// Journey preview: as From and To are picked, show that area's map with the crossing between the two jetties.
+document.querySelectorAll("[data-journey]").forEach((fig) => {
+  const form = fig.previousElementSibling, from = form.elements.origin, to = form.elements.destination;
+  const text = fig.querySelector("[data-journey-text]");
+  const port = (code) => code && fig.querySelector(`[data-code="${CSS.escape(code)}"]`);
+  const name = (sel) => sel.options[sel.selectedIndex].text;
+  const update = () => {
+    const a = port(from.value), b = port(to.value), svg = (a || b)?.closest("svg");
+    fig.querySelectorAll("svg").forEach((s) => s.toggleAttribute("hidden", svg ? s !== svg : s !== fig.querySelector("svg")));
+    fig.querySelectorAll(".chart-port").forEach((p) => p.classList.toggle("picked", p === a || p === b));
+    fig.querySelectorAll(".journey-line, .journey-boat").forEach((el) => el.setAttribute("hidden", ""));
+    if (!a || !b) {
+      text.textContent = a ? `Leaving from ${name(from)}. Now pick where you're going.` : b ? `Going to ${name(to)}. Now pick where you're leaving from.` : "Pick where you're leaving from and going to, and your crossing appears here.";
+      return;
+    }
+    if (a === b) { text.textContent = "Pick two different jetties."; return; }
+    if (a.closest("svg") !== b.closest("svg")) { text.textContent = `${name(from)} and ${name(to)} are in different areas, so no ferry crosses between them.`; return; }
+    const [x1, y1, x2, y2] = [a.dataset.x, a.dataset.y, b.dataset.x, b.dataset.y].map(Number);
+    const cx = (x1 + x2) / 2 - (y2 - y1) * 0.18, cy = (y1 + y2) / 2 + (x2 - x1) * 0.18;  // same curve as the route maps
+    const line = svg.querySelector(".journey-line"), boat = svg.querySelector(".journey-boat");
+    line.setAttribute("d", `M${x1} ${y1} Q${cx.toFixed(0)} ${cy.toFixed(0)} ${x2} ${y2}`);
+    line.removeAttribute("hidden");
+    boat.setAttribute("transform", `translate(${x1} ${y1})`);
+    boat.removeAttribute("hidden");
+    text.textContent = `Your crossing: ${name(from)} to ${name(to)}. Search to see sailings on this route.`;
+  };
+  from.addEventListener("change", update);
+  to.addEventListener("change", update);
+  update();
+});

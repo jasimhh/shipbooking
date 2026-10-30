@@ -42,3 +42,19 @@ def sailing_chart(schedule):
     chart = _chart(charts.region_key(route.origin), [route], highlight=route.pk)
     chart["sailing"] = schedule
     return chart
+
+
+def journey_regions():
+    """Every area with active ports, for the search form's journey preview map."""
+    areas = {}
+    for p in Port.objects.filter(is_active=True):
+        areas.setdefault(charts.region_key(p), []).append(p)
+    result = []
+    for key, ports in areas.items():
+        pos = charts.place_ports(key, ports)
+        art = charts.ART.get(key)
+        result.append({
+            "key": key, "label": art["label"] if art else (ports[0].state or "Other"), "art": art,
+            "ports": [{"code": p.code, "name": p.name, "x": pos[p.pk][0], "y": pos[p.pk][1], "left": pos[p.pk][0] > 720} for p in ports],
+        })
+    return result

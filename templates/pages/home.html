@@ -3,7 +3,7 @@
 {% block og_title %}Ship Booking: ship and ferry tickets in India{% endblock %}
 {% block content %}
 <section class="hero">
-  <svg class="hero-contours" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="none" stroke="#5EEAD4" stroke-width="1">
+  <svg class="hero-contours" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1">
     <path d="M-50 420 C200 360 350 480 600 420 S1000 330 1250 400"/><path d="M-50 450 C200 390 350 510 600 450 S1000 360 1250 430"/>
     <path d="M-50 480 C200 420 350 540 600 480 S1000 390 1250 460"/><path d="M-50 510 C200 450 350 570 600 510 S1000 420 1250 490"/>
     <ellipse cx="930" cy="160" rx="160" ry="70"/><ellipse cx="930" cy="160" rx="120" ry="50"/><ellipse cx="930" cy="160" rx="80" ry="32"/><ellipse cx="930" cy="160" rx="40" ry="15"/>
@@ -11,9 +11,14 @@
   </svg>
   <div class="hero-glow"></div>
   <div class="container">
-    <span class="hero-label">Ship and ferry tickets in India</span>
-    <h1>Your crossing, <em>sorted</em> before you reach the jetty.</h1>
-    <p class="lead">Search sailings by route and date, compare timings and fares in rupees, and get an e-ticket when your payment is confirmed.</p>
+    <div class="hero-top">
+      <div>
+        <span class="hero-label">Ship and ferry tickets in India</span>
+        <h1>Your crossing, <em>sorted</em> before you reach the jetty.</h1>
+        <p class="lead">Search sailings by route and date, compare timings and fares in rupees, and get an e-ticket when your payment is confirmed.</p>
+      </div>
+      {% include "includes/ferry_blueprint.html" %}
+    </div>
     {% include "includes/search_form.html" %}
   </div>
 </section>

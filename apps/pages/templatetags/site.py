@@ -37,3 +37,11 @@ def sailing_map(schedule):
     from apps.pages.charts import sailing_chart
 
     return {"chart": sailing_chart(schedule)}
+
+
+@register.inclusion_tag("includes/journey_map.html")
+def journey_map():
+    """Map under the search form that draws the crossing as people pick From and To."""
+    from apps.pages.charts import journey_regions
+
+    return {"regions": journey_regions()}
