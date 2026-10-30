@@ -81,3 +81,52 @@ html[data-theme="light"] textarea, html[data-theme="light"] .vTextField { backgr
 html[data-theme="light"] input:focus, html[data-theme="light"] select:focus, html[data-theme="light"] textarea:focus { border-color: #C2410C; }
 html[data-theme="light"] #result_list tbody tr:hover td { background: #FFF4E0; }
 html[data-theme="light"] .login #container { border: 2px solid #0D2A4A; box-shadow: 8px 8px 0 #0D2A4A; border-radius: 16px; overflow: hidden; }
+
+/* ---- Forms, Add/Change links and buttons: same style as the public site (both themes) ---- */
+body { font-size: 15px; }
+#content h1 { font-size: 1.7rem; margin-bottom: 18px; }
+.form-row { padding: 14px 16px; }
+.aligned label, .form-row label, fieldset .form-row > div > label, .required label, label.required {
+  font: 700 .72rem var(--font-family-monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--body-quiet-color); }
+label.required, .required label { color: var(--body-fg); }
+.vCheckboxLabel { font: 600 .95rem var(--font-family-primary) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--body-fg) !important; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=url], input[type=tel], input[type=search],
+input[type=date], input[type=time], input[type=datetime-local], select, textarea, .vTextField, .vLargeTextField, .vIntegerField {
+  min-height: 42px; padding: 8px 12px; font: 600 15px var(--font-family-primary); border-radius: 8px; border-width: 2px; box-sizing: border-box; }
+.vTextField, .vURLField, select:not([multiple]) { width: min(100%, 520px); }
+textarea, .vLargeTextField { width: min(100%, 720px); min-height: 110px; }
+input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); vertical-align: middle; }
+.help, .helptext, div.help { font-size: .85rem; color: var(--body-quiet-color); }
+.errornote, .errorlist li { border-radius: 8px; font-weight: 600; }
+
+/* Add / Change / View links: small outlined buttons instead of green and grey icons */
+a.addlink, a.changelink, a.viewlink, a.inlinechangelink, .add-row a {
+  display: inline-flex; align-items: center; gap: 4px; background: var(--body-bg) !important; padding: 4px 12px !important;
+  border: 2px solid var(--body-fg); border-radius: 999px; font: 700 .8rem var(--font-family-primary); color: var(--body-fg) !important; text-decoration: none; }
+a.addlink { background: var(--button-bg) !important; color: var(--button-fg) !important; }
+a.addlink::before { content: "+"; font-weight: 800; }
+a.changelink::before { content: "Edit"; } a.changelink { font-size: 0 !important; } a.changelink::before { font-size: .8rem; }
+a.viewlink::before { content: "View"; } a.viewlink { font-size: 0 !important; } a.viewlink::before { font-size: .8rem; }
+a.addlink:hover, a.changelink:hover, a.viewlink:hover, .add-row a:hover { background: var(--body-fg) !important; color: var(--body-bg) !important; }
+.add-row { padding: 12px 16px !important; background: none !important; }
+.add-row a::before { content: "+ "; }
+.module td a.addlink, .module td a.changelink, .module td a.viewlink { margin-left: 6px; }
+
+/* Icons beside a dropdown (edit / add / delete / view the related item) */
+.related-widget-wrapper { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.related-widget-wrapper-link { display: inline-grid; place-items: center; width: 36px; height: 36px; border: 2px solid var(--body-fg); border-radius: 8px; background: var(--body-bg); opacity: 1 !important; }
+.related-widget-wrapper-link:hover { background: var(--button-bg); }
+.related-widget-wrapper-link img { width: 16px; height: 16px; filter: grayscale(1) brightness(.35); }
+html[data-theme="dark"] .related-widget-wrapper-link img, html[data-theme="auto"] .related-widget-wrapper-link img { filter: grayscale(1) invert(1); }
+
+/* Save row */
+.submit-row { padding: 14px 16px; gap: 10px; }
+.submit-row input, .submit-row a.deletelink, .submit-row a.closelink { min-height: 44px; padding: 10px 20px; font-size: .95rem; }
+input[type=submit].default { font-weight: 800; }
+
+/* Lists */
+#changelist .actions select { min-height: 36px; }
+#changelist-search input[type=text] { width: 280px; }
+#result_list th { font: 700 .72rem var(--font-family-monospace); letter-spacing: .08em; text-transform: uppercase; }
+#result_list td, #result_list th { padding: 10px 12px; }
+.paginator { font-weight: 600; }
