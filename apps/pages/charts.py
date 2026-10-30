@@ -3,6 +3,13 @@ from apps.fleet.models import Port
 from apps.staff import charts
 
 
+def _label_sides(ports):
+    """Put a label on the left when the port is near the right edge, or when another port sits just to its east."""
+    for p in ports:
+        p["left"] = p["x"] > 720 or any(0 < q["x"] - p["x"] < 140 and abs(q["y"] - p["y"]) < 40 for q in ports)
+    return ports
+
+
 def _chart(key, routes, highlight=None):
     ports = {p.pk: p for r in routes for p in (r.origin, r.destination)}
     # All active ports in the area, so the map has context even with one route.
@@ -15,8 +22,8 @@ def _chart(key, routes, highlight=None):
         "key": key,
         "label": art["label"] if art else (next(iter(ports.values())).state or "Other"),
         "art": art,
-        "ports": [{"name": p.name, "x": x, "y": y, "left": x > 720, "coord": f'{charts.dms(p.latitude, "N", "S")} {charts.dms(p.longitude, "E", "W")}' if p.latitude is not None else ""}
-                  for p in ports.values() for x, y in [pos[p.pk]]],
+        "ports": _label_sides([{"name": p.name, "x": x, "y": y, "coord": f'{charts.dms(p.latitude, "N", "S")} {charts.dms(p.longitude, "E", "W")}' if p.latitude is not None else ""}
+                  for p in ports.values() for x, y in [pos[p.pk]]]),
         "routes": [{"route": r, "path": charts.route_path(pos[r.origin_id], pos[r.destination_id]),
                     "on": highlight is None or r.pk == highlight} for r in routes],
     }
@@ -33,7 +40,8 @@ def area_charts(route_cards):
         for line, card in zip(chart["routes"], cards):
             line["card"] = card
         result.append(chart)
-    return result
+    # Mumbai harbour first: it is the default chart on the home page.
+    return sorted(result, key=lambda r: r["key"] != "maharashtra")
 
 
 def sailing_chart(schedule):
@@ -55,6 +63,7 @@ def journey_regions():
         art = charts.ART.get(key)
         result.append({
             "key": key, "label": art["label"] if art else (ports[0].state or "Other"), "art": art,
-            "ports": [{"code": p.code, "name": p.name, "x": pos[p.pk][0], "y": pos[p.pk][1], "left": pos[p.pk][0] > 720} for p in ports],
+            "ports": _label_sides([{"code": p.code, "name": p.name, "x": pos[p.pk][0], "y": pos[p.pk][1]} for p in ports]),
         })
-    return result
+    # Mumbai harbour first: it is the default chart on the home page.
+    return sorted(result, key=lambda r: r["key"] != "maharashtra")
