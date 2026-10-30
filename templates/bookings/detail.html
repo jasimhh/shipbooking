@@ -1,0 +1,70 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}Booking {{ booking.reference }} · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+{% with schedule=booking.schedule %}
+{% if booking.status == "pending" %}{% include "bookings/_header.html" with step=3 %}{% else %}
+<div class="page-header"><div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'accounts:dashboard' %}">Your account</a></nav>
+  <h1>Booking {{ booking.reference }}</h1>
+  <p>{{ schedule.route.origin.name }} to {{ schedule.route.destination.name }} · {{ schedule.departure_at|date:"l j F Y, H:i" }}</p>
+</div></div>
+{% endif %}
+
+<div class="container layout-sidebar">
+  <div>
+    {% if booking.status == "pending" %}
+      <div class="alert alert-info" role="status">
+        <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+        <div>
+          <p><strong>Your places are held until {{ booking.hold.expires_at|time:"H:i" }}</strong>
+            (<span data-countdown="{{ booking.hold.expires_at|date:'c' }}">{{ booking.hold.expires_at|timeuntil }}</span> left).
+            If payment isn't completed by then, the places are released.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:32px">
+        <h2>Payment</h2>
+        <p class="muted">Online payment is being set up and arrives in the next release (test mode only, no real money). Your reservation reference is <strong>{{ booking.reference }}</strong>.</p>
+        <button class="btn btn-primary" type="button" disabled>Pay {{ booking.total_amount|inr }}</button>
+      </div>
+    {% elif booking.status == "expired" %}
+      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p>This reservation expired before payment and the places were released. <a href="{% url 'pages:sailing' schedule.pk %}">Book again</a></p></div>
+    {% elif booking.status == "cancelled" %}
+      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p>This booking is cancelled.</p></div>
+    {% endif %}
+
+    <h2>Passengers</h2>
+    <div class="table-wrap" style="margin-bottom:32px"><table>
+      <thead><tr><th scope="col">Name</th><th scope="col">Age</th>{% if schedule.vessel.seating_mode == "assigned" %}<th scope="col">Seat</th>{% endif %}</tr></thead>
+      <tbody>{% for p in passengers %}<tr><td>{{ p.full_name }}</td><td>{{ p.age }}</td>{% if schedule.vessel.seating_mode == "assigned" %}<td>{% if p.seat and p.seat.active_schedule_id %}{{ p.seat.seat.number }}{% else %}—{% endif %}</td>{% endif %}</tr>{% endfor %}</tbody>
+    </table></div>
+
+    <h2>Journey</h2>
+    <dl class="facts">
+      <dt>Reference</dt><dd>{{ booking.reference }}</dd>
+      <dt>Departs</dt><dd>{{ schedule.departure_at|date:"j M Y, H:i" }} from {{ schedule.route.origin }}</dd>
+      <dt>Arrives</dt><dd>{{ schedule.arrival_at|date:"j M Y, H:i" }} at {{ schedule.route.destination }}</dd>
+      <dt>Vessel</dt><dd>{{ schedule.vessel.name }}</dd>
+      <dt>Class</dt><dd>{{ booking.fare_snapshot.cabin_class }}</dd>
+      <dt>Status</dt><dd>{{ booking.get_status_display }}</dd>
+    </dl>
+  </div>
+
+  <aside class="sidenav">
+    <h2>Price</h2>
+    <dl class="price-lines">
+      <div><dt>Fares × {{ booking.passenger_count }}</dt><dd>{{ booking.base_amount|inr }}</dd></div>
+      <div><dt>Taxes</dt><dd>{{ booking.tax_amount|inr }}</dd></div>
+      <div><dt>Fees</dt><dd>{{ booking.fee_amount|inr }}</dd></div>
+      <div class="total"><dt>Total</dt><dd>{{ booking.total_amount|inr }}</dd></div>
+    </dl>
+    {% if booking.status == "pending" %}
+      <form method="post" action="{% url 'bookings:cancel' booking.reference %}" onsubmit="return confirm('Cancel this reservation and release the places?')">{% csrf_token %}
+        <button class="btn btn-secondary" type="submit" style="width:100%">Cancel reservation</button>
+      </form>
+    {% endif %}
+    <p class="small" style="margin:16px 0 0"><a href="{% url 'pages:contact' %}">Need help with this booking?</a></p>
+  </aside>
+</div>
+{% endwith %}
+{% endblock %}

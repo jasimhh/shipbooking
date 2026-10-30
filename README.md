@@ -2,7 +2,7 @@
 
 Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 4 of 10** done: schema, public site, accounts and roles, and operations management (ports, routes, vessels, seats, sailings, fares, capacity) for platform admins and operator staff. Booking and payment come in Phases 5 and 6.
+Status: **Phase 5 of 10** done: public site, accounts and roles, operations management, and booking up to the payment step (choose class and passengers, enter details, review the price, reserve with a timed hold). Test-mode payment comes in Phase 6.
 
 ## Setup (Windows)
 
@@ -46,6 +46,24 @@ Help-centre guides, the About page, FAQs and service announcements are edited in
 Rules checked on every save: route and vessel belong to the same operator; a vessel can't be on two sailings at overlapping times (cancelled ones don't count); arrival after departure; booking closes before departure; a fare's cabin class belongs to the sailing's vessel; fare capacity defaults to the cabin class, can't exceed it, and can't drop below places already held or sold.
 
 Not built yet: creating repeating sailings in bulk (each sailing is added one at a time) and passenger lists (Phase 8, once bookings exist).
+
+## Booking
+
+1. On a sailing page, choose a class and number of passengers (1 to 9) and select **Book this sailing**. Booking needs a signed-in account with a confirmed email.
+2. Enter each passenger's name, age and gender, plus a contact email and mobile number.
+3. Review the price breakdown (fare, taxes, fees, total in INR) and the cancellation terms, then **Reserve places**.
+4. The places are held for `INVENTORY_HOLD_MINUTES` (default 15) while the passenger pays. The booking page shows a live countdown and a **Cancel reservation** button.
+
+How inventory stays correct (`apps/bookings/services.py`):
+- Prices always come from the database; nothing the browser sends can change the total.
+- Places are taken with a single conditional update that only succeeds while enough remain, inside a transaction, with the database's no-oversell constraint as a backstop.
+- Ships with assigned seating get seats automatically, lowest number first; the database refuses to give one seat to two live bookings.
+- Expired holds are released whenever someone searches, opens a sailing or a booking page, and by `python manage.py expire_holds`, which should run every minute from cron in production.
+- Each account can have at most 3 unpaid reservations at a time, so nobody can tie up a sailing's places.
+- Bookings are only visible to the account that made them.
+- Demo sailings can't be booked if live payments are ever switched on.
+
+Not built yet: choosing your own seat (seats are assigned automatically), guest checkout without an account, and booking look-up by reference for people without an account (Phase 7, with tickets).
 
 ## Tests
 

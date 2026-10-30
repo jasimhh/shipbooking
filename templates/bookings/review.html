@@ -1,0 +1,41 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}Review your booking · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+{% include "bookings/_header.html" with step=2 %}
+<div class="container layout-sidebar">
+  <div>
+    <h2>Passengers</h2>
+    <div class="table-wrap" style="margin-bottom:32px"><table>
+      <thead><tr><th scope="col">Name</th><th scope="col">Age</th><th scope="col">Gender</th></tr></thead>
+      <tbody>{% for p in passengers %}<tr><td>{{ p.full_name }}</td><td>{{ p.age }}</td><td>{{ p.gender_label }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+
+    <h2>Contact</h2>
+    <dl class="facts" style="margin-bottom:32px"><dt>Email</dt><dd>{{ draft.contact_email }}</dd><dt>Mobile</dt><dd>{{ draft.contact_phone }}</dd></dl>
+
+    <h2>Cancellation terms</h2>
+    {% if cancellation_policy %}
+      <p>This booking follows the <a href="{% url 'pages:policy' 'cancellation' %}">Cancellation Policy</a> (version {{ cancellation_policy.version }}).</p>
+    {% else %}
+      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <p>Cancellation and refund terms haven't been published yet. They will be shown here before real bookings open.</p></div>
+    {% endif %}
+    <p><a href="{% url 'bookings:details' schedule.pk %}?passengers={{ draft.passengers|length }}&amp;fare={{ fare.pk }}">Change details</a></p>
+  </div>
+
+  <aside class="sidenav" aria-labelledby="summary">
+    <h2 id="summary">Price</h2>
+    <dl class="price-lines">
+      <div><dt>{{ fare.cabin_class.name }} × {{ draft.passengers|length }}</dt><dd>{{ amounts.base_amount|inr }}</dd></div>
+      <div><dt>Taxes</dt><dd>{{ amounts.tax_amount|inr }}</dd></div>
+      <div><dt>Fees</dt><dd>{{ amounts.fee_amount|inr }}</dd></div>
+      <div class="total"><dt>Total</dt><dd>{{ amounts.total_amount|inr }}</dd></div>
+    </dl>
+    <form method="post">{% csrf_token %}
+      <button class="btn btn-primary" type="submit" style="width:100%">Reserve places</button>
+    </form>
+    <p class="small muted" style="margin:12px 0 0">We'll hold your places for {{ hold_minutes|default:"15" }} minutes while you pay.</p>
+  </aside>
+</div>
+{% endblock %}

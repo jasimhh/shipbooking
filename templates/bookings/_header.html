@@ -1,0 +1,12 @@
+{% load site %}
+<div class="page-header"><div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'pages:sailing' schedule.pk %}">Back to sailing</a></nav>
+  <h1>{{ schedule.route.origin.name }} <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="visually-hidden">to</span> {{ schedule.route.destination.name }}</h1>
+  <p>{{ schedule.departure_at|date:"l j F Y, H:i" }} · {{ schedule.vessel.name }} · {{ schedule.duration|duration }}
+    {% if schedule.route.operator.is_demo %}<span class="badge badge-demo">Demo</span>{% endif %}</p>
+  <ol class="booking-steps" aria-label="Booking progress">
+    <li{% if step == 1 %} aria-current="step"{% endif %} class="{% if step > 1 %}done{% endif %}"><span>1</span> Passengers</li>
+    <li{% if step == 2 %} aria-current="step"{% endif %} class="{% if step > 2 %}done{% endif %}"><span>2</span> Review</li>
+    <li{% if step == 3 %} aria-current="step"{% endif %}><span>3</span> Payment</li>
+  </ol>
+</div></div>

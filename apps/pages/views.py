@@ -7,6 +7,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from apps.bookings.services import expire_holds
 from apps.common import client_ip, is_rate_limited, record_attempt
 from apps.compliance.models import PolicyVersion
 from apps.fleet.models import Route
@@ -64,6 +65,7 @@ def search(request):
     if not form.is_valid():
         return render(request, "pages/search.html", {"form": form})
 
+    expire_holds()
     origin, destination = form.cleaned_data["origin"], form.cleaned_data["destination"]
     date, passengers = form.cleaned_data["date"], form.cleaned_data["passengers"]
     sort = request.GET.get("sort") if request.GET.get("sort") in SORTS else "departure"
@@ -114,6 +116,7 @@ def search(request):
 
 
 def sailing_detail(request, pk):
+    expire_holds()
     schedule = get_object_or_404(
         Schedule.objects.public().select_related(
             "route__operator", "route__origin", "route__destination", "vessel"

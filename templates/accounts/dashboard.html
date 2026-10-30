@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load site %}
 {% block title %}Your account · Ship Booking{% endblock %}
 {% block robots %}<meta name="robots" content="noindex">{% endblock %}
 {% block content %}
@@ -20,9 +20,22 @@
     {% endif %}
 
     <h2>Your bookings</h2>
-    <div class="card" style="margin-bottom:40px">
-      <p class="muted" style="margin:0">You have no bookings. Booking opens in a later release; your upcoming and past journeys, tickets and cancellations will appear here.</p>
-    </div>
+    {% if bookings %}
+      <div class="table-wrap" style="margin-bottom:40px"><table>
+        <thead><tr><th scope="col">Reference</th><th scope="col">Journey</th><th scope="col">Departs</th><th scope="col">Status</th><th scope="col" class="num">Total</th></tr></thead>
+        <tbody>{% for b in bookings %}<tr>
+          <td><a href="{% url 'bookings:detail' b.reference %}">{{ b.reference }}</a></td>
+          <td>{{ b.schedule.route.origin.name }} to {{ b.schedule.route.destination.name }}</td>
+          <td>{{ b.schedule.departure_at|date:"j M Y, H:i" }}</td>
+          <td><span class="badge {% if b.status == 'confirmed' %}badge-ok{% elif b.status == 'pending' %}badge-warn{% else %}badge-bad{% endif %}">{{ b.get_status_display }}</span></td>
+          <td class="num">{{ b.total_amount|inr }}</td>
+        </tr>{% endfor %}</tbody>
+      </table></div>
+    {% else %}
+      <div class="card" style="margin-bottom:40px">
+        <p class="muted" style="margin:0">You have no bookings yet. <a href="{% url 'pages:home' %}">Search sailings</a></p>
+      </div>
+    {% endif %}
 
     <h2>Your details</h2>
     <div class="card">

@@ -1,0 +1,67 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}Passenger details · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+{% include "bookings/_header.html" with step=1 %}
+<div class="container layout-sidebar">
+  <form method="post" novalidate class="form-stack">
+    {% csrf_token %}
+    {% if trip.errors or people.non_form_errors %}
+      <div class="alert alert-error" role="alert"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+        <div><p>Please fix the fields marked below.</p>{{ trip.non_field_errors }}{{ people.non_form_errors }}</div></div>
+    {% endif %}
+
+    <fieldset class="card">
+      <legend><h2>Class</h2></legend>
+      {{ trip.fare.errors }}
+      <div class="fare-options">
+        {% for fare in trip.fields.fare.queryset %}
+          <label class="fare-option{% if not fare.available %} is-full{% endif %}">
+            <input type="radio" name="fare" value="{{ fare.pk }}" required {% if trip.fare.value|stringformat:"s" == fare.pk|stringformat:"s" %}checked{% endif %}{% if not fare.available %} disabled{% endif %}>
+            <span class="fare-option-body">
+              <strong>{{ fare.cabin_class.name }}</strong>
+              <span class="price">{{ fare.unit_total|inr }}</span>
+              <span class="small muted">per passenger · {% if fare.available %}{{ fare.available }} left{% else %}Sold out{% endif %}</span>
+              {% if fare.fare_rules %}<span class="small muted">{{ fare.fare_rules }}</span>{% endif %}
+            </span>
+          </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    {{ people.management_form }}
+    {% for form in people %}
+      <fieldset class="card">
+        <legend><h2>Passenger {{ forloop.counter }}</h2></legend>
+        <div class="passenger-grid">
+          <div class="field">{{ form.full_name.as_field_group }}</div>
+          <div class="field">{{ form.age.as_field_group }}</div>
+          <div class="field">{{ form.gender.as_field_group }}</div>
+        </div>
+      </fieldset>
+    {% endfor %}
+
+    <fieldset class="card">
+      <legend><h2>Contact</h2></legend>
+      <div class="passenger-grid">
+        <div class="field">{{ trip.contact_email.as_field_group }}</div>
+        <div class="field">{{ trip.contact_phone.as_field_group }}</div>
+      </div>
+    </fieldset>
+
+    <p class="small muted">We collect only what the journey needs. See the <a href="{% url 'pages:policy' 'privacy' %}">Privacy Policy</a>.</p>
+    <div><button class="btn btn-primary" type="submit">Continue to review <span aria-hidden="true">→</span></button></div>
+  </form>
+
+  <aside class="sidenav">
+    <h2>Travelling with more people?</h2>
+    <p class="small muted">Up to 9 passengers per booking.</p>
+    <form method="get" class="form-stack" style="gap:10px">
+      {% if trip.fare.value %}<input type="hidden" name="fare" value="{{ trip.fare.value }}">{% endif %}
+      <div class="field"><label for="pcount">Passengers</label>
+        <select id="pcount" name="passengers">{% for n in "123456789" %}<option value="{{ n }}"{% if people.total_form_count|stringformat:"s" == n %} selected{% endif %}>{{ n }}</option>{% endfor %}</select></div>
+      <button class="btn btn-secondary" type="submit">Update</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

@@ -136,7 +136,8 @@ class LoginView(auth_views.LoginView):
 @login_required
 def dashboard(request):
     memberships = request.user.operator_memberships.filter(is_active=True).select_related("operator")
-    return render(request, "accounts/dashboard.html", {"memberships": memberships})
+    bookings = request.user.bookings.select_related("schedule__route__origin", "schedule__route__destination")
+    return render(request, "accounts/dashboard.html", {"memberships": memberships, "bookings": bookings[:20]})
 
 
 @login_required

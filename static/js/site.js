@@ -21,3 +21,14 @@ document.querySelectorAll('input[type="password"]').forEach((input) => {
   });
   wrap.appendChild(button);
 });
+
+// Live "m:ss" left on reservation holds.
+document.querySelectorAll("[data-countdown]").forEach((el) => {
+  const end = new Date(el.dataset.countdown).getTime();
+  const tick = () => {
+    const s = Math.max(0, Math.round((end - Date.now()) / 1000));
+    el.textContent = s ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "no time";
+    if (s) setTimeout(tick, 1000);
+  };
+  tick();
+});

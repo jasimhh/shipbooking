@@ -56,7 +56,16 @@
         </tbody>
       </table>
     </div>
-    <p class="small muted" style="margin-top:12px">Booking opens in a later release. The final total and cancellation terms are shown before payment.</p>
+    {% if is_bookable %}
+      <form class="book-bar card" method="get" action="{% url 'bookings:details' schedule.pk %}">
+        <div class="field"><label for="b-fare">Class</label>
+          <select id="b-fare" name="fare">{% for f in fares %}{% if f.available %}<option value="{{ f.pk }}">{{ f.cabin_class.name }} · {{ f.unit_total|inr }}</option>{% endif %}{% endfor %}</select></div>
+        <div class="field"><label for="b-pax">Passengers</label>
+          <select id="b-pax" name="passengers">{% for n in "123456789" %}<option value="{{ n }}"{% if request.GET.passengers == n %} selected{% endif %}>{{ n }}</option>{% endfor %}</select></div>
+        <button class="btn btn-primary" type="submit">Book this sailing <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="small muted" style="margin-top:12px">You'll see the full price and cancellation terms before you reserve.</p>
+    {% endif %}
 
     {% if schedule.vessel.facilities %}
       <h2 style="margin-top:40px">Facilities on board</h2>
