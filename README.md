@@ -2,7 +2,7 @@
 
 Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 2 of 10** done: schema, design system and public pages (search, sailing details, help centre, FAQ, contact, service updates, policies). Booking and payment come in Phases 5 and 6.
+Status: **Phase 3 of 10** done: schema, public site, and accounts (register, email confirmation, sign-in with lockout, password reset/change, profile, roles and operator-scoped permissions). Booking and payment come in Phases 5 and 6.
 
 ## Setup (Windows)
 
@@ -21,6 +21,14 @@ Site: http://127.0.0.1:8000/ · Admin: http://127.0.0.1:8000/admin/
 `seed_demo` adds 14 days of sailings on Mumbai Ferry Wharf ↔ Mandwa Jetty and Phoenix Bay Jetty ↔ Swaraj Dweep (Havelock). The ports are real; the operator ("Demo Ferries (fictional)"), vessels, timings and fares are invented and labelled **Demo** everywhere on the site.
 
 Help-centre guides, the About page, FAQs and service announcements are edited in the admin under **Pages**. Policy pages show the latest published **Policy version** and say "not published yet" until one exists.
+
+## Accounts and roles
+
+- Users sign in with email (case-insensitive). Five failed sign-ins from one IP for one email lock that pair out for 15 minutes.
+- New accounts get a confirmation email (printed to the console in development). Booking will require a confirmed email.
+- Roles: passenger, operator, support staff, administrator. Setting a user's role to administrator also gives them access to `/admin/`. Role and access changes made in the admin are written to the audit log.
+- Operator staff are linked to operators through **Operator memberships**, with per-member "can edit schedules" and "can view manifests" switches. `apps/accounts/permissions.py` has the server-side checks every protected view must use: `role_required`, `operators_for`, `can_edit_schedules`, `can_view_manifest`.
+- Not built: two-factor sign-in (optional in the spec) and changing your email address (needs re-confirmation; currently via support).
 
 ## Tests
 

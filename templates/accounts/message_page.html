@@ -1,0 +1,7 @@
+{% extends "accounts/pass.html" %}
+{% block pass %}
+  <p class="pass-body">{{ body }}</p>
+  {% if link_url %}
+    <div class="pass-actions"><span></span><a class="btn btn-board" href="{{ link_url }}">{{ link_label }} <span aria-hidden="true">→</span></a></div>
+  {% endif %}
+{% endblock %}

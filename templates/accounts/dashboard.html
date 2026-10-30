@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Your account · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <h1>Hello{% if user.first_name %}, {{ user.first_name }}{% endif %}</h1>
+  <p>{{ user.email }} · {{ user.get_role_display }}</p>
+</div></div>
+
+<div class="container layout-sidebar">
+  <div>
+    {% if not user.email_verified %}
+      <div class="alert alert-warning" role="status">
+        <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+        <div>
+          <p><strong>Confirm your email address.</strong> We sent a link to {{ user.email }}. You'll need a confirmed email to book.</p>
+          <form method="post" action="{% url 'accounts:resend_verification' %}">{% csrf_token %}<button class="btn btn-secondary" type="submit">Send a new link</button></form>
+        </div>
+      </div>
+    {% endif %}
+
+    <h2>Your bookings</h2>
+    <div class="card" style="margin-bottom:40px">
+      <p class="muted" style="margin:0">You have no bookings. Booking opens in a later release; your upcoming and past journeys, tickets and cancellations will appear here.</p>
+    </div>
+
+    <h2>Your details</h2>
+    <div class="card">
+      <dl class="facts">
+        <dt>Name</dt><dd>{{ user.get_full_name|default:"Not given" }}</dd>
+        <dt>Email</dt><dd>{{ user.email }} {% if user.email_verified %}<span class="badge badge-ok">Confirmed</span>{% else %}<span class="badge badge-warn">Not confirmed</span>{% endif %}</dd>
+        <dt>Mobile</dt><dd>{{ user.phone|default:"Not given" }}</dd>
+      </dl>
+      <p style="display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 0">
+        <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">Edit details</a>
+        <a class="btn btn-secondary" href="{% url 'accounts:password_change' %}">Change password</a>
+      </p>
+    </div>
+
+    {% if memberships %}
+      <h2 style="margin-top:40px">Operator access</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th scope="col">Operator</th><th scope="col">Role</th><th scope="col">Can edit schedules</th><th scope="col">Can view manifests</th></tr></thead>
+        <tbody>{% for m in memberships %}<tr><td>{{ m.operator.name }}</td><td>{{ m.get_role_display }}</td><td>{{ m.can_edit_schedules|yesno:"Yes,No" }}</td><td>{{ m.can_view_manifests|yesno:"Yes,No" }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    {% endif %}
+  </div>
+
+  <aside class="sidenav" aria-label="Account">
+    <h2>Account</h2>
+    <ul>
+      <li><a href="{% url 'accounts:dashboard' %}" aria-current="page">Overview</a></li>
+      <li><a href="{% url 'accounts:profile' %}">Your details</a></li>
+      <li><a href="{% url 'accounts:password_change' %}">Change password</a></li>
+      {% if user.is_platform_admin %}<li><a href="{% url 'admin:index' %}">Administration</a></li>{% endif %}
+      <li><a href="{% url 'pages:contact' %}">Contact support</a></li>
+    </ul>
+    <form method="post" action="{% url 'accounts:logout' %}" style="margin-top:16px">{% csrf_token %}<button class="btn btn-secondary" type="submit" style="width:100%">Sign out</button></form>
+  </aside>
+</div>
+{% endblock %}

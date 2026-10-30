@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · Ship Booking{% endblock %}
+{% block og_title %}{{ title }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="pass-stage">
+  <div class="pass-hello">
+    <h1>{{ heading|default:title }}</h1>
+    {% if intro %}<p>{{ intro }}</p>{% endif %}
+  </div>
+  <div class="pass">
+    <div class="pass-main">
+      <div class="pass-top"><span class="pass-line">Ship Booking · Passenger pass</span><span class="pass-class">Economy of effort</span></div>
+      {% if after_form == "login" or after_form == "register" %}
+        <nav class="pass-tabs" aria-label="Account">
+          <a href="{% url 'accounts:login' %}"{% if after_form == "login" %} aria-current="page"{% endif %}>Sign in</a>
+          <a href="{% url 'accounts:register' %}"{% if after_form == "register" %} aria-current="page"{% endif %}>New passenger</a>
+        </nav>
+      {% endif %}
+      {% block pass %}{% endblock %}
+    </div>
+    <aside class="pass-stub" aria-label="Pass details, just for fun">
+      <dl>
+        <div><dt>From</dt><dd>Sofa</dd></div>
+        <div><dt>To</dt><dd>Sea</dd></div>
+        <div><dt>Passenger</dt><dd>{% if user.is_authenticated %}{{ user.first_name|default:"You" }}{% else %}You{% endif %}</dd></div>
+        <div><dt>Seat</dt><dd>Any</dd></div>
+      </dl>
+      <div><div class="pass-barcode" aria-hidden="true"></div><small>Just for fun: this is not a real ticket.</small></div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

@@ -19,6 +19,19 @@ class AuditLog(models.Model):
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["object_type", "object_id"])]
 
+    @classmethod
+    def record(cls, actor, action, obj, changes=None, request=None):
+        from apps.common import client_ip
+
+        return cls.objects.create(
+            actor=actor if actor and actor.is_authenticated else None,
+            action=action,
+            object_type=obj._meta.label,
+            object_id=str(obj.pk),
+            changes=changes or {},
+            ip_address=client_ip(request) or None if request else None,
+        )
+
     def save(self, *args, **kwargs):
         if self.pk:
             raise PermissionError("Audit log entries are immutable.")

@@ -20,6 +20,9 @@ class UserManager(BaseUserManager):
         extra.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra)
 
+    def get_by_natural_key(self, email):
+        return self.get(email__iexact=email)
+
     def create_superuser(self, email, password=None, **extra):
         extra.update(is_staff=True, is_superuser=True, role=User.Role.ADMIN, email_verified=True)
         return self._create_user(email, password, **extra)
@@ -41,6 +44,17 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
+
+    def save(self, *args, **kwargs):
+        # Lowercase so sign-in and uniqueness ignore case.
+        self.email = self.email.strip().lower()
+        if self.role == self.Role.ADMIN:
+            self.is_staff = True
+        super().save(*args, **kwargs)
+
+    @property
+    def is_platform_admin(self):
+        return self.is_active and (self.is_superuser or self.role == self.Role.ADMIN)
 
     def __str__(self):
         return self.email

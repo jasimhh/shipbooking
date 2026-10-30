@@ -13,9 +13,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   {# ponytail: Google-hosted font; self-host Inter in Phase 9 so no visitor IP goes to a third party. #}
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
   <meta name="theme-color" content="#07121F">
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script src="{% static 'js/site.js' %}" defer></script>
 </head>
 <body>
   {% include "includes/icons.html" %}
@@ -37,6 +38,15 @@
           <li><a href="{% url 'pages:contact' %}"{% if url_name == "contact" %} aria-current="page"{% endif %}>Contact</a></li>
         </ul>
       </nav>
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <a class="btn btn-secondary" href="{% url 'accounts:dashboard' %}">Account</a>
+          <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="btn btn-secondary" type="submit">Sign out</button></form>
+        {% else %}
+          <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Sign in</a>
+          <a class="btn btn-primary" href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+      </div>
     </div>
   </header>
 

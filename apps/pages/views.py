@@ -1,13 +1,13 @@
 from datetime import timedelta
 
 from django.contrib import messages
-from django.core.cache import cache
 from django.db import transaction
 from django.db.models import F, Min
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from apps.common import client_ip, is_rate_limited, record_attempt
 from apps.compliance.models import PolicyVersion
 from apps.fleet.models import Route
 from apps.schedules.models import Fare, Schedule
@@ -162,12 +162,11 @@ def contact(request):
     if request.method == "POST" and form.is_valid():
         if form.cleaned_data["website"]:
             return redirect("pages:contact")  # bot; pretend success, store nothing
-        # ponytail: per-IP limit in the local cache; behind Nginx set REMOTE_ADDR from the proxy (Phase 10).
-        key = f"contact-rate:{request.META.get('REMOTE_ADDR', '')}"
-        if cache.get_or_set(key, 0, 3600) >= CONTACT_LIMIT_PER_HOUR:
+        key = f"contact-rate:{client_ip(request)}"
+        if is_rate_limited(key, CONTACT_LIMIT_PER_HOUR):
             messages.error(request, "Too many messages from your network. Please try again in an hour.")
             return render(request, "pages/contact.html", {"form": form}, status=429)
-        cache.incr(key)
+        record_attempt(key, 3600)
 
         data = form.cleaned_data
         body = data["message"]

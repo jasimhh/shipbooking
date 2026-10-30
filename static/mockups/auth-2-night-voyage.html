@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in B · Night voyage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root{--bg:#07121F;--surface:#0F2133;--line:#1E3A52;--text:#E6EEF5;--muted:#8FA3B8;--accent:#5EEAD4;--moon:#FDE68A}
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:400 16px/1.55 Inter,system-ui,sans-serif}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .notice{background:#1A1607;color:#FCD34D;font-size:13px;padding:9px 16px;text-align:center}
+  .layout{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 38px)} @media(min-width:900px){.layout{grid-template-columns:1.15fr 1fr}}
+  .scene{position:relative;overflow:hidden;min-height:300px;background:linear-gradient(180deg,#040B14 0%,#0A1E33 60%,#0C2A40 100%)}
+  .scene svg{position:absolute;inset:0;width:100%;height:100%}
+  .twinkle{animation:tw 3s ease-in-out infinite} .twinkle:nth-child(3n){animation-delay:1s} .twinkle:nth-child(3n+1){animation-delay:2s}
+  @keyframes tw{50%{opacity:.25}}
+  .beam{transform-origin:860px 300px;animation:sweep 6s ease-in-out infinite alternate}
+  @keyframes sweep{from{transform:rotate(-14deg)}to{transform:rotate(10deg)}}
+  .wave{animation:drift 7s linear infinite} .wave.b{animation-duration:11s;animation-direction:reverse}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-200px)}}
+  .ship{transition:transform 1.2s cubic-bezier(.3,.7,.3,1)} .bob{animation:bob 3.2s ease-in-out infinite} @keyframes bob{50%{transform:translateY(5px) rotate(1deg)}}
+  .scene-copy{position:absolute;left:32px;right:32px;top:32px}
+  .brand{font:800 18px Manrope;color:var(--text);text-decoration:none}
+  .scene-copy h1{font:800 clamp(30px,4.5vw,52px)/1.05 Manrope;letter-spacing:-.03em;margin:28px 0 10px;max-width:13ch}
+  .scene-copy h1 em{font-style:normal;color:var(--accent)}
+  .scene-copy p{color:var(--muted);max-width:40ch;margin:0}
+  .progress{position:absolute;left:32px;bottom:24px;font:600 13px Manrope;color:var(--muted);background:rgba(7,18,31,.6);border:1px solid var(--line);padding:6px 12px;border-radius:8px}
+  .progress b{color:var(--accent)}
+  .panel{display:flex;align-items:center;justify-content:center;padding:40px 20px}
+  .card{width:100%;max-width:420px}
+  .tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);margin-bottom:28px}
+  .tabs button{background:none;border:0;color:var(--muted);font:700 16px Manrope;padding:12px 0;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs button[aria-selected=true]{color:var(--text);border-color:var(--accent)}
+  .f{margin-bottom:18px} label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+  input{width:100%;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:50px;color-scheme:dark}
+  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(94,234,212,.18)}
+  .pw{position:relative} .pw input{padding-right:84px}
+  .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#132A40;color:var(--accent);font:700 13px Manrope;padding:7px 10px;border-radius:8px;cursor:pointer}
+  .eye svg{width:16px;height:16px}
+  .go{width:100%;border:0;background:var(--accent);color:#05201C;font:800 16px Manrope;min-height:52px;border-radius:10px;cursor:pointer;margin-top:6px}
+  .go:hover{background:#2DD4BF}
+  .links{display:flex;justify-content:space-between;margin-top:18px;font-size:14px} .links a{color:var(--accent)}
+  .fine{color:var(--muted);font-size:13px;margin-top:18px}
+  [hidden]{display:none!important}
+  @media(prefers-reduced-motion:reduce){.twinkle,.beam,.wave,.bob{animation:none}.ship{transition:none}}
+</style>
+</head>
+<body>
+<div class="notice">Prototype: all sailings shown are fictional demo data. Nothing can be booked or paid for yet.</div>
+<div class="layout">
+  <section class="scene" aria-hidden="true">
+    <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
+      <g fill="#E6EEF5">
+        <circle class="twinkle" cx="80" cy="60" r="1.5"/><circle class="twinkle" cx="220" cy="120" r="1"/><circle class="twinkle" cx="360" cy="40" r="1.6"/>
+        <circle class="twinkle" cx="470" cy="150" r="1"/><circle class="twinkle" cx="600" cy="70" r="1.4"/><circle class="twinkle" cx="700" cy="180" r="1"/>
+        <circle class="twinkle" cx="780" cy="50" r="1.2"/><circle class="twinkle" cx="930" cy="110" r="1.6"/><circle class="twinkle" cx="150" cy="200" r="1"/>
+        <circle class="twinkle" cx="300" cy="230" r="1.3"/><circle class="twinkle" cx="540" cy="250" r="1"/><circle class="twinkle" cx="880" cy="220" r="1.1"/>
+      </g>
+      <circle cx="740" cy="110" r="36" fill="#FDE68A" opacity=".9"/><circle cx="755" cy="100" r="34" fill="#071423"/>
+      <polygon class="beam" points="860,300 360,250 360,350" fill="url(#beamG)"/>
+      <defs><linearGradient id="beamG" x1="1" x2="0"><stop offset="0" stop-color="#FDE68A" stop-opacity=".35"/><stop offset="1" stop-color="#FDE68A" stop-opacity="0"/></linearGradient></defs>
+      <path d="M820 420 L840 300 H880 L900 420 Z" fill="#0F2133" stroke="#1E3A52"/><rect x="842" y="286" width="36" height="18" fill="#FDE68A"/><path d="M836 286 L860 266 L884 286Z" fill="#0F2133" stroke="#1E3A52"/>
+      <rect x="836" y="330" width="48" height="10" fill="#E8735A" opacity=".85"/><rect x="832" y="375" width="56" height="10" fill="#E8735A" opacity=".85"/>
+      <path d="M700 430 Q860 380 1000 420 V600 H700Z" fill="#0A1A2A"/>
+      <g class="ship" id="ship" style="transform:translateX(0px)">
+        <g class="bob">
+          <path d="M60 430 L80 456 H220 L246 430 Z" fill="#E6EEF5"/><rect x="96" y="404" width="104" height="26" rx="4" fill="#E6EEF5"/>
+          <rect x="128" y="384" width="44" height="20" rx="3" fill="#5EEAD4"/><rect x="146" y="364" width="8" height="20" fill="#E8735A"/>
+          <g fill="#0F2133"><rect x="106" y="412" width="12" height="9" rx="2"/><rect x="124" y="412" width="12" height="9" rx="2"/><rect x="142" y="412" width="12" height="9" rx="2"/><rect x="160" y="412" width="12" height="9" rx="2"/><rect x="178" y="412" width="12" height="9" rx="2"/></g>
+        </g>
+      </g>
+      <g class="wave"><path d="M0 458 Q50 446 100 458 T200 458 T300 458 T400 458 T500 458 T600 458 T700 458 T800 458 T900 458 T1000 458 T1100 458 T1200 458 V600 H0Z" fill="#123B57" opacity=".9"/></g>
+      <g class="wave b"><path d="M-200 490 Q-140 476 -80 490 T40 490 T160 490 T280 490 T400 490 T520 490 T640 490 T760 490 T880 490 T1000 490 T1120 490 T1240 490 V600 H-200Z" fill="#0C2A40"/></g>
+    </svg>
+    <div class="scene-copy" aria-hidden="false">
+      <a class="brand" href="#">Ship Booking</a>
+      <h1>Every crossing starts <em>right here.</em></h1>
+      <p>Fill in the form and watch your ferry reach the lighthouse.</p>
+    </div>
+    <div class="progress" id="progress" aria-hidden="false">Voyage progress: <b>0%</b></div>
+  </section>
+
+  <section class="panel">
+    <div class="card">
+      <div class="tabs" role="tablist" aria-label="Account">
+        <button role="tab" aria-selected="true" aria-controls="p-in" id="t-in">Sign in</button>
+        <button role="tab" aria-selected="false" aria-controls="p-up" id="t-up">Create account</button>
+      </div>
+      <form id="p-in" role="tabpanel" aria-labelledby="t-in" onsubmit="return false">
+        <div class="f"><label for="e1">Email</label><input id="e1" type="email" autocomplete="email" required></div>
+        <div class="f"><label for="w1">Password</label><div class="pw"><input id="w1" type="password" autocomplete="current-password" required><button class="eye" type="button" aria-pressed="false" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span>Show</span></button></div></div>
+        <button class="go" type="submit">Set sail</button>
+        <div class="links"><a href="#">Forgot password?</a><a href="#">Back to search</a></div>
+      </form>
+      <form id="p-up" role="tabpanel" aria-labelledby="t-up" hidden onsubmit="return false">
+        <div class="f"><label for="n2">First name</label><input id="n2" autocomplete="given-name" required></div>
+        <div class="f"><label for="e2">Email</label><input id="e2" type="email" autocomplete="email" required></div>
+        <div class="f"><label for="w2">Password</label><div class="pw"><input id="w2" type="password" autocomplete="new-password" minlength="10" required><button class="eye" type="button" aria-pressed="false" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span>Show</span></button></div></div>
+        <button class="go" type="submit">Join the crew</button>
+        <p class="fine">At least 10 characters. By creating an account you agree to the Terms and Conditions and Privacy Policy.</p>
+      </form>
+    </div>
+  </section>
+</div>
+<script>
+  const ship = document.getElementById('ship'), progress = document.querySelector('#progress b');
+  function sail(){
+    const form = document.querySelector('form:not([hidden])'), fields = [...form.querySelectorAll('input[required]')];
+    const done = fields.filter(f => f.value.trim() && f.checkValidity()).length / fields.length;
+    ship.style.transform = `translateX(${Math.round(done * 520)}px)`; progress.textContent = Math.round(done * 100) + '%';
+  }
+  document.querySelectorAll('input').forEach(i => i.addEventListener('input', sail));
+  document.querySelectorAll('[role=tab]').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('[role=tab]').forEach(x => { const on = x === t; x.setAttribute('aria-selected', on); document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); sail();
+  }));
+  document.querySelectorAll('.eye').forEach(b => b.addEventListener('click', () => {
+    const i = b.previousElementSibling, s = i.type === 'password'; i.type = s ? 'text' : 'password';
+    b.querySelector('span').textContent = s ? 'Hide' : 'Show'; b.setAttribute('aria-pressed', s); b.setAttribute('aria-label', s ? 'Hide password' : 'Show password');
+  }));
+</script>
+</body>
+</html>

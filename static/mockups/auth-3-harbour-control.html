@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in C · Harbour control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root{--bg:#050E18;--surface:#0B1A2A;--line:#18324A;--text:#E6EEF5;--muted:#86A0B6;--accent:#5EEAD4;--amber:#FCD34D;--red:#F87171}
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:400 16px/1.55 Inter,system-ui,sans-serif;overflow-x:hidden}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .notice{background:#1A1607;color:#FCD34D;font-size:13px;padding:9px 16px;text-align:center}
+  .stage{position:relative;min-height:calc(100vh - 38px);display:grid;place-items:center;padding:48px 16px}
+  .radar{position:fixed;width:min(1100px,160vw);aspect-ratio:1;left:50%;top:55%;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+    background:repeating-radial-gradient(circle,transparent 0 79px,rgba(94,234,212,.12) 79px 80px),
+      linear-gradient(90deg,transparent 49.95%,rgba(94,234,212,.1) 50%,transparent 50.05%),
+      linear-gradient(0deg,transparent 49.95%,rgba(94,234,212,.1) 50%,transparent 50.05%)}
+  .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(94,234,212,.28),rgba(94,234,212,0) 60deg,transparent 360deg);animation:spin 5s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .blip{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent);animation:ping 5s ease-out infinite}
+  @keyframes ping{0%,70%{opacity:.15}75%{opacity:1}100%{opacity:.15}}
+  .console{position:relative;width:100%;max-width:520px;background:rgba(11,26,42,.86);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;box-shadow:0 0 0 1px rgba(94,234,212,.06),0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+  .bar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);font:700 12px 'JetBrains Mono';letter-spacing:.12em;color:var(--muted)}
+  .lights{display:flex;gap:6px} .lights i{width:9px;height:9px;border-radius:50%;background:#1E3A52} .lights i.on{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+  .body{padding:26px 24px 28px}
+  h1{font:800 clamp(26px,4vw,34px)/1.1 Manrope;letter-spacing:-.03em;margin:0 0 6px} .sub{color:var(--muted);margin:0 0 22px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;background:#07141F;border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:22px}
+  .seg button{border:0;background:none;color:var(--muted);font:700 14px Manrope;padding:9px;border-radius:7px;cursor:pointer}
+  .seg button[aria-selected=true]{background:var(--surface);color:var(--accent);box-shadow:inset 0 0 0 1px var(--line)}
+  .f{margin-bottom:16px} label{display:flex;justify-content:space-between;font:700 11px 'JetBrains Mono';letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  label .ok{color:var(--accent);opacity:0;transition:opacity .2s} .f.valid label .ok{opacity:1}
+  input{width:100%;font:500 16px Inter;color:var(--text);background:#07141F;border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:50px;color-scheme:dark}
+  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(94,234,212,.16)}
+  .pw{position:relative} .pw input{padding-right:84px;font-family:'JetBrains Mono'}
+  .peek{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:1px solid var(--line);background:var(--surface);color:var(--accent);font:700 12px 'JetBrains Mono';letter-spacing:.08em;padding:8px 12px;border-radius:8px;cursor:pointer}
+  .hull{margin-top:10px} .hull .track{height:8px;background:#07141F;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .hull .fill{height:100%;width:0;background:var(--red);transition:width .25s,background .25s}
+  .hull small{display:flex;justify-content:space-between;font:500 12px 'JetBrains Mono';color:var(--muted);margin-top:6px}
+  .go{width:100%;border:0;background:var(--accent);color:#05201C;font:800 16px Manrope;min-height:52px;border-radius:10px;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px}
+  .go:hover{background:#2DD4BF}
+  .foot{display:flex;justify-content:space-between;gap:12px;margin-top:16px;font-size:14px;flex-wrap:wrap} .foot a{color:var(--accent)}
+  .log{border-top:1px solid var(--line);padding:12px 18px;font:500 12px 'JetBrains Mono';color:var(--muted);min-height:42px}
+  .log b{color:var(--accent);font-weight:700}
+  [hidden]{display:none!important}
+  @media(prefers-reduced-motion:reduce){.sweep,.blip{animation:none}}
+</style>
+</head>
+<body>
+<div class="notice">Prototype: all sailings shown are fictional demo data. Nothing can be booked or paid for yet.</div>
+<div class="stage">
+  <div class="radar" aria-hidden="true"><div class="sweep"></div>
+    <span class="blip" style="left:30%;top:38%"></span><span class="blip" style="left:66%;top:28%;animation-delay:1.4s"></span><span class="blip" style="left:58%;top:72%;animation-delay:3s"></span>
+  </div>
+  <div class="console">
+    <div class="bar"><span>SHIP BOOKING · HARBOUR CONTROL</span><span class="lights" aria-hidden="true"><i class="on"></i><i id="l2"></i><i id="l3"></i></span></div>
+    <div class="body">
+      <h1 id="title">Request clearance</h1>
+      <p class="sub">Sign in to book sailings, or register as a new passenger.</p>
+      <div class="seg" role="tablist" aria-label="Account">
+        <button role="tab" aria-selected="true" aria-controls="p-in" id="t-in">Sign in</button>
+        <button role="tab" aria-selected="false" aria-controls="p-up" id="t-up">Register</button>
+      </div>
+      <form id="p-in" role="tabpanel" aria-labelledby="t-in" onsubmit="return false">
+        <div class="f"><label for="e1">Email <span class="ok">✓ LOCKED ON</span></label><input id="e1" type="email" autocomplete="email" required></div>
+        <div class="f"><label for="w1">Password <span class="ok">✓ RECEIVED</span></label><div class="pw"><input id="w1" type="password" autocomplete="current-password" required><button class="peek" type="button" aria-pressed="false" aria-label="Show password">PEEK</button></div></div>
+        <button class="go" type="submit">Request clearance <span aria-hidden="true">→</span></button>
+        <div class="foot"><a href="#">Forgot password?</a><a href="#">Back to search</a></div>
+      </form>
+      <form id="p-up" role="tabpanel" aria-labelledby="t-up" hidden onsubmit="return false">
+        <div class="f"><label for="n2">First name <span class="ok">✓ LOGGED</span></label><input id="n2" autocomplete="given-name" required></div>
+        <div class="f"><label for="e2">Email <span class="ok">✓ LOCKED ON</span></label><input id="e2" type="email" autocomplete="email" required></div>
+        <div class="f"><label for="w2">Password <span class="ok">✓ SEAWORTHY</span></label><div class="pw"><input id="w2" type="password" autocomplete="new-password" minlength="10" required><button class="peek" type="button" aria-pressed="false" aria-label="Show password">PEEK</button></div>
+          <div class="hull"><div class="track"><div class="fill" id="hull"></div></div><small><span>Hull strength</span><span id="hull-label" aria-live="polite">Leaky</span></small></div></div>
+        <button class="go" type="submit">Register vessel <span aria-hidden="true">→</span></button>
+        <div class="foot"><span class="sub" style="margin:0;font-size:13px">At least 10 characters. You agree to the Terms and Privacy Policy.</span></div>
+      </form>
+    </div>
+    <div class="log" aria-live="polite" id="log">&gt; Awaiting passenger details…</div>
+  </div>
+</div>
+<script>
+  const log = document.getElementById('log');
+  document.querySelectorAll('[role=tab]').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('[role=tab]').forEach(x => { const on = x === t; x.setAttribute('aria-selected', on); document.getElementById(x.getAttribute('aria-controls')).hidden = !on; });
+    document.getElementById('title').textContent = t.id === 't-in' ? 'Request clearance' : 'Register a new passenger';
+    status();
+  }));
+  function status(){
+    const form = document.querySelector('form:not([hidden])'), fs = [...form.querySelectorAll('input[required]')];
+    fs.forEach(i => i.closest('.f').classList.toggle('valid', !!i.value && i.checkValidity()));
+    const n = fs.filter(i => i.value && i.checkValidity()).length;
+    document.getElementById('l2').className = n >= 1 ? 'on' : ''; document.getElementById('l3').className = n === fs.length ? 'on' : '';
+    log.innerHTML = n === fs.length ? '&gt; <b>All checks green.</b> Ready when you are.' : `&gt; ${n} of ${fs.length} checks complete…`;
+  }
+  document.querySelectorAll('input').forEach(i => i.addEventListener('input', status));
+  document.getElementById('w2').addEventListener('input', e => {
+    const v = e.target.value; let s = 0;
+    if (v.length >= 10) s++; if (v.length >= 14) s++; if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++; if (/\d/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
+    const levels = [['Leaky','#F87171',8],['Leaky','#F87171',20],['Patched','#FCD34D',45],['Sturdy','#FCD34D',65],['Seaworthy','#5EEAD4',85],['Ironclad','#5EEAD4',100]];
+    const [label, color, w] = levels[s]; const fill = document.getElementById('hull');
+    fill.style.width = (v ? w : 0) + '%'; fill.style.background = color; document.getElementById('hull-label').textContent = v ? label : 'Leaky';
+  });
+  document.querySelectorAll('.peek').forEach(b => b.addEventListener('click', () => {
+    const i = b.previousElementSibling, s = i.type === 'password'; i.type = s ? 'text' : 'password';
+    b.textContent = s ? 'HIDE' : 'PEEK'; b.setAttribute('aria-pressed', s); b.setAttribute('aria-label', s ? 'Hide password' : 'Show password');
+  }));
+</script>
+</body>
+</html>
