@@ -43,7 +43,7 @@
         <button class="btn btn-secondary btn-icon" type="button" data-theme-toggle aria-label="Light theme" title="Switch between dark blueprint and light whiteprint"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></button>
         {% if user.is_authenticated %}
           {% if user.is_platform_admin or user.role == "support" or user.role == "operator" %}<a class="btn btn-secondary" href="{% url 'staff:dashboard' %}">Staff</a>{% endif %}
-          {% if user.is_platform_admin %}<a class="btn btn-secondary" href="{% url 'admin:index' %}" title="Admin panel (shortcut: G then A)">Admin</a>{% endif %}
+          {% if user.is_platform_admin %}<a class="btn btn-secondary" href="{% url 'admin:index' %}" title="Admin panel (shortcut: Shift+A)">Admin</a>{% endif %}
           <a class="btn btn-secondary" href="{% url 'accounts:dashboard' %}">Account</a>
           <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="btn btn-secondary" type="submit">Sign out</button></form>
         {% else %}
