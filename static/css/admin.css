@@ -24,9 +24,9 @@ html[data-theme="light"] {
   --hairline-color: #DCE6F0; --border-color: #C9D7E6; --error-fg: #A11D12;
   --message-debug-bg: #EEF4FA; --message-info-bg: #E6F0FA; --message-success-bg: #E7F6EE; --message-warning-bg: #FFF4E0; --message-error-bg: #FDECEA;
   --darkened-bg: #EEF4FA; --selected-bg: #E1EAF4; --selected-row: #FFF4E0;
-  --button-fg: #FFFFFF; --button-bg: #C2410C; --button-hover-bg: #9A3412; --default-button-bg: #C2410C; --default-button-hover-bg: #9A3412;
+  --button-fg: #0D2A4A; --button-bg: #FFC845; --button-hover-bg: #FFD66E; --default-button-bg: #FFC845; --default-button-hover-bg: #FFD66E;
   --close-button-bg: #4C6A8A; --close-button-hover-bg: #2B4A6C; --delete-button-bg: #B42318; --delete-button-hover-bg: #8F1C13;
-  --object-tools-fg: #FFFFFF; --object-tools-bg: #4C6A8A; --object-tools-hover-bg: #C2410C;
+  --object-tools-fg: #0D2A4A; --object-tools-bg: #FFC845; --object-tools-hover-bg: #FFD66E;
   --grid: rgba(19, 72, 130, .07); --grid-2: rgba(19, 72, 130, .03);
 }
 html {
@@ -52,3 +52,32 @@ input, select, textarea { border-radius: 6px; }
 input[type=text], input[type=email], input[type=password], input[type=number], input[type=url], input[type=tel], input[type=search],
 input[type=date], input[type=time], input[type=datetime-local], select, textarea, .vTextField { background: var(--body-bg); color: var(--body-fg); }
 #nav-sidebar { background: var(--secondary); }
+
+/* White "boarding pass" details (day theme) */
+html[data-theme="light"] #header { background: #FFFFFF; border-bottom: 2px solid #0D2A4A; }
+html[data-theme="light"] #site-name a { color: #0D2A4A; }
+html[data-theme="light"] .sb-mark { border: 2px solid #0D2A4A; }
+html[data-theme="light"] .sb-mark svg { stroke: #C2410C; }
+html[data-theme="light"] div.breadcrumbs { background: #EEF4FA; border-bottom: 2px solid #0D2A4A; }
+html[data-theme="light"] .module, html[data-theme="light"] #changelist-filter, html[data-theme="light"] .inline-group,
+html[data-theme="light"] #content-related .module, html[data-theme="light"] .selector-available, html[data-theme="light"] .selector-chosen {
+  background: #FFFFFF; border: 2px solid #0D2A4A; box-shadow: 5px 5px 0 #0D2A4A; border-radius: 12px; }
+html[data-theme="light"] .module h2, html[data-theme="light"] .module caption, html[data-theme="light"] .inline-group h2 {
+  background: #0D2A4A; color: #FFFFFF; }
+html[data-theme="light"] .module h2 a, html[data-theme="light"] .module caption a { color: #FFC845; }
+html[data-theme="light"] .button, html[data-theme="light"] input[type=submit], html[data-theme="light"] input[type=button],
+html[data-theme="light"] .submit-row input, html[data-theme="light"] a.button, html[data-theme="light"] .object-tools a {
+  border: 2px solid #0D2A4A; box-shadow: 3px 3px 0 #0D2A4A; font-weight: 700; }
+html[data-theme="light"] .button:hover, html[data-theme="light"] input[type=submit]:hover, html[data-theme="light"] .object-tools a:hover {
+  transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #0D2A4A; }
+html[data-theme="light"] .submit-row { background: #FFFFFF; border: 2px solid #0D2A4A; border-radius: 12px; box-shadow: 5px 5px 0 #0D2A4A; }
+html[data-theme="light"] .submit-row a.deletelink { background: #B42318; color: #FFFFFF; border: 2px solid #0D2A4A; border-radius: 8px; }
+html[data-theme="light"] #content h1 { font-weight: 800; letter-spacing: -.02em; }
+html[data-theme="light"] #nav-sidebar { background: #FFFFFF; border-right: 2px solid #0D2A4A; }
+html[data-theme="light"] #nav-sidebar .current-model { background: #FFF4E0; }
+html[data-theme="light"] input[type=text], html[data-theme="light"] input[type=email], html[data-theme="light"] input[type=password],
+html[data-theme="light"] input[type=number], html[data-theme="light"] input[type=search], html[data-theme="light"] select,
+html[data-theme="light"] textarea, html[data-theme="light"] .vTextField { background: #FFFFFF; border: 2px solid #C9D7E6; }
+html[data-theme="light"] input:focus, html[data-theme="light"] select:focus, html[data-theme="light"] textarea:focus { border-color: #C2410C; }
+html[data-theme="light"] #result_list tbody tr:hover td { background: #FFF4E0; }
+html[data-theme="light"] .login #container { border: 2px solid #0D2A4A; box-shadow: 8px 8px 0 #0D2A4A; border-radius: 16px; overflow: hidden; }
