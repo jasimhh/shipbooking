@@ -6,4 +6,4 @@
   <div class="field">{{ form.passengers.as_field_group }}</div>
   <button class="btn btn-primary" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Search sailings</button>
 </form>
-{% journey_map %}
+{% if not no_map %}{% journey_map %}{% endif %}

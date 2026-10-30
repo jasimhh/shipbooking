@@ -8,3 +8,4 @@ staticfiles/
 .superdesign/tmp/
 backups/
 db.before-*.sqlite3
+design-options/

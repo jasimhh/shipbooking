@@ -95,7 +95,7 @@ document.querySelectorAll("[data-live]").forEach((boat) => {
 
 // Journey preview: as From and To are picked, show that area's map with the crossing between the two jetties.
 document.querySelectorAll("[data-journey]").forEach((fig) => {
-  const form = fig.previousElementSibling, from = form.elements.origin, to = form.elements.destination;
+  const form = fig.parentElement.querySelector("form.search-form"), from = form.elements.origin, to = form.elements.destination;
   const text = fig.querySelector("[data-journey-text]");
   const port = (code) => code && fig.querySelector(`[data-code="${CSS.escape(code)}"]`);
   const name = (sel) => sel.options[sel.selectedIndex].text;

@@ -1,5 +1,5 @@
 {% load static %}{% with url_name=request.resolver_match.url_name %}<!doctype html>
-<html lang="en-IN">
+<html lang="en-IN" data-theme="day">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
   <meta property="og:locale" content="en_IN">
   {% block robots %}{% endblock %}
   <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
-  <meta name="theme-color" content="#0F2C4C">
+  <meta name="theme-color" content="#F4F8FC">
   <script src="{% static 'js/theme.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
   <script src="{% static 'js/site.js' %}" defer></script>
