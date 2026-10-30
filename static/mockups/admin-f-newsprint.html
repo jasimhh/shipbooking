@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin F · Newsprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Libre+Franklin:wght@400;500;700;900&display=swap">
+<style>
+  :root{--paper:#FAF9F6;--ink:#111;--grey:#666;--rule:#111;--light:#D9D6CF;--red:#D0021B}
+  *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 "Libre Franklin",system-ui,sans-serif}
+  :focus-visible{outline:3px solid var(--red);outline-offset:2px}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 clamp(16px,3vw,36px)}
+  .mast{text-align:center;padding:18px 0 10px;border-bottom:4px double var(--rule)}
+  .mast small{display:flex;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+  .mast h1{font:400 clamp(40px,6vw,76px)/1 "DM Serif Display",serif;margin:0;letter-spacing:-.01em}
+  .mast h1 span{color:var(--red)}
+  nav{display:flex;justify-content:center;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+  nav a{padding:10px 16px;color:var(--ink);text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.1em}
+  nav a:hover{color:var(--red)}nav a[aria-current]{background:var(--ink);color:var(--paper)}
+  .note{font-size:12px;font-style:italic;color:var(--grey);text-align:center;margin:10px 0 0}
+  .ticker{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-bottom:1px solid var(--rule);margin-top:14px}
+  .t{padding:12px 16px;border-right:1px solid var(--light)}.t:last-child{border-right:0}
+  .t span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--grey)}
+  .t b{display:block;font:400 36px/1.1 "DM Serif Display",serif}.t i{font-style:normal;font-weight:700;font-size:12px;color:var(--red)}
+  .cols{display:grid;grid-template-columns:1fr;gap:0;margin-top:22px}@media(min-width:1180px){.cols{grid-template-columns:1.4fr 1fr}}
+  .col{padding:0 0 30px}@media(min-width:1180px){.col:first-child{padding-right:26px;border-right:1px solid var(--rule)}.col:last-child{padding-left:26px}}
+  .kicker{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+  h2{font:400 32px/1.05 "DM Serif Display",serif;margin:4px 0 12px}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:2px solid var(--rule);margin-bottom:0;flex-wrap:wrap}
+  .btn{font:700 13px "Libre Franklin";text-transform:uppercase;letter-spacing:.08em;background:var(--ink);color:var(--paper);border:2px solid var(--ink);padding:8px 14px;cursor:pointer;margin-bottom:10px}
+  .btn:hover{background:var(--red);border-color:var(--red)}.btn.ghost{background:transparent;color:var(--ink)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);text-align:left;padding:10px 8px;border-bottom:1px solid var(--rule)}
+  td{padding:11px 8px;border-bottom:1px solid var(--light)}tbody tr:hover{background:#F1EFEA}
+  td:first-child{font-weight:700}.r{text-align:right;font-variant-numeric:tabular-nums}
+  .lbl{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.ok{color:var(--ink)}.warn{color:var(--grey)}.bad{color:var(--red)}
+  .lbl.ok::before{content:"● "}.lbl.warn::before{content:"◐ "}.lbl.bad::before{content:"▲ "}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:#FCEBEC!important}tr[aria-selected=true] td:first-child{color:var(--red)}
+  .story{border-top:2px solid var(--rule);padding-top:12px}
+  .story h3{font:400 44px/1 "DM Serif Display",serif;margin:6px 0}
+  .byline{font-size:13px;color:var(--grey);border-bottom:1px solid var(--light);padding-bottom:10px;margin-bottom:12px}
+  .facts{columns:2;column-rule:1px solid var(--light);column-gap:24px;margin:0}
+  .facts div{break-inside:avoid;padding:6px 0;border-bottom:1px dotted var(--light)}.facts span{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
+  .pull{font:400 22px/1.2 "DM Serif Display",serif;font-style:italic;border-left:4px solid var(--red);padding-left:14px;margin:18px 0}
+  .actions{display:flex;gap:10px;margin-top:16px}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(440px,100%);background:var(--paper);border-left:4px double var(--rule);padding:24px;transform:translateX(100%);transition:transform .2s;z-index:5;overflow:auto}
+  .drawer.open{transform:none}
+  label{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin:14px 0 5px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:500 15px "Libre Franklin";border:0;border-bottom:2px solid var(--ink);background:transparent;padding:8px 2px;border-radius:0}
+  .drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-color:var(--red)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="mast">
+    <small><span>Vol. I · No. 304</span><span>Friday 30 October 2026</span><span>Admin edition · ₹ INR</span></small>
+    <h1>The Ship Booking <span>Gazette</span></h1>
+  </div>
+  <nav aria-label="Admin"><a href="#">Overview</a><a href="#">Sailings</a><a href="#" aria-current="page">Ferries</a><a href="#">Bookings</a><a href="#">Passengers</a><a href="#">Refunds</a><a href="#">Support</a><a href="#">Audit log</a></nav>
+  <p class="note">Example data in this preview. Ferries and passengers are fictional.</p>
+</header>
+<main class="wrap">
+  <div class="ticker">
+    <div class="t"><span>Sailings today</span><b>14</b><i>2 delayed</i></div>
+    <div class="t"><span>Passengers</span><b>612</b><i>+48 on last week</i></div>
+    <div class="t"><span>Received today</span><b>₹2,84,310</b><i>3 refunds due</i></div>
+    <div class="t"><span>Open requests</span><b>7</b><i>1 grievance</i></div>
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="head"><div><div class="kicker">Fleet</div><h2>Three ferries on the register</h2></div><button class="btn" id="add">Add ferry</button></div>
+      <table><thead><tr><th>Ferry</th><th>Operator</th><th>Seating</th><th class="r">Capacity</th><th>Status</th></tr></thead><tbody>
+        <tr><td>MV Demo Star</td><td>Demo Ferries</td><td>By capacity</td><td class="r">180</td><td><span class="lbl ok">In service</span></td></tr>
+        <tr><td>MV Demo Wave</td><td>Demo Ferries</td><td>Numbered</td><td class="r">24</td><td><span class="lbl ok">In service</span></td></tr>
+        <tr><td>MV Example Breeze</td><td>Example Lines</td><td>By capacity</td><td class="r">320</td><td><span class="lbl warn">In refit</span></td></tr>
+      </tbody></table>
+      <div class="head" style="margin-top:30px"><div><div class="kicker">06:30 · Phoenix Bay → Havelock</div><h2>Who's sailing this morning</h2></div><button class="btn ghost">Download</button></div>
+      <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Ticket</th></tr></thead><tbody>
+        <tr data-pax="0" tabindex="0" aria-selected="true"><td>Asha Rao</td><td>SBKH46K99Z</td><td class="r">34</td><td><span class="lbl ok">Valid</span></td></tr>
+        <tr data-pax="1" tabindex="0"><td>Kiran Rao</td><td>SBKH46K99Z</td><td class="r">8</td><td><span class="lbl ok">Valid</span></td></tr>
+        <tr data-pax="2" tabindex="0"><td>Meera Iyer</td><td>SB7QW2MZ4D</td><td class="r">61</td><td><span class="lbl warn">Boarded</span></td></tr>
+        <tr data-pax="3" tabindex="0"><td>Rohan Das</td><td>SBP3XH8K2N</td><td class="r">27</td><td><span class="lbl bad">Unpaid</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="col"><div class="kicker">Passenger profile</div><div class="story" id="detail" aria-live="polite"></div></div>
+  </div>
+</main>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <div class="kicker">New entry</div><h2>Add a ferry to the register</h2>
+  <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Type</label><input id="f5"></div></div>
+  <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  <div class="actions"><button class="btn">Publish to register</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const people=[["Asha Rao","SBKH46K99Z","34, female","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","₹975 paid on 30 Oct"],["Kiran Rao","SBKH46K99Z","8, male","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","₹975 paid on 30 Oct"],["Meera Iyer","SB7QW2MZ4D","61, female","meera@example.com","+91 98111 11111","Cabin seat","Boarded at 06:12","₹1,547.50 paid"],["Rohan Das","SBP3XH8K2N","27, male","rohan@example.com","+91 98222 22222","Deck","No ticket","Unpaid; hold ends 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`<h3>${p[0]}</h3><div class="byline">Booking ${p[1]} · ${p[2]}</div><div class="facts"><div><span>Email</span>${p[3]}</div><div><span>Mobile</span>${p[4]}</div><div><span>Class</span>${p[5]}</div><div><span>Ticket</span>${p[6]}</div></div><p class="pull">${p[7]}</p><div class="actions"><button class="btn">Open booking</button><button class="btn ghost">Reissue ticket</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+</script>
+</body>
+</html>

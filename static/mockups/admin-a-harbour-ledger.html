@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin A · Harbour Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root{--paper:#F6F1E7;--sheet:#FBF8F2;--ink:#1B2A3A;--ink-2:#55606B;--rule:#D8CDB8;--rule-2:#E9E1D2;--teal:#1E5A5A;--ox:#8C2F1F;--olive:#4F6B2E;--amber:#9A6A00}
+  *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+  :focus-visible{outline:2px solid var(--ox);outline-offset:2px}
+  .app{display:grid;grid-template-columns:1fr;min-height:100vh}@media(min-width:960px){.app{grid-template-columns:232px 1fr}}
+  aside{background:var(--sheet);border-right:1px solid var(--rule);padding:22px 0}
+  .brand{padding:0 22px 18px;border-bottom:3px double var(--rule)}
+  .brand b{display:block;font:600 22px Newsreader,serif;letter-spacing:-.01em}.brand small{color:var(--ink-2);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  nav ol{list-style:none;margin:14px 0 0;padding:0;counter-reset:n}
+  nav li{counter-increment:n}nav a{display:flex;gap:12px;align-items:baseline;padding:9px 22px;color:var(--ink-2);text-decoration:none;font-weight:500}
+  nav a::before{content:counter(n,upper-roman)".";font:500 12px "IBM Plex Mono";width:24px;color:var(--rule)}
+  nav a:hover{color:var(--ink);background:var(--rule-2)}nav a[aria-current]{color:var(--ink);background:var(--paper);box-shadow:inset 3px 0 0 var(--ox)}nav a[aria-current]::before{color:var(--ox)}
+  main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+  .top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--ink);padding-bottom:14px}
+  h1{font:600 clamp(28px,3.4vw,40px)/1.05 Newsreader,serif;margin:0;letter-spacing:-.02em}
+  .date{font:500 13px "IBM Plex Mono";color:var(--ink-2)}
+  .search{display:flex;gap:8px}.search input{font:inherit;border:1px solid var(--rule);background:var(--sheet);padding:9px 12px;min-width:240px;border-radius:2px}
+  .note{background:#FFF7E0;border:1px dashed var(--amber);color:#6B4A00;font-size:13px;padding:6px 10px;margin:14px 0 0;display:inline-block}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:1px solid var(--rule);margin:22px 0 30px;background:var(--sheet)}
+  .kpi{padding:16px 18px;border-right:1px solid var(--rule-2)}.kpi:last-child{border-right:0}
+  .kpi span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}.kpi b{display:block;font:600 30px Newsreader,serif;margin-top:4px}.kpi i{font:500 12px "IBM Plex Mono";font-style:normal;color:var(--olive)}
+  .cols{display:grid;gap:28px;grid-template-columns:1fr}@media(min-width:1180px){.cols{grid-template-columns:1.3fr 1fr}}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px double var(--rule);padding-bottom:8px;margin-bottom:0}
+  h2{font:600 22px Newsreader,serif;margin:0}
+  .btn{font:600 14px "IBM Plex Sans";border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 14px;border-radius:2px;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  table{width:100%;border-collapse:collapse;background:var(--sheet)}
+  th{font:500 11px "IBM Plex Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:10px 12px;border-bottom:1px solid var(--ink)}
+  td{padding:12px;border-bottom:1px solid var(--rule-2);vertical-align:top}tbody tr:hover{background:#F3EDE1}
+  .num{font-family:"IBM Plex Mono";text-align:right}
+  .stamp{display:inline-block;font:600 11px "IBM Plex Mono";letter-spacing:.14em;text-transform:uppercase;border:1.5px solid currentColor;padding:2px 7px;border-radius:3px;transform:rotate(-2deg)}
+  .s-ok{color:var(--olive)}.s-warn{color:var(--amber)}.s-bad{color:var(--ox)}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:#EFE6D4!important;box-shadow:inset 3px 0 0 var(--ox)}
+  .detail{background:var(--sheet);border:1px solid var(--rule);padding:22px;position:relative}
+  .detail::before{content:"";position:absolute;inset:6px;border:1px solid var(--rule-2);pointer-events:none}
+  .detail h3{font:600 26px Newsreader,serif;margin:4px 0 2px}.detail .ref{font:500 13px "IBM Plex Mono";color:var(--ox)}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:16px 0}dt{color:var(--ink-2);font-size:13px}dd{margin:0;font-weight:500}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(440px,100%);background:var(--sheet);border-left:1px solid var(--ink);box-shadow:-20px 0 40px rgba(27,42,58,.12);padding:26px;transform:translateX(100%);transition:transform .25s;z-index:5;overflow:auto}
+  .drawer.open{transform:none}.drawer h2{margin-bottom:16px}
+  label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:14px 0 5px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:inherit;border:1px solid var(--rule);background:#fff;padding:9px 11px;border-radius:2px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:10px;margin-top:22px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><b>Ship Booking</b><small>Harbour ledger · Admin</small></div>
+    <nav aria-label="Admin"><ol>
+      <li><a href="#">Overview</a></li><li><a href="#">Sailings</a></li><li><a href="#" aria-current="page">Ferries</a></li>
+      <li><a href="#">Bookings</a></li><li><a href="#">Passengers</a></li><li><a href="#">Refunds</a></li><li><a href="#">Support</a></li><li><a href="#">Audit log</a></li>
+    </ol></nav>
+  </aside>
+  <main>
+    <div class="top">
+      <div><div class="date">FRIDAY 30 OCTOBER 2026 · ENTRY 0412</div><h1>Ferries &amp; today's manifest</h1></div>
+      <div class="search"><input aria-label="Search" placeholder="Search name, booking, ferry…"><button class="btn ghost">Search</button></div>
+    </div>
+    <p class="note">Example data for this design preview. Names and ferries are fictional.</p>
+    <div class="kpis">
+      <div class="kpi"><span>Sailings today</span><b>14</b><i>2 delayed</i></div>
+      <div class="kpi"><span>Passengers today</span><b>612</b><i>+48 vs last Fri</i></div>
+      <div class="kpi"><span>Payments today</span><b>₹2,84,310</b><i>3 refunds due</i></div>
+      <div class="kpi"><span>Open requests</span><b>7</b><i>1 grievance</i></div>
+    </div>
+    <div class="cols">
+      <section>
+        <div class="sec-head"><h2>Fleet register</h2><button class="btn" id="add">+ Add ferry</button></div>
+        <table><thead><tr><th>Ferry</th><th>Operator</th><th>Seating</th><th class="num">Capacity</th><th>Status</th></tr></thead><tbody>
+          <tr><td><b>MV Demo Star</b><div style="color:var(--ink-2);font-size:13px">Passenger ferry · IMO —</div></td><td>Demo Ferries</td><td>By capacity</td><td class="num">180</td><td><span class="stamp s-ok">In service</span></td></tr>
+          <tr><td><b>MV Demo Wave</b><div style="color:var(--ink-2);font-size:13px">Catamaran · 24 numbered seats</div></td><td>Demo Ferries</td><td>Assigned</td><td class="num">24</td><td><span class="stamp s-ok">In service</span></td></tr>
+          <tr><td><b>MV Example Breeze</b><div style="color:var(--ink-2);font-size:13px">Ro-pax · refit</div></td><td>Example Lines</td><td>By capacity</td><td class="num">320</td><td><span class="stamp s-warn">Maintenance</span></td></tr>
+        </tbody></table>
+        <div class="sec-head" style="margin-top:34px"><h2>Today's passengers · 06:30 Phoenix Bay → Havelock</h2></div>
+        <table><thead><tr><th>Passenger</th><th>Booking</th><th class="num">Age</th><th>Seat</th><th>Ticket</th></tr></thead><tbody id="pax">
+          <tr data-pax="0" tabindex="0" aria-selected="true"><td>Asha Rao</td><td>SBKH46K99Z</td><td class="num">34</td><td>—</td><td><span class="stamp s-ok">Valid</span></td></tr>
+          <tr data-pax="1" tabindex="0"><td>Kiran Rao</td><td>SBKH46K99Z</td><td class="num">8</td><td>—</td><td><span class="stamp s-ok">Valid</span></td></tr>
+          <tr data-pax="2" tabindex="0"><td>Meera Iyer</td><td>SB7QW2MZ4D</td><td class="num">61</td><td>—</td><td><span class="stamp s-bad">Boarded</span></td></tr>
+          <tr data-pax="3" tabindex="0"><td>Rohan Das</td><td>SBP3XH8K2N</td><td class="num">27</td><td>—</td><td><span class="stamp s-warn">Unpaid</span></td></tr>
+        </tbody></table>
+      </section>
+      <section>
+        <div class="sec-head"><h2>Passenger record</h2></div>
+        <div class="detail" aria-live="polite" id="detail"></div>
+      </section>
+    </div>
+  </main>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <h2>Enter a new ferry</h2>
+  <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div>
+  <div><label for="f3">IMO number</label><input id="f3" placeholder="Optional"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div>
+  <div><label for="f5">Type</label><input id="f5" placeholder="Catamaran, Ro-pax…"></div></div>
+  <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  <label for="f7">Facilities on board</label><textarea id="f7" rows="2"></textarea>
+  <div class="actions"><button class="btn">Save to register</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const people=[["Asha Rao","SBKH46K99Z","34 · Female","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","Paid ₹975 · 30 Oct, 21:17"],["Kiran Rao","SBKH46K99Z","8 · Male","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","Paid ₹975 · 30 Oct, 21:17"],["Meera Iyer","SB7QW2MZ4D","61 · Female","meera@example.com","+91 98111 11111","Cabin seat","Boarded 06:12","Paid ₹1,547.50"],["Rohan Das","SBP3XH8K2N","27 · Male","rohan@example.com","+91 98222 22222","Deck","No ticket","Hold expires 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`<span class="ref">${p[1]}</span><h3>${p[0]}</h3><div style="color:var(--ink-2)">${p[2]}</div><dl><dt>Email</dt><dd>${p[3]}</dd><dt>Mobile</dt><dd>${p[4]}</dd><dt>Class</dt><dd>${p[5]}</dd><dt>Ticket</dt><dd>${p[6]}</dd><dt>Payment</dt><dd>${p[7]}</dd></dl><div class="actions"><button class="btn">Open booking</button><button class="btn ghost">Reissue ticket</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+</script>
+</body>
+</html>

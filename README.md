@@ -123,6 +123,15 @@ Operator staff, support staff and admins get a **Staff** button in the header. W
 
 **Passengers** see their requests under Account → Support requests (`/account/support/`), read replies and answer back. Requests sent from the contact form before they registered appear once their email is confirmed.
 
+**Harbour master** (`/staff/harbour/`): a live chart of today's sailings, one tab per area (state of the ports). Same role scoping as the dashboard.
+
+- Ferry positions are **estimated** from the timetable and sailing status (boarding 30 minutes before, at sea between departure and arrival); there is no GPS feed. The page refreshes every 30 seconds.
+- Side panel: today's numbers, alerts (delays, cancellations, unpaid holds about to lapse, unassigned complaints, cancellations and refunds waiting), sailings, passengers of the selected sailing (needs manifest access; each view is audited), and ferries.
+- Admins can **Add ferry** with its cabin classes (`Deck · 120`, one per line). Add sailings for it in the admin as usual.
+- Ports need latitude and longitude (admin → Ports) to be placed. Maharashtra and the Andaman Islands have drawn coastlines; other areas show ports on a plain grid.
+- Weather and sea show "Not connected" until a marine weather service is added.
+- Night/day theme toggle, remembered per browser.
+
 ## Tests
 
 ```bash

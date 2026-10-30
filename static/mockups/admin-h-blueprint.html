@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin H · Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+  :root{--blue:#123E6B;--blue-2:#164A7E;--blue-3:#1B5791;--line:rgba(255,255,255,.28);--faint:rgba(255,255,255,.1);--white:#F2F7FC;--dim:#A9C3DD;--yellow:#FFD84A;--red:#FF8A7A;--green:#9BF0C4}
+  *{box-sizing:border-box}body{margin:0;color:var(--white);font:400 14px/1.55 "Roboto Mono",ui-monospace,monospace;background:var(--blue);
+    background-image:linear-gradient(var(--faint) 1px,transparent 1px),linear-gradient(90deg,var(--faint) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+    background-size:100px 100px,100px 100px,20px 20px,20px 20px}
+  :focus-visible{outline:2px dashed var(--yellow);outline-offset:3px}
+  .app{display:grid;grid-template-columns:1fr;min-height:100vh}@media(min-width:960px){.app{grid-template-columns:220px 1fr}}
+  aside{border-right:1px solid var(--line);padding:20px 0}
+  .brand{padding:0 18px 16px;border-bottom:1px solid var(--line);font:700 18px "Chakra Petch";letter-spacing:.08em;text-transform:uppercase}
+  .brand small{display:block;font:400 11px "Roboto Mono";color:var(--dim);letter-spacing:.02em;text-transform:none}
+  nav{padding-top:10px}nav a{display:block;padding:9px 18px;color:var(--dim);text-decoration:none;font-size:13px}
+  nav a::before{content:"[ ] "}nav a:hover{color:var(--white)}nav a[aria-current]{color:var(--yellow)}nav a[aria-current]::before{content:"[x] "}
+  main{padding:22px clamp(16px,3vw,36px) 60px;min-width:0}
+  .titleblock{display:grid;grid-template-columns:1fr auto;border:1px solid var(--white);margin-bottom:20px}
+  .titleblock>div{padding:12px 16px}.titleblock>div+div{border-left:1px solid var(--white);font-size:12px;color:var(--dim);display:grid;align-content:center}
+  .titleblock .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  h1{font:700 clamp(26px,3.4vw,38px)/1.1 "Chakra Petch";text-transform:uppercase;letter-spacing:.04em;margin:2px 0 0}
+  .ship{display:block;width:100%;max-width:560px;height:auto;margin:-6px 0 18px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:22px}
+  .kpi{border:1px dashed var(--line);padding:12px 14px;position:relative}
+  .kpi::before{content:attr(data-n);position:absolute;top:-9px;left:10px;background:var(--blue);padding:0 6px;font-size:10px;color:var(--yellow)}
+  .kpi span{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}.kpi b{display:block;font:700 30px "Chakra Petch";margin-top:2px}.kpi i{font-style:normal;font-size:12px;color:var(--yellow)}
+  .grid{display:grid;gap:18px;grid-template-columns:1fr}@media(min-width:1180px){.grid{grid-template-columns:1.35fr 1fr}}
+  .sheet{border:1px solid var(--white);background:rgba(18,62,107,.85)}
+  .sh{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--white)}
+  h2{font:600 16px "Chakra Petch";text-transform:uppercase;letter-spacing:.1em;margin:0}h2 small{font:400 12px "Roboto Mono";color:var(--dim);margin-left:8px;text-transform:none;letter-spacing:0}
+  .btn{font:600 13px "Chakra Petch";text-transform:uppercase;letter-spacing:.1em;background:var(--yellow);color:var(--blue);border:1px solid var(--yellow);padding:7px 12px;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--white);border-color:var(--white)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:left;padding:8px 14px;border-bottom:1px dashed var(--line)}
+  td{padding:10px 14px;border-bottom:1px dashed var(--faint)}tbody tr:hover{background:var(--blue-2)}
+  .r{text-align:right}.ok{color:var(--green)}.warn{color:var(--yellow)}.bad{color:var(--red)}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:var(--blue-3)!important;outline:1px dashed var(--yellow);outline-offset:-1px}
+  .detail{padding:16px}.detail .ref{color:var(--yellow);font-size:12px}
+  .detail h3{font:700 28px "Chakra Petch";text-transform:uppercase;letter-spacing:.04em;margin:4px 0}
+  .spec{width:100%;border-collapse:collapse;margin:14px 0}.spec td{border:1px solid var(--line);padding:7px 10px}.spec td:first-child{color:var(--dim);width:110px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(430px,100%);background:var(--blue-2);border-left:1px solid var(--white);padding:22px;transform:translateX(100%);transition:transform .2s;z-index:5;overflow:auto;box-shadow:-20px 0 40px rgba(0,0,0,.3)}
+  .drawer.open{transform:none}
+  label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:14px 0 5px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:500 14px "Roboto Mono";color:var(--white);background:var(--blue);border:1px dashed var(--white);padding:9px 10px;color-scheme:dark}
+  .drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-style:solid;border-color:var(--yellow)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:10px;margin-top:20px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">Ship Booking<small>Drawing no. SB-ADM-01</small></div>
+    <nav aria-label="Admin"><a href="#">Overview</a><a href="#">Sailings</a><a href="#" aria-current="page">Ferries</a><a href="#">Bookings</a><a href="#">Passengers</a><a href="#">Refunds</a><a href="#">Support</a><a href="#">Audit log</a></nav>
+  </aside>
+  <main>
+    <div class="titleblock">
+      <div><span class="lbl">Sheet 03 · Fleet and passengers</span><h1>Ferries &amp; passengers</h1></div>
+      <div>Date 30.10.2026<br>Scale 1:1<br>Example data, fictional</div>
+    </div>
+    <svg class="ship" viewBox="0 0 560 90" aria-hidden="true" fill="none" stroke="#F2F7FC" stroke-width="1.2">
+      <path d="M20 60 L60 82 H470 L520 60 Z"/><path d="M90 60 V38 H400 V60"/><path d="M150 38 V22 H330 V38"/><path d="M220 22 V8 H260 V22"/>
+      <g stroke-dasharray="3 3"><path d="M110 50 H380"/><path d="M0 70 H560"/></g>
+      <g font-family="Roboto Mono" font-size="9" fill="#A9C3DD" stroke="none"><text x="420" y="34">BRIDGE</text><text x="20" y="54">BOW</text><text x="500" y="54">STERN</text></g>
+      <path d="M60 88 H470" stroke="#FFD84A"/><path d="M60 84 V90 M470 84 V90" stroke="#FFD84A"/><text x="250" y="88" font-family="Roboto Mono" font-size="9" fill="#FFD84A" stroke="none">LOA</text>
+    </svg>
+    <div class="kpis">
+      <div class="kpi" data-n="01"><span>Sailings today</span><b>14</b><i>2 delayed</i></div>
+      <div class="kpi" data-n="02"><span>Passengers</span><b>612</b><i>+48 on last Fri</i></div>
+      <div class="kpi" data-n="03"><span>Received</span><b>₹2,84,310</b><i>3 refunds due</i></div>
+      <div class="kpi" data-n="04"><span>Open requests</span><b>7</b><i>1 grievance</i></div>
+    </div>
+    <div class="grid">
+      <div style="display:grid;gap:18px">
+        <section class="sheet"><div class="sh"><h2>Fleet<small>3 vessels</small></h2><button class="btn" id="add">+ Add ferry</button></div>
+          <table><thead><tr><th>Vessel</th><th>Operator</th><th>Seating</th><th class="r">Cap.</th><th>Status</th></tr></thead><tbody>
+            <tr><td>MV Demo Star</td><td>Demo Ferries</td><td>Capacity</td><td class="r">180</td><td class="ok">In service</td></tr>
+            <tr><td>MV Demo Wave</td><td>Demo Ferries</td><td>Assigned</td><td class="r">024</td><td class="ok">In service</td></tr>
+            <tr><td>MV Example Breeze</td><td>Example Lines</td><td>Capacity</td><td class="r">320</td><td class="warn">Refit</td></tr>
+          </tbody></table></section>
+        <section class="sheet"><div class="sh"><h2>Manifest 06:30<small>PBPBJ → HVLJ</small></h2><button class="btn ghost">Export</button></div>
+          <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Ticket</th></tr></thead><tbody>
+            <tr data-pax="0" tabindex="0" aria-selected="true"><td>Asha Rao</td><td>SBKH46K99Z</td><td class="r">34</td><td class="ok">Valid</td></tr>
+            <tr data-pax="1" tabindex="0"><td>Kiran Rao</td><td>SBKH46K99Z</td><td class="r">08</td><td class="ok">Valid</td></tr>
+            <tr data-pax="2" tabindex="0"><td>Meera Iyer</td><td>SB7QW2MZ4D</td><td class="r">61</td><td class="warn">Boarded</td></tr>
+            <tr data-pax="3" tabindex="0"><td>Rohan Das</td><td>SBP3XH8K2N</td><td class="r">27</td><td class="bad">Unpaid</td></tr>
+          </tbody></table></section>
+      </div>
+      <section class="sheet"><div class="sh"><h2>Passenger detail</h2></div><div class="detail" id="detail" aria-live="polite"></div></section>
+    </div>
+  </main>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <h2 style="font-size:20px">New vessel spec</h2>
+  <label for="f1">Vessel name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO no.</label><input id="f3"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>Capacity</option><option>Assigned</option></select></div><div><label for="f5">Type</label><input id="f5"></div></div>
+  <label for="f6">Classes : capacity</label><textarea id="f6" rows="3">Deck : 120
+Seater : 60</textarea>
+  <div class="actions"><button class="btn">Approve spec</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const people=[["Asha Rao","SBKH46K99Z","34 · F","asha@example.com","+91 98000 00000","Deck","Valid","₹975 paid"],["Kiran Rao","SBKH46K99Z","08 · M","asha@example.com","+91 98000 00000","Deck","Valid","₹975 paid"],["Meera Iyer","SB7QW2MZ4D","61 · F","meera@example.com","+91 98111 11111","Cabin seat","Boarded 06:12","₹1,547.50 paid"],["Rohan Das","SBP3XH8K2N","27 · M","rohan@example.com","+91 98222 22222","Deck","None","Hold until 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`<span class="ref">REF ${p[1]}</span><h3>${p[0]}</h3><table class="spec"><tr><td>Age/sex</td><td>${p[2]}</td></tr><tr><td>Email</td><td>${p[3]}</td></tr><tr><td>Mobile</td><td>${p[4]}</td></tr><tr><td>Class</td><td>${p[5]}</td></tr><tr><td>Ticket</td><td>${p[6]}</td></tr><tr><td>Payment</td><td>${p[7]}</td></tr></table><div class="actions"><button class="btn">Open booking</button><button class="btn ghost">Reissue</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+</script>
+</body>
+</html>

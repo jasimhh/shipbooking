@@ -88,6 +88,14 @@ class StaffAreaTest(BookingSetup, TestCase):
         csv_response = self.get(self.admin, "reports", start=str(timezone.localdate()), end=str(timezone.localdate() + timedelta(days=5)), format="csv")
         self.assertIn("Occupancy %", csv_response.content.decode())
 
+    def test_admin_passenger_list_searchable_and_audited(self):
+        superuser = User.objects.create_superuser("root@example.com", PASSWORD)
+        self.client.force_login(superuser)
+        page = self.client.get(reverse("admin:bookings_bookingpassenger_changelist"), {"q": '"Passenger 1"'})
+        self.assertContains(page, self.booking.reference)
+        self.assertEqual(page.context["cl"].result_count, 1)
+        self.assertTrue(AuditLog.objects.filter(action="passengers.listed").exists())
+
     def test_support_desk_is_support_and_admin_only(self):
         self.assertEqual(self.get(self.crew, "support").status_code, 403)
         self.assertEqual(self.get(self.support, "support").status_code, 200)

@@ -12,6 +12,7 @@
   <aside class="sidenav" aria-label="Staff">
     <h2>Staff</h2>
     <ul>
+      <li><a href="{% url 'staff:harbour' %}">Harbour master (live map)</a></li>
       <li><a href="{% url 'staff:dashboard' %}"{% if url_name == "dashboard" %} aria-current="page"{% endif %}>Dashboard</a></li>
       <li><a href="{% url 'staff:reports' %}"{% if url_name == "reports" %} aria-current="page"{% endif %}>Reports</a></li>
       {% if user.is_platform_admin or user.role == "support" %}<li><a href="{% url 'staff:support' %}"{% if url_name == "support" or url_name == "support_detail" %} aria-current="page"{% endif %}>Support desk</a></li>{% endif %}

@@ -17,10 +17,10 @@ from apps.operators.models import Operator
 from apps.schedules.models import Fare, Schedule
 
 PORTS = [
-    ("MUMFW", "Mumbai Ferry Wharf", "Mumbai", "Maharashtra"),
-    ("MDWJ", "Mandwa Jetty", "Alibag", "Maharashtra"),
-    ("PBPBJ", "Phoenix Bay Jetty", "Sri Vijaya Puram (Port Blair)", "Andaman and Nicobar Islands"),
-    ("HVLJ", "Swaraj Dweep (Havelock) Jetty", "Swaraj Dweep", "Andaman and Nicobar Islands"),
+    ("MUMFW", "Mumbai Ferry Wharf", "Mumbai", "Maharashtra", "18.958", "72.846"),
+    ("MDWJ", "Mandwa Jetty", "Alibag", "Maharashtra", "18.806", "72.882"),
+    ("PBPBJ", "Phoenix Bay Jetty", "Sri Vijaya Puram (Port Blair)", "Andaman and Nicobar Islands", "11.672", "92.737"),
+    ("HVLJ", "Swaraj Dweep (Havelock) Jetty", "Swaraj Dweep", "Andaman and Nicobar Islands", "12.035", "92.982"),
 ]
 # (origin, destination, departure times, journey minutes)
 ROUTES = [
@@ -53,8 +53,9 @@ class Command(BaseCommand):
         )
         ports = {}
         # Real ports: no boarding instructions until an operator supplies verified ones.
-        for code, name, city, state in PORTS:
-            ports[code], _ = Port.objects.get_or_create(code=code, defaults={"name": name, "city": city, "state": state})
+        for code, name, city, state, lat, lon in PORTS:
+            ports[code], _ = Port.objects.get_or_create(code=code, defaults={
+                "name": name, "city": city, "state": state, "latitude": Decimal(lat), "longitude": Decimal(lon)})
         vessels = []
         for name, mode in [("MV Demo Star", "capacity"), ("MV Demo Wave", "assigned")]:
             vessel, created = Vessel.objects.get_or_create(

@@ -1,0 +1,80 @@
+{% load static %}<!doctype html>
+<html lang="en-IN" data-theme="night">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Harbour master · Ship Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/harbour.css' %}">
+  <script>try { if (localStorage.getItem("harbour-theme") === "day") document.documentElement.dataset.theme = "day"; } catch (e) {}</script>
+</head>
+<body>
+{% include "staff/_harbour_icons.html" %}
+<a class="skip" href="#panel">Skip to operations panel</a>
+<div class="shell">
+  <section class="mapwrap gridbg" aria-label="Live map of sailings">
+    <div id="map" role="img" aria-label="Map of the selected area with ports, routes and estimated ferry positions"></div>
+    <div class="bar">
+      <span class="card live"><i aria-hidden="true"></i><span class="mono" id="clock"></span> IST</span>
+      <div class="card seg" role="group" aria-label="Area" id="regions"></div>
+      <span class="sp"></span>
+      <button class="iconbtn" id="theme" type="button" aria-label="Switch to light whiteprint"><svg class="i"><use href="#sun"/></svg></button>
+      {% if can_add_ferry %}<button class="btn" id="add" type="button"><svg class="i"><use href="#plus"/></svg>Add ferry</button>{% endif %}
+    </div>
+    <div class="zoom"><button class="iconbtn" type="button" aria-label="Zoom in" data-z="1.15"><svg class="i"><use href="#plus"/></svg></button><button class="iconbtn" type="button" aria-label="Zoom out" data-z="0.87"><svg class="i"><use href="#minus"/></svg></button><button class="iconbtn" type="button" aria-label="Reset zoom" data-z="0"><svg class="i"><use href="#target"/></svg></button></div>
+    <div class="card weather" aria-label="Weather and sea">
+      <div class="h">Weather and sea<span>Not connected</span></div>
+      <p>Connect a marine weather service to show wind, swell and warnings here.</p>
+    </div>
+    <div class="card ferry" id="fc" aria-live="polite"></div>
+    <div class="card legend" aria-hidden="true">
+      <span><svg viewBox="0 0 22 10"><path d="M0 5h22" stroke="var(--route)" stroke-width="2.5" stroke-dasharray="6 4"/></svg>Selected route</span>
+      <span><svg viewBox="0 0 22 10"><path d="M0 5h22" stroke="var(--other)" stroke-width="1.5" stroke-dasharray="2 4"/></svg>Other routes</span>
+      <span><svg viewBox="0 0 22 10"><rect x="5" y="1" width="12" height="8" rx="2" fill="none" stroke="var(--route)" stroke-width="2"/></svg>Ferry (estimated)</span>
+    </div>
+  </section>
+
+  <section class="panel" id="panel" aria-label="Operations" tabindex="-1">
+    <div class="ph">
+      <h1>Harbour master<small>{% now "l j F" %} · {{ user.get_role_display }}</small></h1>
+      <nav class="links" aria-label="Staff">
+        <a href="{% url 'staff:dashboard' %}">Dashboard</a><a href="{% url 'staff:reports' %}">Reports</a>
+        {% if user.is_platform_admin or user.role == "support" %}<a href="{% url 'staff:support' %}">Support</a>{% endif %}
+        {% if user.is_platform_admin %}<a href="{% url 'admin:index' %}">Admin</a>{% elif user.role == "operator" %}<a href="{% url 'operator:index' %}">Portal</a>{% endif %}
+      </nav>
+    </div>
+    <p class="notice">Ferry positions are estimated from the timetable and sailing status, not GPS.</p>
+    {% for message in messages %}<div class="flash {{ message.tags }}" role="status">{{ message }}</div>{% endfor %}
+    <div class="stats" id="stats"></div>
+    <div class="tabs" role="tablist" aria-label="Panel">
+      <button role="tab" type="button" data-tab="alerts" aria-selected="true">Alerts<span class="ct" id="alertCount"></span></button>
+      <button role="tab" type="button" data-tab="sail" aria-selected="false">Sailings</button>
+      <button role="tab" type="button" data-tab="pax" aria-selected="false">Passengers</button>
+      <button role="tab" type="button" data-tab="fleet" aria-selected="false">Ferries</button>
+    </div>
+    <div class="tools" id="tools"></div>
+    <div class="list" id="list" aria-live="polite"></div>
+    <div class="det" id="detail" aria-live="polite" hidden></div>
+  </section>
+</div>
+
+{% if can_add_ferry %}
+<div class="modal-wrap" id="drawer">
+  <form class="modal" method="post" action="{% url 'staff:harbour_add_ferry' %}" aria-labelledby="addTitle">
+    {% csrf_token %}
+    <h2 id="addTitle">Add a ferry</h2><p>Saved to the fleet register. Add sailings for it afterwards.</p>
+    <div class="field">{{ ferry_form.name.as_field_group }}</div>
+    <div class="row2"><div class="field">{{ ferry_form.operator.as_field_group }}</div><div class="field">{{ ferry_form.imo_number.as_field_group }}</div></div>
+    <div class="row2"><div class="field">{{ ferry_form.seating_mode.as_field_group }}</div><div class="field">{{ ferry_form.vessel_type.as_field_group }}</div></div>
+    <div class="field">{{ ferry_form.classes.as_field_group }}</div>
+    <div class="acts plain"><button class="btn" type="submit">Add ferry</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+  </form>
+</div>
+{% endif %}
+
+{{ data|json_script:"harbour-data" }}
+<script src="{% static 'js/harbour.js' %}" defer></script>
+</body>
+</html>

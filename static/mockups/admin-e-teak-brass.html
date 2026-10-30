@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin E · Teak &amp; Brass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Karla:wght@400;500;700&display=swap">
+<style>
+  :root{--teak:#24170F;--teak-2:#2F2015;--teak-3:#3A281B;--grain:#4A3424;--cream:#F1E6D2;--dim:#B8A68C;--brass:#C9A227;--brass-2:#E3C35A;--sage:#8DB39A;--rust:#D9714A}
+  *{box-sizing:border-box}body{margin:0;background:var(--teak);color:var(--cream);font:400 15px/1.6 Karla,system-ui,sans-serif;
+    background-image:repeating-linear-gradient(92deg,rgba(255,255,255,.012) 0 2px,transparent 2px 9px),repeating-linear-gradient(88deg,rgba(0,0,0,.08) 0 1px,transparent 1px 23px)}
+  :focus-visible{outline:2px solid var(--brass-2);outline-offset:2px}
+  .app{display:grid;grid-template-columns:1fr;min-height:100vh}@media(min-width:960px){.app{grid-template-columns:240px 1fr}}
+  aside{background:var(--teak-2);border-right:1px solid var(--grain);padding:26px 0;position:relative}
+  aside::after{content:"";position:absolute;top:0;bottom:0;right:4px;width:1px;background:var(--grain)}
+  .brand{text-align:center;padding:0 20px 22px;margin-bottom:12px;border-bottom:1px solid var(--grain)}
+  .brand svg{display:block;margin:0 auto 8px}
+  .brand b{font:700 24px "Cormorant Garamond",serif;letter-spacing:.04em;color:var(--brass-2)}.brand small{display:block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+  nav a{display:flex;align-items:center;gap:12px;padding:10px 24px;color:var(--dim);text-decoration:none;font-weight:500;letter-spacing:.02em}
+  nav a::before{content:"";width:6px;height:6px;transform:rotate(45deg);border:1px solid currentColor}
+  nav a:hover{color:var(--cream)}nav a[aria-current]{color:var(--brass-2);background:linear-gradient(90deg,rgba(201,162,39,.14),transparent)}nav a[aria-current]::before{background:var(--brass)}
+  main{padding:30px clamp(16px,3vw,44px) 60px;min-width:0}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--grain)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass)}
+  h1{font:600 clamp(34px,4vw,48px)/1 "Cormorant Garamond",serif;margin:6px 0 0;letter-spacing:.005em}
+  .note{font-size:12px;color:var(--dim);border:1px solid var(--grain);padding:6px 12px;border-radius:999px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:24px 0 30px}
+  .kpi{background:var(--teak-3);border:1px solid var(--grain);border-radius:4px;padding:18px;position:relative}
+  .kpi::before,.kpi::after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;background:var(--brass);top:8px;left:8px;box-shadow:0 0 0 2px var(--teak-3),0 0 0 3px #7A6118}
+  .kpi::after{left:auto;right:8px}
+  .kpi span{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}.kpi b{display:block;font:600 34px "Cormorant Garamond",serif;color:var(--brass-2);margin-top:6px}.kpi small{color:var(--sage)}
+  .grid{display:grid;gap:22px;grid-template-columns:1fr}@media(min-width:1180px){.grid{grid-template-columns:1.35fr 1fr}}
+  .panel{background:var(--teak-2);border:1px solid var(--grain);border-radius:4px}
+  .ph{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--grain);gap:12px}
+  h2{font:600 24px "Cormorant Garamond",serif;margin:0}h2 small{font:400 13px Karla;color:var(--dim);margin-left:8px}
+  .btn{font:700 13px Karla;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--brass);background:linear-gradient(180deg,#D8B23A,#A9861A);color:#1D1408;padding:9px 16px;border-radius:3px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+  .btn.ghost{background:transparent;color:var(--brass-2);box-shadow:none}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 18px;font-weight:500}
+  td{padding:12px 18px;border-top:1px solid var(--grain)}tbody tr:hover{background:rgba(201,162,39,.06)}
+  .r{text-align:right;font-variant-numeric:tabular-nums}
+  .plate{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:2px;border:1px solid}
+  .ok{color:var(--sage);border-color:#4F6B5A}.warn{color:var(--brass-2);border-color:#7A6118}.bad{color:var(--rust);border-color:#7A3A22}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:rgba(201,162,39,.12)!important;box-shadow:inset 3px 0 0 var(--brass)}
+  .detail{padding:22px}.detail .ref{font-size:12px;letter-spacing:.24em;color:var(--brass)}
+  .detail h3{font:600 34px "Cormorant Garamond",serif;margin:6px 0 2px}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:18px 0;padding-top:16px;border-top:1px solid var(--grain)}dt{color:var(--dim);font-size:13px}dd{margin:0}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(440px,100%);background:var(--teak-2);border-left:1px solid var(--brass);padding:26px;transform:translateX(100%);transition:transform .25s;z-index:5;overflow:auto;box-shadow:-20px 0 50px rgba(0,0,0,.5)}
+  .drawer.open{transform:none}
+  label{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:14px 0 6px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:inherit;color:var(--cream);background:var(--teak);border:1px solid var(--grain);border-radius:3px;padding:10px 12px;color-scheme:dark}
+  .drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-color:var(--brass)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:10px;margin-top:22px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <svg width="42" height="42" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="18" fill="none" stroke="#C9A227" stroke-width="1.5"/><circle cx="21" cy="21" r="6" fill="none" stroke="#C9A227" stroke-width="1.5"/><path d="M21 3v12M21 27v12M3 21h12M27 21h12M8.3 8.3l8.5 8.5M25.2 25.2l8.5 8.5M33.7 8.3l-8.5 8.5M16.8 25.2l-8.5 8.5" stroke="#C9A227" stroke-width="1.5"/></svg>
+      <b>Ship Booking</b><small>Purser's office</small>
+    </div>
+    <nav aria-label="Admin"><a href="#">Overview</a><a href="#">Sailings</a><a href="#" aria-current="page">Ferries</a><a href="#">Bookings</a><a href="#">Passengers</a><a href="#">Refunds</a><a href="#">Support</a><a href="#">Audit log</a></nav>
+  </aside>
+  <main>
+    <div class="top"><div><div class="eyebrow">Friday · 30 October 2026</div><h1>The fleet &amp; today's guests</h1></div><span class="note">Example data · fictional ferries and names</span></div>
+    <div class="kpis">
+      <div class="kpi"><span>Sailings today</span><b>14</b><small>2 delayed</small></div>
+      <div class="kpi"><span>Passengers today</span><b>612</b><small>+48 on last Friday</small></div>
+      <div class="kpi"><span>Received today</span><b>₹2,84,310</b><small>3 refunds waiting</small></div>
+      <div class="kpi"><span>Open requests</span><b>7</b><small>1 grievance</small></div>
+    </div>
+    <div class="grid">
+      <div style="display:grid;gap:22px">
+        <section class="panel"><div class="ph"><h2>The fleet<small>3 ferries</small></h2><button class="btn" id="add">Add ferry</button></div>
+          <table><thead><tr><th>Ferry</th><th>Operator</th><th>Seating</th><th class="r">Capacity</th><th>Status</th></tr></thead><tbody>
+            <tr><td>MV Demo Star</td><td>Demo Ferries</td><td>By capacity</td><td class="r">180</td><td><span class="plate ok">In service</span></td></tr>
+            <tr><td>MV Demo Wave</td><td>Demo Ferries</td><td>Numbered seats</td><td class="r">24</td><td><span class="plate ok">In service</span></td></tr>
+            <tr><td>MV Example Breeze</td><td>Example Lines</td><td>By capacity</td><td class="r">320</td><td><span class="plate warn">In refit</span></td></tr>
+          </tbody></table></section>
+        <section class="panel"><div class="ph"><h2>Guest list · 06:30<small>Phoenix Bay → Havelock</small></h2><button class="btn ghost">Download</button></div>
+          <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Ticket</th></tr></thead><tbody>
+            <tr data-pax="0" tabindex="0" aria-selected="true"><td>Asha Rao</td><td>SBKH46K99Z</td><td class="r">34</td><td><span class="plate ok">Valid</span></td></tr>
+            <tr data-pax="1" tabindex="0"><td>Kiran Rao</td><td>SBKH46K99Z</td><td class="r">8</td><td><span class="plate ok">Valid</span></td></tr>
+            <tr data-pax="2" tabindex="0"><td>Meera Iyer</td><td>SB7QW2MZ4D</td><td class="r">61</td><td><span class="plate warn">Boarded</span></td></tr>
+            <tr data-pax="3" tabindex="0"><td>Rohan Das</td><td>SBP3XH8K2N</td><td class="r">27</td><td><span class="plate bad">Unpaid</span></td></tr>
+          </tbody></table></section>
+      </div>
+      <section class="panel"><div class="ph"><h2>Guest details</h2></div><div class="detail" id="detail" aria-live="polite"></div></section>
+    </div>
+  </main>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <h2>Commission a ferry</h2>
+  <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3" placeholder="Optional"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Type</label><input id="f5"></div></div>
+  <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  <div class="actions"><button class="btn">Add to fleet</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const people=[["Asha Rao","SBKH46K99Z","34 · Female","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","₹975 paid"],["Kiran Rao","SBKH46K99Z","8 · Male","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","₹975 paid"],["Meera Iyer","SB7QW2MZ4D","61 · Female","meera@example.com","+91 98111 11111","Cabin seat","Boarded 06:12","₹1,547.50 paid"],["Rohan Das","SBP3XH8K2N","27 · Male","rohan@example.com","+91 98222 22222","Deck","None yet","Hold until 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`<span class="ref">${p[1]}</span><h3>${p[0]}</h3><div style="color:var(--dim)">${p[2]}</div><dl><dt>Email</dt><dd>${p[3]}</dd><dt>Mobile</dt><dd>${p[4]}</dd><dt>Class</dt><dd>${p[5]}</dd><dt>Ticket</dt><dd>${p[6]}</dd><dt>Payment</dt><dd>${p[7]}</dd></dl><div class="actions"><button class="btn">Open booking</button><button class="btn ghost">Reissue ticket</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+</script>
+</body>
+</html>

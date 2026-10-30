@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin M · Slate Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{--bg:#0B0C0E;--side:#0F1013;--panel:#131418;--panel-2:#191A1F;--hover:#1D1F25;--line:#24262D;--line-2:#2E3038;--text:#E8E9ED;--dim:#8A8D98;--faint:#5C5F6A;--accent:#4C8DFF;--green:#3DD68C;--amber:#F2B54B;--red:#F2555A}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:400 13px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .app{display:grid;grid-template-columns:1fr;min-height:100vh}@media(min-width:960px){.app{grid-template-columns:232px 1fr}}
+  aside{background:var(--side);border-right:1px solid var(--line);padding:10px 8px;display:flex;flex-direction:column;gap:2px}
+  .ws{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;font-weight:600;margin-bottom:6px}
+  .ws i{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#4C8DFF,#3DD68C);display:grid;place-items:center;font-style:normal;font-size:11px;color:#0B0C0E;font-weight:800}
+  .cmd{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;color:var(--faint);margin-bottom:10px;background:var(--panel)}
+  .cmd kbd{margin-left:auto;font:500 11px Inter;border:1px solid var(--line-2);border-radius:4px;padding:0 5px;color:var(--dim)}
+  .grp{font-size:11px;font-weight:600;color:var(--faint);padding:12px 10px 4px}
+  aside a{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:6px;color:var(--dim);text-decoration:none;font-weight:500}
+  aside a:hover{background:var(--hover);color:var(--text)}aside a[aria-current]{background:var(--panel-2);color:var(--text)}
+  aside a .n{margin-left:auto;font-size:11px;color:var(--faint)}aside a .n.hot{color:var(--amber)}
+  main{min-width:0;display:flex;flex-direction:column}
+  .tb{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .crumb{color:var(--dim)}.crumb b{color:var(--text);font-weight:600}
+  .tb .sp{flex:1}
+  .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:6px;padding:4px 8px;color:var(--dim);font-weight:500;background:var(--panel)}
+  .btn{display:inline-flex;align-items:center;gap:6px;font:600 13px Inter;border:1px solid transparent;background:var(--text);color:var(--bg);padding:6px 10px;border-radius:6px;cursor:pointer}
+  .btn.sec{background:var(--panel-2);color:var(--text);border-color:var(--line-2)}
+  .content{display:grid;grid-template-columns:1fr;flex:1;min-height:0}@media(min-width:1200px){.content{grid-template-columns:1fr 380px}}
+  .main{padding:18px 20px 40px;min-width:0}
+  .note{font-size:12px;color:var(--amber);margin-bottom:12px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:18px;background:var(--panel)}
+  .stat{padding:14px 16px;border-right:1px solid var(--line)}.stat:last-child{border-right:0}
+  .stat span{color:var(--dim);font-weight:500}.stat b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em;margin:2px 0}
+  .stat .d{font-size:12px}.up{color:var(--green)}.dn{color:var(--red)}
+  .stat svg{display:block;width:100%;height:28px;margin-top:6px}
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin:20px 0 8px}.sec-h h2{font-size:13px;font-weight:600;margin:0}
+  .tabs{display:flex;gap:2px}.tabs button{font:500 12px Inter;background:none;border:0;color:var(--dim);padding:4px 8px;border-radius:5px;cursor:pointer}.tabs button[aria-selected=true]{background:var(--panel-2);color:var(--text)}
+  table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+  th{font-weight:500;color:var(--faint);text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12px}
+  td{padding:9px 12px;border-bottom:1px solid var(--line)}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:var(--hover)}
+  .r{text-align:right;font-variant-numeric:tabular-nums}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;color:var(--dim)}
+  .dot{display:inline-flex;align-items:center;gap:6px}.dot::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  .g{color:var(--green)}.a{color:var(--amber)}.rd{color:var(--red)}.n{color:var(--dim)}
+  .bar{display:flex;align-items:center;gap:8px}.bar i{width:70px;height:4px;border-radius:2px;background:var(--line-2);position:relative}.bar i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--accent);border-radius:2px}
+  .av{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-size:10px;font-weight:700;color:#0B0C0E;margin-right:8px;vertical-align:middle}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:#1A2233!important}
+  .sheet{border-left:1px solid var(--line);background:var(--side);padding:18px;min-width:0}
+  .sheet .top{display:flex;align-items:center;gap:12px}.sheet .av{width:40px;height:40px;font-size:14px;margin:0}
+  .sheet h3{font-size:16px;font-weight:600;margin:0}.sheet .sub{color:var(--dim)}
+  .kv{display:grid;grid-template-columns:96px 1fr;gap:8px 12px;margin:16px 0;font-size:13px}.kv dt{color:var(--faint)}.kv dd{margin:0}
+  .tl{list-style:none;padding:0;margin:8px 0 0;border-left:1px solid var(--line-2);margin-left:6px}
+  .tl li{position:relative;padding:0 0 14px 16px}.tl li::before{content:"";position:absolute;left:-4px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--line-2);box-shadow:0 0 0 3px var(--side)}
+  .tl li.on::before{background:var(--accent)}.tl small{display:block;color:var(--faint)}
+  .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .drawer{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .15s;z-index:5;padding:16px}
+  .drawer.open{opacity:1;pointer-events:auto}
+  .modal{width:min(520px,100%);background:var(--panel);border:1px solid var(--line-2);border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .mh{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:600;display:flex;justify-content:space-between}
+  .mb{padding:4px 16px 16px}.mf{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+  label{display:block;font-weight:500;color:var(--dim);margin:12px 0 5px}
+  .modal input,.modal select,.modal textarea{width:100%;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line-2);border-radius:6px;padding:8px 10px;color-scheme:dark}
+  .modal input:focus,.modal select:focus,.modal textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(76,141,255,.2)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="ship" viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.4 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.9 5.3 2.8 7.8"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/></symbol>
+  <symbol id="tix" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></symbol>
+  <symbol id="users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+  <symbol id="ref" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="log" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="filter" viewBox="0 0 24 24"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></symbol>
+</defs></svg>
+<div class="app">
+  <aside aria-label="Admin">
+    <div class="ws"><i>SB</i>Ship Booking</div>
+    <div class="cmd"><svg class="i"><use href="#search"/></svg>Search or jump to…<kbd>Ctrl K</kbd></div>
+    <a href="#"><svg class="i"><use href="#home"/></svg>Overview</a>
+    <a href="#"><svg class="i"><use href="#cal"/></svg>Sailings<span class="n hot">2 delayed</span></a>
+    <a href="#" aria-current="page"><svg class="i"><use href="#ship"/></svg>Ferries<span class="n">3</span></a>
+    <a href="#"><svg class="i"><use href="#tix"/></svg>Bookings<span class="n">1,284</span></a>
+    <a href="#"><svg class="i"><use href="#users"/></svg>Passengers</a>
+    <div class="grp">Needs attention</div>
+    <a href="#"><svg class="i"><use href="#ref"/></svg>Refunds<span class="n hot">3</span></a>
+    <a href="#"><svg class="i"><use href="#msg"/></svg>Support<span class="n hot">7</span></a>
+    <div class="grp">Compliance</div>
+    <a href="#"><svg class="i"><use href="#log"/></svg>Audit log</a>
+  </aside>
+  <main>
+    <div class="tb">
+      <span class="crumb">Operations / <b>Ferries</b></span><span class="sp"></span>
+      <span class="chip"><svg class="i"><use href="#cal"/></svg>Today, 30 Oct</span><span class="chip"><svg class="i"><use href="#filter"/></svg>All operators</span>
+      <button class="btn" id="add"><svg class="i"><use href="#plus"/></svg>New ferry</button>
+    </div>
+    <div class="content">
+      <div class="main">
+        <div class="note">Example data in this preview · fictional ferries and passengers</div>
+        <div class="stats">
+          <div class="stat"><span>Passengers today</span><b>612</b><span class="d up">↑ 8.5% vs last Fri</span><svg viewBox="0 0 100 28" preserveAspectRatio="none"><path d="M0 22 L12 20 L24 21 L36 16 L48 18 L60 12 L72 14 L84 8 L100 6" fill="none" stroke="#3DD68C" stroke-width="1.5"/></svg></div>
+          <div class="stat"><span>Received today</span><b>₹2,84,310</b><span class="d up">↑ 12.1%</span><svg viewBox="0 0 100 28" preserveAspectRatio="none"><path d="M0 24 L12 18 L24 20 L36 14 L48 15 L60 10 L72 12 L84 7 L100 4" fill="none" stroke="#4C8DFF" stroke-width="1.5"/></svg></div>
+          <div class="stat"><span>Average load</span><b>71%</b><span class="d dn">↓ 3 pts</span><svg viewBox="0 0 100 28" preserveAspectRatio="none"><path d="M0 8 L12 10 L24 9 L36 12 L48 11 L60 15 L72 13 L84 16 L100 15" fill="none" stroke="#F2555A" stroke-width="1.5"/></svg></div>
+          <div class="stat"><span>On-time departures</span><b>86%</b><span class="d n">12 of 14</span><svg viewBox="0 0 100 28" preserveAspectRatio="none"><path d="M0 14 L12 12 L24 15 L36 11 L48 13 L60 12 L72 10 L84 13 L100 11" fill="none" stroke="#8A8D98" stroke-width="1.5"/></svg></div>
+        </div>
+        <div class="sec-h"><h2>Fleet</h2></div>
+        <table><thead><tr><th>Ferry</th><th>Operator</th><th>Seating</th><th class="r">Capacity</th><th>Today's load</th><th>Status</th></tr></thead><tbody>
+          <tr><td><b>MV Demo Star</b> <span class="mono">IMO —</span></td><td>Demo Ferries</td><td>By capacity</td><td class="r">180</td><td><span class="bar"><i style="--w:62%"></i>62%</span></td><td><span class="dot g">In service</span></td></tr>
+          <tr><td><b>MV Demo Wave</b></td><td>Demo Ferries</td><td>24 numbered seats</td><td class="r">24</td><td><span class="bar"><i style="--w:88%"></i>88%</span></td><td><span class="dot g">In service</span></td></tr>
+          <tr><td><b>MV Example Breeze</b></td><td>Example Lines</td><td>By capacity</td><td class="r">320</td><td><span class="bar"><i style="--w:0%"></i>—</span></td><td><span class="dot a">Maintenance · back 4 Nov</span></td></tr>
+        </tbody></table>
+        <div class="sec-h"><h2>Passengers · 06:30 Phoenix Bay → Havelock</h2><div class="tabs" role="tablist"><button role="tab" aria-selected="true">All 4</button><button role="tab" aria-selected="false">Not boarded</button><button role="tab" aria-selected="false">Issues</button></div></div>
+        <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Class</th><th>Ticket</th></tr></thead><tbody>
+          <tr data-pax="0" tabindex="0" aria-selected="true"><td><span class="av" style="background:#4C8DFF">AR</span>Asha Rao</td><td class="mono">SBKH46K99Z</td><td class="r">34</td><td>Deck</td><td><span class="dot g">Valid</span></td></tr>
+          <tr data-pax="1" tabindex="0"><td><span class="av" style="background:#4C8DFF">KR</span>Kiran Rao</td><td class="mono">SBKH46K99Z</td><td class="r">8</td><td>Deck</td><td><span class="dot g">Valid</span></td></tr>
+          <tr data-pax="2" tabindex="0"><td><span class="av" style="background:#3DD68C">MI</span>Meera Iyer</td><td class="mono">SB7QW2MZ4D</td><td class="r">61</td><td>Cabin seat</td><td><span class="dot n">Boarded 06:12</span></td></tr>
+          <tr data-pax="3" tabindex="0"><td><span class="av" style="background:#F2555A">RD</span>Rohan Das</td><td class="mono">SBP3XH8K2N</td><td class="r">27</td><td>Deck</td><td><span class="dot rd">Unpaid · hold 21:40</span></td></tr>
+        </tbody></table>
+      </div>
+      <aside class="sheet" id="detail" aria-live="polite" aria-label="Passenger details"></aside>
+    </div>
+  </main>
+</div>
+<div class="drawer" id="drawer"><form class="modal" aria-label="New ferry" onsubmit="return false">
+  <div class="mh">New ferry <span class="mono">Esc to close</span></div>
+  <div class="mb">
+    <label for="f1">Name</label><input id="f1" placeholder="MV …">
+    <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3" placeholder="Optional"></div></div>
+    <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Type</label><input id="f5" placeholder="Catamaran"></div></div>
+    <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  </div>
+  <div class="mf"><button class="btn sec" type="button" id="close">Cancel</button><button class="btn">Create ferry</button></div>
+</form></div>
+<script>
+const people=[["Asha Rao","AR","#4C8DFF","SBKH46K99Z","34 · Female","asha@example.com","+91 98000 00000","Deck","₹975 · Razorpay test","Booked 30 Oct 21:12|Paid 21:17|Ticket issued 21:17|Not scanned yet"],["Kiran Rao","KR","#4C8DFF","SBKH46K99Z","8 · Male","asha@example.com","+91 98000 00000","Deck","₹975 · Razorpay test","Booked 30 Oct 21:12|Paid 21:17|Ticket issued 21:17|Not scanned yet"],["Meera Iyer","MI","#3DD68C","SB7QW2MZ4D","61 · Female","meera@example.com","+91 98111 11111","Cabin seat 07","₹1,547.50","Booked 28 Oct|Paid 28 Oct|Ticket issued|Scanned and boarded 06:12"],["Rohan Das","RD","#F2555A","SBP3XH8K2N","27 · Male","rohan@example.com","+91 98222 22222","Deck","Unpaid","Reserved 21:25|Payment failed 21:28|Hold ends 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i],ev=p[9].split("|");d.innerHTML=`<div class="top"><span class="av" style="background:${p[2]}">${p[1]}</span><div><h3>${p[0]}</h3><div class="sub">${p[4]}</div></div></div><dl class="kv"><dt>Booking</dt><dd class="mono">${p[3]}</dd><dt>Email</dt><dd>${p[5]}</dd><dt>Mobile</dt><dd>${p[6]}</dd><dt>Class</dt><dd>${p[7]}</dd><dt>Payment</dt><dd>${p[8]}</dd></dl><div class="sec-h" style="margin-top:0"><h2>Activity</h2></div><ol class="tl">${ev.map((e,j)=>`<li class="${j===ev.length-1?"on":""}">${e}</li>`).join("")}</ol><div class="acts"><button class="btn">Open booking</button><button class="btn sec">Reissue ticket</button><button class="btn sec">Message</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");const open=()=>{dr.classList.add("open");dr.querySelector("input").focus()};const close=()=>dr.classList.remove("open");
+document.getElementById("add").onclick=open;document.getElementById("close").onclick=close;dr.onclick=e=>{if(e.target===dr)close()};document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
+document.querySelectorAll("[role=tab]").forEach(t=>t.onclick=()=>document.querySelectorAll("[role=tab]").forEach(x=>x.setAttribute("aria-selected",x===t)));
+</script>
+</body>
+</html>

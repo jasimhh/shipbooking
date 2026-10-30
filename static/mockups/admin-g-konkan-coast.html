@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin G · Konkan Coast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap">
+<style>
+  :root{--sand:#FBF4EA;--card:#FFFDF9;--laterite:#B4432A;--laterite-2:#8E3220;--coconut:#4E7A34;--leaf:#E3EEDB;--turmeric:#E8A317;--sea:#1F6F8B;--ink:#2B1A14;--dim:#7A645A;--line:#EBDCCB}
+  *{box-sizing:border-box}body{margin:0;background:var(--sand);color:var(--ink);font:400 15px/1.55 "Bricolage Grotesque",system-ui,sans-serif}
+  :focus-visible{outline:3px solid var(--turmeric);outline-offset:2px}
+  .print{height:22px;background:var(--laterite);background-image:
+    radial-gradient(circle at 11px 11px,var(--turmeric) 3px,transparent 3.5px),
+    radial-gradient(circle at 11px 11px,transparent 6px,var(--sand) 6.5px,var(--sand) 7.5px,transparent 8px);background-size:22px 22px}
+  .app{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 22px)}@media(min-width:960px){.app{grid-template-columns:236px 1fr}}
+  aside{background:var(--laterite-2);color:#FBE9DD;padding:22px 14px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;margin-bottom:24px;padding:0 6px}
+  .brand svg{flex:none}
+  nav a{display:block;padding:10px 14px;margin-bottom:4px;border-radius:12px;color:#F2CDBB;text-decoration:none;font-weight:600}
+  nav a:hover{background:rgba(255,255,255,.08);color:#fff}nav a[aria-current]{background:var(--sand);color:var(--laterite-2)}
+  main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .hello{font-weight:600;color:var(--laterite)}h1{font-weight:800;font-size:clamp(30px,3.8vw,44px);letter-spacing:-.03em;line-height:1.05;margin:4px 0 0}
+  .note{background:var(--leaf);color:var(--coconut);font-weight:600;font-size:13px;padding:6px 12px;border-radius:999px}
+  .kpis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:24px}
+  .kpi{border-radius:18px;padding:18px;color:#fff}.kpi span{font-weight:600;font-size:14px;opacity:.9}.kpi b{display:block;font-weight:800;font-size:34px;letter-spacing:-.02em}.kpi small{opacity:.9}
+  .k1{background:var(--laterite)}.k2{background:var(--coconut)}.k3{background:var(--sea)}.k4{background:var(--turmeric);color:var(--ink)}
+  .grid{display:grid;gap:20px;grid-template-columns:1fr}@media(min-width:1180px){.grid{grid-template-columns:1.35fr 1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+  .ch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px}
+  h2{font-weight:800;font-size:20px;margin:0}h2 small{font-weight:400;font-size:14px;color:var(--dim);margin-left:8px}
+  .btn{font:700 15px "Bricolage Grotesque";border:0;background:var(--laterite);color:#fff;padding:10px 16px;border-radius:12px;cursor:pointer}
+  .btn:hover{background:var(--laterite-2)}.btn.ghost{background:var(--leaf);color:var(--coconut)}
+  table{width:100%;border-collapse:collapse}
+  th{font-weight:600;font-size:13px;color:var(--dim);text-align:left;padding:10px 20px;background:#FBF1E4}
+  td{padding:13px 20px;border-top:1px solid var(--line)}tbody tr:hover{background:#FDF6EC}
+  .r{text-align:right;font-variant-numeric:tabular-nums}
+  .chip{display:inline-block;font-weight:700;font-size:13px;padding:3px 12px;border-radius:999px}
+  .ok{background:var(--leaf);color:var(--coconut)}.warn{background:#FCEFD0;color:#8A5B00}.bad{background:#F7DCD3;color:var(--laterite-2)}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:#FBEBDD!important}
+  .detail{padding:0 20px 22px}
+  .avatar{width:56px;height:56px;border-radius:16px;background:var(--turmeric);display:grid;place-items:center;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:10px}
+  .detail h3{font-weight:800;font-size:28px;letter-spacing:-.02em;margin:0}.detail .ref{color:var(--laterite);font-weight:700}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+  .fact{background:var(--sand);border-radius:14px;padding:10px 12px}.fact span{font-size:12px;color:var(--dim)}.fact b{display:block}
+  .drawer{position:fixed;inset:12px 12px 12px auto;width:min(430px,calc(100% - 24px));background:var(--card);border-radius:22px;border-top:10px solid var(--laterite);box-shadow:0 30px 70px rgba(43,26,20,.25);padding:22px;transform:translateX(calc(100% + 24px));transition:transform .25s;z-index:5;overflow:auto}
+  .drawer.open{transform:none}
+  label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:inherit;border:2px solid var(--line);background:var(--sand);border-radius:12px;padding:10px 12px}
+  .drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-color:var(--coconut)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:10px;margin-top:20px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="print" aria-hidden="true"></div>
+<div class="app">
+  <aside>
+    <div class="brand"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M4 22c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0 4-1.5 6 0" stroke="#E8A317" stroke-width="2" fill="none"/><path d="M8 19 L10 14 H20 L22 19Z" fill="#FBE9DD"/><path d="M15 14V5l6 7h-6" fill="#E8A317"/></svg>Ship Booking</div>
+    <nav aria-label="Admin"><a href="#">Overview</a><a href="#">Sailings</a><a href="#" aria-current="page">Ferries</a><a href="#">Bookings</a><a href="#">Passengers</a><a href="#">Refunds</a><a href="#">Support</a><a href="#">Audit log</a></nav>
+  </aside>
+  <main>
+    <div class="top"><div><div class="hello">Namaste · Friday 30 October</div><h1>Ferries and passengers</h1></div><span class="note">Example data · fictional names and ferries</span></div>
+    <div class="kpis">
+      <div class="kpi k1"><span>Sailings today</span><b>14</b><small>2 delayed</small></div>
+      <div class="kpi k2"><span>Passengers today</span><b>612</b><small>+48 on last Friday</small></div>
+      <div class="kpi k3"><span>Received today</span><b>₹2,84,310</b><small>3 refunds waiting</small></div>
+      <div class="kpi k4"><span>Open requests</span><b>7</b><small>1 grievance</small></div>
+    </div>
+    <div class="grid">
+      <div style="display:grid;gap:20px">
+        <section class="card"><div class="ch"><h2>Our ferries<small>3</small></h2><button class="btn" id="add">+ Add ferry</button></div>
+          <table><thead><tr><th>Ferry</th><th>Operator</th><th>Seating</th><th class="r">Capacity</th><th>Status</th></tr></thead><tbody>
+            <tr><td><b>MV Demo Star</b></td><td>Demo Ferries</td><td>By capacity</td><td class="r">180</td><td><span class="chip ok">Sailing</span></td></tr>
+            <tr><td><b>MV Demo Wave</b></td><td>Demo Ferries</td><td>Numbered seats</td><td class="r">24</td><td><span class="chip ok">Sailing</span></td></tr>
+            <tr><td><b>MV Example Breeze</b></td><td>Example Lines</td><td>By capacity</td><td class="r">320</td><td><span class="chip warn">In dry dock</span></td></tr>
+          </tbody></table></section>
+        <section class="card"><div class="ch"><h2>Travelling at 06:30<small>Phoenix Bay → Havelock</small></h2><button class="btn ghost">Download</button></div>
+          <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Ticket</th></tr></thead><tbody>
+            <tr data-pax="0" tabindex="0" aria-selected="true"><td>Asha Rao</td><td>SBKH46K99Z</td><td class="r">34</td><td><span class="chip ok">Valid</span></td></tr>
+            <tr data-pax="1" tabindex="0"><td>Kiran Rao</td><td>SBKH46K99Z</td><td class="r">8</td><td><span class="chip ok">Valid</span></td></tr>
+            <tr data-pax="2" tabindex="0"><td>Meera Iyer</td><td>SB7QW2MZ4D</td><td class="r">61</td><td><span class="chip warn">On board</span></td></tr>
+            <tr data-pax="3" tabindex="0"><td>Rohan Das</td><td>SBP3XH8K2N</td><td class="r">27</td><td><span class="chip bad">Unpaid</span></td></tr>
+          </tbody></table></section>
+      </div>
+      <section class="card"><div class="ch"><h2>Passenger</h2></div><div class="detail" id="detail" aria-live="polite"></div></section>
+    </div>
+  </main>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <h2 style="font-size:24px">Add a ferry</h2>
+  <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3" placeholder="Optional"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Type</label><input id="f5"></div></div>
+  <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  <div class="actions"><button class="btn">Add ferry</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const people=[["Asha Rao","SBKH46K99Z","34 · Female","asha@example.com","+91 98000 00000","Deck","Valid","₹975 paid"],["Kiran Rao","SBKH46K99Z","8 · Male","asha@example.com","+91 98000 00000","Deck","Valid","₹975 paid"],["Meera Iyer","SB7QW2MZ4D","61 · Female","meera@example.com","+91 98111 11111","Cabin seat","On board since 06:12","₹1,547.50 paid"],["Rohan Das","SBP3XH8K2N","27 · Male","rohan@example.com","+91 98222 22222","Deck","None yet","Hold until 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i],ini=p[0].split(" ").map(w=>w[0]).join("");d.innerHTML=`<div class="avatar" aria-hidden="true">${ini}</div><h3>${p[0]}</h3><div><span class="ref">${p[1]}</span> · ${p[2]}</div><div class="facts"><div class="fact"><span>Email</span><b>${p[3]}</b></div><div class="fact"><span>Mobile</span><b>${p[4]}</b></div><div class="fact"><span>Class</span><b>${p[5]}</b></div><div class="fact"><span>Ticket</span><b>${p[6]}</b></div><div class="fact" style="grid-column:1/-1"><span>Payment</span><b>${p[7]}</b></div></div><div class="actions"><button class="btn">Open booking</button><button class="btn ghost">Reissue ticket</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+</script>
+</body>
+</html>

@@ -12,10 +12,16 @@ class Port(TimeStampedModel):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     boarding_instructions = models.TextField(blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.CheckConstraint(condition=Q(latitude__gte=-90, latitude__lte=90) | Q(latitude__isnull=True), name="port_latitude_range"),
+            models.CheckConstraint(condition=Q(longitude__gte=-180, longitude__lte=180) | Q(longitude__isnull=True), name="port_longitude_range"),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.code})"

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map R · Departures Split</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@85..100,400;85..100,500;85..100,700;85..100,800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{--bg:#F3F1EC;--card:#FFFFFF;--ink:#14171C;--dim:#5E646E;--line:#E2DED5;--water:#D3E4EC;--water-2:#BFD6E1;--land:#EFEBE2;--land-line:#D8D1C3;--route:#E2531B;--board:#1A1D22;--board-2:#22262C;--yellow:#FFD23F;--green:#1E9E63;--red:#D23A2E}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 Archivo,system-ui,sans-serif}
+  :focus-visible{outline:3px solid var(--route);outline-offset:2px}
+  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px clamp(16px,3vw,28px);border-bottom:1px solid var(--line);background:var(--card)}
+  .brand{font:800 18px Archivo;font-stretch:85%;text-transform:uppercase;letter-spacing:.02em}.brand span{color:var(--route)}
+  header nav{display:flex;gap:2px;flex-wrap:wrap}header nav a{padding:6px 10px;border-radius:6px;color:var(--dim);text-decoration:none;font-weight:500}header nav a[aria-current]{background:var(--ink);color:#fff}
+  .sp{flex:1}.btn{font:700 13px Archivo;border:0;background:var(--route);color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer}.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .clock{font:600 14px "IBM Plex Mono"}
+  .split{display:grid;grid-template-columns:1fr;gap:16px;padding:16px clamp(16px,3vw,28px) 40px}@media(min-width:1060px){.split{grid-template-columns:440px 1fr}}
+  .board{background:var(--board);color:#EDEFF2;border-radius:12px;overflow:hidden}
+  .bh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #31353C}
+  .bh h1{font:800 22px Archivo;font-stretch:85%;text-transform:uppercase;letter-spacing:.04em;margin:0;color:var(--yellow)}.bh small{color:#9AA0A8}
+  .cols,.dep{display:grid;grid-template-columns:62px 1fr 92px;gap:10px;align-items:center;padding:0 16px}
+  .cols{font:600 11px "IBM Plex Mono";color:#7E848D;text-transform:uppercase;letter-spacing:.1em;padding-top:10px;padding-bottom:6px}
+  .dep{padding-top:12px;padding-bottom:12px;border-top:1px solid #2C3037;cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;color:inherit;font:inherit;text-align:left}
+  .dep:hover{background:var(--board-2)}.dep[aria-pressed=true]{background:#2A2E35;box-shadow:inset 3px 0 0 var(--yellow)}
+  .dep .t{font:600 20px "IBM Plex Mono";color:var(--yellow)}.dep b{display:block;font-weight:700;text-transform:uppercase;letter-spacing:.02em}.dep small{color:#9AA0A8}
+  .st{font:600 12px "IBM Plex Mono";text-transform:uppercase;text-align:right}.s-ok{color:#5FE3A1}.s-warn{color:var(--yellow)}.s-sea{color:#7CC7FF}.s-bad{color:#FF7A6E}
+  .pg{grid-column:1/-1;height:3px;background:#30343B;border-radius:2px;overflow:hidden}.pg i{display:block;height:100%;background:var(--yellow)}
+  .note{font-size:12px;color:#9AA0A8;padding:12px 16px;border-top:1px solid #2C3037}
+  .right{display:grid;gap:16px;min-width:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+  .mapc{position:relative}.mapc svg{display:block;width:100%;height:auto}
+  .over{position:absolute;left:14px;top:14px;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:10px;padding:10px 12px;max-width:calc(100% - 28px)}
+  .over b{display:block;font-size:16px}.over small{color:var(--dim)}
+  .eta{position:absolute;right:14px;bottom:14px;background:var(--ink);color:#fff;border-radius:10px;padding:8px 12px;font:600 13px "IBM Plex Mono"}
+  .port{font:600 12px Archivo;fill:var(--ink)}.place{font:500 11px Archivo;fill:#9C927F;letter-spacing:.14em;text-transform:uppercase}
+  .low{display:grid;gap:16px;grid-template-columns:1fr}@media(min-width:1300px){.low{grid-template-columns:1.3fr 1fr}}
+  .ch{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.ch h2{font:700 15px Archivo;margin:0;text-transform:uppercase;letter-spacing:.04em}
+  table{width:100%;border-collapse:collapse}th{font:600 11px "IBM Plex Mono";color:var(--dim);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:9px 16px}
+  td{padding:11px 16px;border-top:1px solid var(--line)}tbody tr:hover{background:#FAF8F4}tr[data-i]{cursor:pointer}tr[aria-selected=true]{background:#FFF3E9!important;box-shadow:inset 3px 0 0 var(--route)}
+  .mono{font:500 12px "IBM Plex Mono";color:var(--dim)}
+  .chip{font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px}.c-ok{background:#E2F5EB;color:var(--green)}.c-bad{background:#FCE6E3;color:var(--red)}.c-sea{background:#E3EFF8;color:#1F6CA8}
+  .det{padding:16px}.det h3{font:800 24px Archivo;font-stretch:85%;text-transform:uppercase;margin:0}.det dl{display:grid;grid-template-columns:90px 1fr;gap:8px 12px;margin:12px 0}.det dt{color:var(--dim)}.det dd{margin:0;font-weight:500}
+  .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(420px,100%);background:var(--card);border-left:4px solid var(--route);padding:20px;transform:translateX(100%);transition:transform .2s;z-index:5;overflow:auto;box-shadow:-20px 0 40px rgba(0,0,0,.12)}
+  .drawer.open{transform:none}label{display:block;font-weight:500;margin:14px 0 6px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:6px;padding:9px 11px}.drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-color:var(--route)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">Ship<span>/</span>Booking ops</span>
+  <nav aria-label="Admin"><a href="#" aria-current="page">Departures</a><a href="#">Sailings</a><a href="#">Ferries</a><a href="#">Bookings</a><a href="#">Passengers</a><a href="#">Refunds</a></nav>
+  <span class="sp"></span><span class="clock" id="clock">21:42</span><button class="btn" id="add">+ Add ferry</button>
+</header>
+<div class="split">
+  <section class="board" aria-label="Departures">
+    <div class="bh"><h1>Departures</h1><small>Today · all jetties</small></div>
+    <div class="cols"><span>Time</span><span>Route · ferry</span><span style="text-align:right">Status</span></div>
+    <div id="deps"></div>
+    <p class="note">Example data · positions estimated from the timetable</p>
+  </section>
+  <div class="right">
+    <section class="card mapc" id="map" aria-label="Route map"></section>
+    <div class="low">
+      <section class="card"><div class="ch"><h2 id="pt">Passengers</h2><button class="btn sec">Export</button></div>
+        <table><thead><tr><th>Passenger</th><th>Booking</th><th>Age</th><th>Ticket</th></tr></thead><tbody id="pax"></tbody></table></section>
+      <section class="card det" id="detail" aria-live="polite"></section>
+    </div>
+  </div>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <h2 style="margin:0">Add a ferry</h2>
+  <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Home route</label><select id="f5"><option>Mumbai ⇄ Mandwa</option><option>Andamans</option></select></div></div>
+  <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  <div class="acts" style="margin-top:16px"><button class="btn">Add ferry</button><button class="btn sec" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const W="#D3E4EC",L="#EFEBE2",LL="#D8D1C3",R="#E2531B";
+const ports={mum:[[262,370,"Ferry Wharf",-110,-4],[678,440,"Mandwa Jetty",14,4]],and:[[320,350,"Phoenix Bay Jetty",16,30],[650,175,"Havelock Jetty",16,5]]};
+const land={mum:`<path d="M150 0 L330 0 L350 120 L330 240 L300 330 L270 410 L240 460 L215 470 L200 420 L180 330 L160 200Z"/><path d="M620 0 L1000 0 L1000 600 L760 600 L720 540 L700 460 L670 410 L650 340 L670 260 L640 180 L620 100Z"/>`,and:`<path d="M140 140 L260 110 L320 170 L340 280 L300 390 L250 500 L180 540 L130 450 L110 320Z"/><path d="M640 80 L740 60 L800 120 L790 210 L720 260 L650 210 L620 140Z"/><path d="M590 330 L650 320 L670 360 L630 390 L585 375Z"/>`};
+const paths={mum:"M262 370 C380 380 520 440 678 440",and:"M320 350 C450 330 580 230 650 175"};
+const places={mum:`<text class="place" x="190" y="80">Mumbai</text><text class="place" x="800" y="120">Raigad</text>`,and:`<text class="place" x="150" y="230">South Andaman</text><text class="place" x="650" y="45">Swaraj Dweep</text>`};
+const DEPS=[["05:45","mum","Mandwa → Mumbai","MV Demo Wave · 24/24","s-sea","At sea",64,"Arrives 06:45 · 22 min left",[[2,"Meera Iyer","MI","SB7QW2MZ4D","61 · Female","meera@example.com","+91 98111 11111","Cabin seat 07","c-sea","Boarded"]]],["06:30","and","Phoenix Bay → Havelock","MV Demo Star · 2/180","s-ok","Boarding",4,"Departs in 8 min · Gate 2",[[0,"Asha Rao","AR","SBKH46K99Z","34 · Female","asha@example.com","+91 98000 00000","Deck","c-ok","Valid"],[1,"Kiran Rao","KR","SBKH46K99Z","8 · Male","asha@example.com","+91 98000 00000","Deck","c-ok","Valid"]]],["07:00","mum","Mumbai → Mandwa","MV Demo Wave · 21/24","s-warn","+20 min",0,"Delayed: waiting for inbound",[[3,"Rohan Das","RD","SBP3XH8K2N","27 · Male","rohan@example.com","+91 98222 22222","Deck","c-bad","Unpaid"]]],["09:30","and","Havelock → Phoenix Bay","MV Demo Star · 41/180","s-ok","On time",0,"Departs 09:30",[]]];
+let cur=1;
+function map(d){const r=d[1],moving=d[6]>0&&d[6]<100;document.getElementById("map").innerHTML=`<svg viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${d[2]} map"><rect width="1000" height="600" fill="${W}"/><g fill="none" stroke="#BFD6E1">${[...Array(8)].map((_,k)=>`<path d="M-50 ${60+k*60} Q250 ${30+k*60} 500 ${70+k*60} T1050 ${50+k*60}"/>`).join("")}</g><g fill="${L}" stroke="${LL}">${land[r]}</g>${places[r]}<path id="rt" d="${paths[r]}" fill="none" stroke="${R}" stroke-width="3" stroke-dasharray="8 6"/>${ports[r].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="#fff" stroke="#14171C" stroke-width="2.5"/><text class="port" x="${p[0]+p[3]}" y="${p[1]+p[4]}">${p[2]}</text>`).join("")}${moving?`<g><circle r="13" fill="#fff" stroke="${R}" stroke-width="3"><animateMotion dur="24s" repeatCount="indefinite"><mpath href="#rt"/></animateMotion></circle><circle r="5" fill="${R}"><animateMotion dur="24s" repeatCount="indefinite"><mpath href="#rt"/></animateMotion></circle></g>`:`<circle cx="${ports[r][0][0]}" cy="${ports[r][0][1]}" r="13" fill="#fff" stroke="${R}" stroke-width="3"/>`}</svg><div class="over"><b>${d[2]}</b><small>${d[3]}</small></div><div class="eta">${d[7]}</div>`;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.querySelectorAll("animateMotion").forEach(a=>a.remove())}
+function pax(d){const rows=d[8];document.getElementById("pt").textContent=`Passengers · ${d[0]} ${d[2]}`;const tb=document.getElementById("pax");
+  tb.innerHTML=rows.length?rows.map((p,i)=>`<tr data-i="${i}" tabindex="0" aria-selected="${i===0}"><td>${p[1]}</td><td class="mono">${p[3]}</td><td>${p[4].split(" ")[0]}</td><td><span class="chip ${p[8]}">${p[9]}</span></td></tr>`).join(""):`<tr><td colspan="4" style="color:var(--dim)">No passengers yet.</td></tr>`;
+  tb.querySelectorAll("tr[data-i]").forEach(tr=>{tr.onclick=()=>{det(rows[tr.dataset.i]);tb.querySelectorAll("tr").forEach(x=>x.setAttribute("aria-selected",x===tr))};tr.onkeydown=e=>{if(e.key==="Enter")tr.onclick()}});det(rows[0])}
+function det(p){document.getElementById("detail").innerHTML=p?`<h3>${p[1]}</h3><div style="color:var(--dim)">${p[4]}</div><dl><dt>Booking</dt><dd class="mono">${p[3]}</dd><dt>Email</dt><dd>${p[5]}</dd><dt>Mobile</dt><dd>${p[6]}</dd><dt>Class</dt><dd>${p[7]}</dd><dt>Ticket</dt><dd>${p[9]}</dd></dl><div class="acts"><button class="btn">Open booking</button><button class="btn sec">Reissue</button></div>`:`<p style="color:var(--dim);margin:0">Select a passenger.</p>`}
+function render(){document.getElementById("deps").innerHTML=DEPS.map((d,i)=>`<button class="dep" aria-pressed="${i===cur}" data-i="${i}"><span class="t">${d[0]}</span><span><b>${d[2]}</b><small>${d[3]}</small></span><span class="st ${d[4]}">${d[5]}</span><span class="pg"><i style="width:${d[6]}%"></i></span></button>`).join("");
+  document.querySelectorAll(".dep").forEach(b=>b.onclick=()=>{cur=+b.dataset.i;render()});map(DEPS[cur]);pax(DEPS[cur])}
+render();
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit"})+" IST"},1000);
+</script>
+</body>
+</html>

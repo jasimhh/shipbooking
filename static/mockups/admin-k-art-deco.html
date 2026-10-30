@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin K · Art Deco Liner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Limelight&family=Josefin+Sans:wght@300;400;600;700&display=swap">
+<style>
+  :root{--black:#0D0D0F;--onyx:#16161A;--onyx-2:#1E1E24;--gold:#C9A45C;--gold-2:#E9CF8F;--ivory:#EFE8D8;--dim:#A39C8C;--jade:#6FB59A;--ruby:#D46A6A}
+  *{box-sizing:border-box}body{margin:0;background:var(--black);color:var(--ivory);font:300 16px/1.55 "Josefin Sans",system-ui,sans-serif}
+  :focus-visible{outline:1px solid var(--gold-2);outline-offset:3px}
+  .frieze{height:34px;background:
+    radial-gradient(circle at 17px 34px,transparent 9px,var(--gold) 9.5px,var(--gold) 10.5px,transparent 11px),
+    radial-gradient(circle at 17px 34px,transparent 15px,var(--gold) 15.5px,var(--gold) 16.5px,transparent 17px),
+    linear-gradient(var(--black),var(--black));background-size:34px 34px;border-bottom:1px solid var(--gold)}
+  .app{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 34px)}@media(min-width:960px){.app{grid-template-columns:240px 1fr}}
+  aside{border-right:1px solid #3A3220;padding:28px 0;background:linear-gradient(180deg,var(--onyx),var(--black))}
+  .brand{text-align:center;margin:0 18px 26px;padding:16px 0;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);position:relative}
+  .brand::before,.brand::after{content:"";position:absolute;left:50%;width:10px;height:10px;background:var(--gold);transform:translateX(-50%) rotate(45deg)}
+  .brand::before{top:-6px}.brand::after{bottom:-6px}
+  .brand b{font:400 26px Limelight,serif;color:var(--gold-2);letter-spacing:.04em}.brand small{display:block;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+  nav a{display:block;text-align:center;padding:10px;color:var(--dim);text-decoration:none;font-weight:400;letter-spacing:.24em;text-transform:uppercase;font-size:13px}
+  nav a:hover{color:var(--ivory)}nav a[aria-current]{color:var(--gold-2)}nav a[aria-current]::before,nav a[aria-current]::after{content:"◆";font-size:8px;margin:0 10px;vertical-align:middle;color:var(--gold)}
+  main{padding:30px clamp(16px,3vw,44px) 60px;min-width:0}
+  .top{text-align:center;margin-bottom:26px}
+  .eyebrow{font-size:12px;letter-spacing:.5em;text-transform:uppercase;color:var(--gold)}
+  h1{font:400 clamp(34px,4.6vw,56px)/1.05 Limelight,serif;color:var(--gold-2);margin:8px 0;letter-spacing:.02em}
+  .rule{display:flex;align-items:center;gap:12px;justify-content:center;color:var(--gold)}.rule::before,.rule::after{content:"";height:1px;width:min(160px,25vw);background:linear-gradient(90deg,transparent,var(--gold))}.rule::after{transform:scaleX(-1)}
+  .note{font-size:13px;color:var(--dim);margin-top:10px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+  .kpi{border:1px solid #4A3F28;padding:18px 16px 16px;text-align:center;position:relative;background:var(--onyx);
+    clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)}
+  .kpi span{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}.kpi b{display:block;font:400 34px Limelight,serif;color:var(--gold-2);margin:4px 0}.kpi small{color:var(--jade);font-size:13px}
+  .grid{display:grid;gap:22px;grid-template-columns:1fr}@media(min-width:1180px){.grid{grid-template-columns:1.35fr 1fr}}
+  .panel{border:1px solid #4A3F28;background:var(--onyx)}
+  .ph{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #4A3F28;background:linear-gradient(90deg,rgba(201,164,92,.1),transparent)}
+  h2{font:400 22px Limelight,serif;color:var(--gold-2);margin:0;letter-spacing:.03em}h2 small{font:300 13px "Josefin Sans";color:var(--dim);margin-left:8px;letter-spacing:.06em}
+  .btn{font:600 13px "Josefin Sans";letter-spacing:.24em;text-transform:uppercase;border:1px solid var(--gold);background:var(--gold);color:var(--black);padding:10px 16px 8px;cursor:pointer}
+  .btn:hover{background:var(--gold-2)}.btn.ghost{background:transparent;color:var(--gold-2)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);text-align:left;padding:12px 18px}
+  td{padding:12px 18px;border-top:1px solid #2A2618}tbody tr:hover{background:var(--onyx-2)}
+  .r{text-align:right;font-variant-numeric:tabular-nums}
+  .st{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}.ok{color:var(--jade)}.warn{color:var(--gold-2)}.bad{color:var(--ruby)}
+  .st::before{content:"◆ ";font-size:9px}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:#262217!important}tr[aria-selected=true] td:first-child{color:var(--gold-2)}
+  .detail{padding:24px;text-align:center;background:radial-gradient(circle at 50% 0,rgba(201,164,92,.18),transparent 60%)}
+  .sun{display:block;margin:0 auto 8px}
+  .detail .ref{font-size:12px;letter-spacing:.4em;color:var(--gold)}.detail h3{font:400 34px Limelight,serif;color:var(--gold-2);margin:6px 0}
+  dl{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:18px 0;border-top:1px solid #4A3F28;text-align:left}
+  dl div{padding:10px 8px;border-bottom:1px solid #2A2618}dl div:nth-child(odd){border-right:1px solid #2A2618}dt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}dd{margin:2px 0 0}
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(440px,100%);background:var(--onyx);border-left:1px solid var(--gold);padding:28px;transform:translateX(100%);transition:transform .25s;z-index:5;overflow:auto}
+  .drawer.open{transform:none}
+  label{display:block;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin:16px 0 6px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:400 16px "Josefin Sans";color:var(--ivory);background:var(--black);border:0;border-bottom:1px solid var(--gold);padding:9px 4px;color-scheme:dark}
+  .drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-bottom-color:var(--gold-2);background:#121212}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="frieze" aria-hidden="true"></div>
+<div class="app">
+  <aside>
+    <div class="brand"><b>Ship Booking</b><small>Grand saloon</small></div>
+    <nav aria-label="Admin"><a href="#">Overview</a><a href="#">Sailings</a><a href="#" aria-current="page">Ferries</a><a href="#">Bookings</a><a href="#">Passengers</a><a href="#">Refunds</a><a href="#">Support</a><a href="#">Audit</a></nav>
+  </aside>
+  <main>
+    <div class="top"><div class="eyebrow">Friday · 30 October · 2026</div><h1>The Fleet &amp; Its Passengers</h1><div class="rule">◆</div><div class="note">Example data · fictional ferries and names</div></div>
+    <div class="kpis">
+      <div class="kpi"><span>Sailings today</span><b>14</b><small>2 delayed</small></div>
+      <div class="kpi"><span>Passengers</span><b>612</b><small>48 more than last Friday</small></div>
+      <div class="kpi"><span>Received</span><b>₹2,84,310</b><small>3 refunds waiting</small></div>
+      <div class="kpi"><span>Requests</span><b>7</b><small>1 grievance</small></div>
+    </div>
+    <div class="grid">
+      <div style="display:grid;gap:22px">
+        <section class="panel"><div class="ph"><h2>The Fleet<small>3 vessels</small></h2><button class="btn" id="add">Add ferry</button></div>
+          <table><thead><tr><th>Ferry</th><th>Operator</th><th>Seating</th><th class="r">Capacity</th><th>Status</th></tr></thead><tbody>
+            <tr><td>MV Demo Star</td><td>Demo Ferries</td><td>By capacity</td><td class="r">180</td><td><span class="st ok">In service</span></td></tr>
+            <tr><td>MV Demo Wave</td><td>Demo Ferries</td><td>Numbered</td><td class="r">24</td><td><span class="st ok">In service</span></td></tr>
+            <tr><td>MV Example Breeze</td><td>Example Lines</td><td>By capacity</td><td class="r">320</td><td><span class="st warn">In refit</span></td></tr>
+          </tbody></table></section>
+        <section class="panel"><div class="ph"><h2>Passenger List<small>06:30 · Phoenix Bay → Havelock</small></h2><button class="btn ghost">Download</button></div>
+          <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Ticket</th></tr></thead><tbody>
+            <tr data-pax="0" tabindex="0" aria-selected="true"><td>Asha Rao</td><td>SBKH46K99Z</td><td class="r">34</td><td><span class="st ok">Valid</span></td></tr>
+            <tr data-pax="1" tabindex="0"><td>Kiran Rao</td><td>SBKH46K99Z</td><td class="r">8</td><td><span class="st ok">Valid</span></td></tr>
+            <tr data-pax="2" tabindex="0"><td>Meera Iyer</td><td>SB7QW2MZ4D</td><td class="r">61</td><td><span class="st warn">Boarded</span></td></tr>
+            <tr data-pax="3" tabindex="0"><td>Rohan Das</td><td>SBP3XH8K2N</td><td class="r">27</td><td><span class="st bad">Unpaid</span></td></tr>
+          </tbody></table></section>
+      </div>
+      <section class="panel"><div class="ph"><h2>Passenger</h2></div><div class="detail" id="detail" aria-live="polite"></div></section>
+    </div>
+  </main>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <h2 style="font-size:28px;text-align:center">Christen a Ferry</h2><div class="rule" style="margin:8px 0 6px">◆</div>
+  <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+  <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3"></div></div>
+  <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Type</label><input id="f5"></div></div>
+  <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  <div class="actions"><button class="btn">Add to fleet</button><button class="btn ghost" type="button" id="close">Cancel</button></div>
+</form>
+<script>
+const sun='<svg class="sun" width="64" height="34" viewBox="0 0 64 34" aria-hidden="true"><g stroke="#C9A45C" stroke-width="1"><path d="M32 34 V4"/><path d="M32 34 L10 10"/><path d="M32 34 L54 10"/><path d="M32 34 L2 24"/><path d="M32 34 L62 24"/><path d="M32 34 L20 4"/><path d="M32 34 L44 4"/></g><path d="M18 34 A14 14 0 0 1 46 34" fill="#0D0D0F" stroke="#E9CF8F"/></svg>';
+const people=[["Asha Rao","SBKH46K99Z","34 · Female","asha@example.com","+91 98000 00000","Deck","Valid","₹975 paid"],["Kiran Rao","SBKH46K99Z","8 · Male","asha@example.com","+91 98000 00000","Deck","Valid","₹975 paid"],["Meera Iyer","SB7QW2MZ4D","61 · Female","meera@example.com","+91 98111 11111","Cabin seat","Boarded 06:12","₹1,547.50 paid"],["Rohan Das","SBP3XH8K2N","27 · Male","rohan@example.com","+91 98222 22222","Deck","None yet","Hold until 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`${sun}<span class="ref">${p[1]}</span><h3>${p[0]}</h3><div style="color:var(--dim)">${p[2]}</div><dl><div><dt>Email</dt><dd>${p[3]}</dd></div><div><dt>Mobile</dt><dd>${p[4]}</dd></div><div><dt>Class</dt><dd>${p[5]}</dd></div><div><dt>Ticket</dt><dd>${p[6]}</dd></div><div><dt>Payment</dt><dd>${p[7]}</dd></div></dl><div class="actions"><button class="btn">Open booking</button><button class="btn ghost">Reissue ticket</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+</script>
+</body>
+</html>

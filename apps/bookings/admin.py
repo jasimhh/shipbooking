@@ -55,6 +55,48 @@ class BookingAdmin(admin.ModelAdmin):
         messages.success(request, f"Reissued {n} ticket(s). Only confirmed bookings get tickets.")
 
 
+@admin.register(BookingPassenger)
+class PassengerAdmin(admin.ModelAdmin):
+    """Every passenger across all bookings, searchable. Read-only: passenger details change only via the booking."""
+
+    list_display = ["full_name", "age", "gender", "booking_link", "sailing", "booking_status", "contact"]
+    list_filter = ["booking__status", "booking__schedule__route__operator", "gender"]
+    search_fields = ["full_name", "booking__reference", "booking__contact_email", "booking__contact_phone"]
+    list_select_related = ["booking__schedule__route__origin", "booking__schedule__route__destination"]
+    readonly_fields = ["booking", "full_name", "age", "gender"]
+
+    @admin.display(description="Booking", ordering="booking__reference")
+    def booking_link(self, p):
+        from django.urls import reverse
+        from django.utils.html import format_html
+        return format_html('<a href="{}">{}</a>', reverse("admin:bookings_booking_change", args=[p.booking_id]), p.booking.reference)
+
+    @admin.display(description="Sailing", ordering="booking__schedule__departure_at")
+    def sailing(self, p):
+        return p.booking.schedule
+
+    @admin.display(description="Status")
+    def booking_status(self, p):
+        return p.booking.get_status_display()
+
+    @admin.display(description="Contact")
+    def contact(self, p):
+        return f"{p.booking.contact_email} · {p.booking.contact_phone}"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        AuditLog.record(request.user, "passengers.listed", request.user, {"query": request.GET.get("q", "")}, request)
+        return super().changelist_view(request, extra_context)
+
+
 @admin.register(CancellationRequest)
 class CancellationRequestAdmin(AuditedAdmin):
     list_display = ["booking", "status", "eligible_refund_amount", "policy_version", "created_at", "decided_by"]

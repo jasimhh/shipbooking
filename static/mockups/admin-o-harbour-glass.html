@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin O · Harbour Glass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{--bg:#F2F2F7;--group:#FFFFFF;--side:#EBEBF0;--ink:#1C1C1E;--dim:#6C6C70;--faint:#AEAEB2;--sep:rgba(60,60,67,.18);--blue:#0A6CFF;--green:#22A35A;--orange:#E07A00;--red:#E5383B;--fill:rgba(118,118,128,.12)}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  :focus-visible{outline:3px solid rgba(10,108,255,.5);outline-offset:2px;border-radius:8px}
+  svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .split{display:grid;grid-template-columns:1fr;min-height:100vh}@media(min-width:900px){.split{grid-template-columns:240px 360px 1fr}}
+  .pane{min-width:0;border-right:1px solid var(--sep);display:flex;flex-direction:column}
+  .bar{position:sticky;top:0;z-index:2;padding:12px 16px 8px;background:rgba(242,242,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+  .side{background:var(--side)}.side .bar{background:rgba(235,235,240,.85)}
+  .large{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:6px 0 10px}
+  .search{display:flex;align-items:center;gap:6px;background:var(--fill);border-radius:10px;padding:7px 10px;color:var(--dim)}
+  .search input{border:0;background:none;font:inherit;flex:1;min-width:0;color:var(--ink)}.search input:focus{outline:none}
+  .side nav{padding:4px 10px}
+  .side a{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500}
+  .side a .ic{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;color:#fff}
+  .side a .ic svg{width:16px;height:16px}
+  .side a[aria-current]{background:var(--blue);color:#fff}
+  .side a .n{margin-left:auto;color:var(--dim);font-size:14px}.side a[aria-current] .n{color:#fff}
+  .note{margin:10px 16px;font-size:12px;color:var(--orange);font-weight:600}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--fill);border-radius:9px;padding:2px;margin-top:10px}
+  .seg button{font:600 13px Inter;border:0;background:none;border-radius:7px;padding:6px;color:var(--ink);cursor:pointer}.seg button[aria-pressed=true]{background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.12)}
+  .hdr{font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.02em;padding:18px 32px 6px}
+  .group{background:var(--group);border-radius:12px;margin:0 16px;overflow:hidden}
+  .cell{display:flex;align-items:center;gap:12px;padding:11px 16px;position:relative;cursor:pointer;width:100%;border:0;background:none;font:inherit;color:inherit;text-align:left}
+  .cell+.cell::before{content:"";position:absolute;top:0;left:60px;right:0;height:1px;background:var(--sep)}
+  .cell:hover{background:#F7F7FA}.cell[aria-current=true]{background:#E7F0FF}
+  .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;flex:none}
+  .cell .t{flex:1;min-width:0}.cell .t b{display:block;font-weight:600}.cell .t small{color:var(--dim)}
+  .tag{font-size:12px;font-weight:600;border-radius:6px;padding:2px 8px}.ok{background:#E3F6EA;color:var(--green)}.warn{background:#FDEFD9;color:var(--orange)}.bad{background:#FDE2E2;color:var(--red)}
+  .chev{color:var(--faint)}
+  .ferry .ic2{width:36px;height:36px;border-radius:9px;background:#E7F0FF;color:var(--blue);display:grid;place-items:center;flex:none}
+  .add{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:600;padding:12px 16px;border:0;background:none;font-size:15px;cursor:pointer}
+  .detail{background:var(--bg)}
+  .hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 16px 10px}
+  .hero .av{width:84px;height:84px;font-size:30px}.hero h2{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:12px 0 2px}.hero p{color:var(--dim);margin:0}
+  .quick{display:flex;gap:10px;justify-content:center;margin:16px 0 4px;flex-wrap:wrap}
+  .quick button{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:84px;background:var(--group);border:0;border-radius:12px;padding:10px 12px;color:var(--blue);font:600 12px Inter;cursor:pointer}
+  .row{display:flex;justify-content:space-between;gap:16px;padding:12px 16px;position:relative}.row+.row::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
+  .row span{color:var(--dim)}.row b{font-weight:500;text-align:right}
+  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;z-index:5}
+  .sheet.open{opacity:1;pointer-events:auto}
+  .sheet form{width:min(560px,100%);max-height:92vh;overflow:auto;background:var(--bg);border-radius:14px 14px 0 0;padding-bottom:20px;transform:translateY(40px);transition:transform .25s}
+  .sheet.open form{transform:none}
+  .sh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px}.sh b{font-size:17px}.sh button{border:0;background:none;color:var(--blue);font:500 16px Inter;cursor:pointer}.sh button.done{font-weight:700}
+  .field{display:flex;align-items:center;gap:12px;padding:4px 16px;position:relative;min-height:46px}.field+.field::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
+  .field label{width:110px;flex:none}.field input,.field select,.field textarea{flex:1;border:0;background:none;font:inherit;padding:10px 0;text-align:right;color:var(--ink)}.field textarea{text-align:left}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none}
+  @media(prefers-reduced-motion:reduce){.sheet,.sheet form{transition:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="ship" viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.4 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.9 5.3 2.8 7.8"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/></symbol>
+  <symbol id="tix" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></symbol>
+  <symbol id="users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></symbol>
+  <symbol id="ref" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+</defs></svg>
+<div class="split">
+  <div class="pane side">
+    <div class="bar"><div class="large">Ship Booking</div><div class="search"><svg class="i"><use href="#search"/></svg><input aria-label="Search everything" placeholder="Search"></div></div>
+    <nav aria-label="Admin">
+      <a href="#"><span class="ic" style="background:#636366"><svg class="i"><use href="#grid"/></svg></span>Today</a>
+      <a href="#"><span class="ic" style="background:#0A6CFF"><svg class="i"><use href="#cal"/></svg></span>Sailings<span class="n">14</span></a>
+      <a href="#" aria-current="page"><span class="ic" style="background:#30B0C7"><svg class="i"><use href="#ship"/></svg></span>Ferries &amp; passengers</a>
+      <a href="#"><span class="ic" style="background:#22A35A"><svg class="i"><use href="#tix"/></svg></span>Bookings</a>
+      <a href="#"><span class="ic" style="background:#E07A00"><svg class="i"><use href="#ref"/></svg></span>Refunds<span class="n">3</span></a>
+      <a href="#"><span class="ic" style="background:#E5383B"><svg class="i"><use href="#msg"/></svg></span>Support<span class="n">7</span></a>
+    </nav>
+    <p class="note">Example data · fictional</p>
+  </div>
+
+  <div class="pane">
+    <div class="bar"><div class="large" style="font-size:24px">06:30 to Havelock</div><div class="seg" role="group" aria-label="Show"><button aria-pressed="true">Passengers</button><button aria-pressed="false">Not boarded</button><button aria-pressed="false">Issues</button></div></div>
+    <div class="hdr">Passengers · 4</div>
+    <div class="group" id="list">
+      <button class="cell" data-pax="0" aria-current="true"><span class="av" style="background:#0A6CFF">AR</span><span class="t"><b>Asha Rao</b><small>SBKH46K99Z · 34</small></span><span class="tag ok">Valid</span><svg class="i chev"><use href="#chev"/></svg></button>
+      <button class="cell" data-pax="1"><span class="av" style="background:#0A6CFF">KR</span><span class="t"><b>Kiran Rao</b><small>SBKH46K99Z · 8</small></span><span class="tag ok">Valid</span><svg class="i chev"><use href="#chev"/></svg></button>
+      <button class="cell" data-pax="2"><span class="av" style="background:#22A35A">MI</span><span class="t"><b>Meera Iyer</b><small>SB7QW2MZ4D · 61</small></span><span class="tag warn">Boarded</span><svg class="i chev"><use href="#chev"/></svg></button>
+      <button class="cell" data-pax="3"><span class="av" style="background:#E5383B">RD</span><span class="t"><b>Rohan Das</b><small>SBP3XH8K2N · 27</small></span><span class="tag bad">Unpaid</span><svg class="i chev"><use href="#chev"/></svg></button>
+    </div>
+    <div class="hdr">Ferries · 3</div>
+    <div class="group">
+      <div class="cell ferry"><span class="ic2"><svg class="i"><use href="#ship"/></svg></span><span class="t"><b>MV Demo Star</b><small>Demo Ferries · 180 by capacity</small></span><span class="tag ok">In service</span></div>
+      <div class="cell ferry"><span class="ic2"><svg class="i"><use href="#ship"/></svg></span><span class="t"><b>MV Demo Wave</b><small>Demo Ferries · 24 seats</small></span><span class="tag ok">In service</span></div>
+      <div class="cell ferry"><span class="ic2"><svg class="i"><use href="#ship"/></svg></span><span class="t"><b>MV Example Breeze</b><small>Example Lines · 320</small></span><span class="tag warn">Repairs</span></div>
+      <button class="add" id="add"><svg class="i"><use href="#plus"/></svg>Add ferry</button>
+    </div>
+  </div>
+
+  <div class="pane detail" id="detail" aria-live="polite"></div>
+</div>
+<div class="sheet" id="drawer"><form aria-label="Add a ferry" onsubmit="return false">
+  <div class="sh"><button type="button" id="close">Cancel</button><b>New Ferry</b><button class="done">Add</button></div>
+  <div class="hdr" style="padding-top:4px">Ferry</div>
+  <div class="group">
+    <div class="field"><label for="f1">Name</label><input id="f1" placeholder="MV …"></div>
+    <div class="field"><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div>
+    <div class="field"><label for="f3">IMO number</label><input id="f3" placeholder="Optional"></div>
+    <div class="field"><label for="f5">Type</label><input id="f5" placeholder="Catamaran"></div>
+  </div>
+  <div class="hdr">Seating</div>
+  <div class="group">
+    <div class="field"><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div>
+    <div class="field"><label for="f6">Classes</label><textarea id="f6" rows="2">Deck · 120, Seater · 60</textarea></div>
+  </div>
+</form></div>
+<script>
+const people=[["Asha Rao","AR","#0A6CFF","34 · Female","SBKH46K99Z","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","₹975 paid"],["Kiran Rao","KR","#0A6CFF","8 · Male","SBKH46K99Z","asha@example.com","+91 98000 00000","Deck","Valid, not boarded","₹975 paid"],["Meera Iyer","MI","#22A35A","61 · Female","SB7QW2MZ4D","meera@example.com","+91 98111 11111","Cabin seat 07","Boarded 06:12","₹1,547.50 paid"],["Rohan Das","RD","#E5383B","27 · Male","SBP3XH8K2N","rohan@example.com","+91 98222 22222","Deck","No ticket","Unpaid · hold until 21:40"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`<div class="hero"><span class="av" style="background:${p[2]}">${p[1]}</span><h2>${p[0]}</h2><p>${p[3]}</p><div class="quick"><button><svg class="i"><use href="#phone"/></svg>Call</button><button><svg class="i"><use href="#mail"/></svg>Email</button><button><svg class="i"><use href="#tix"/></svg>Reissue</button></div></div><div class="hdr">Booking</div><div class="group"><div class="row"><span>Reference</span><b>${p[4]}</b></div><div class="row"><span>Class</span><b>${p[7]}</b></div><div class="row"><span>Ticket</span><b>${p[8]}</b></div><div class="row"><span>Payment</span><b>${p[9]}</b></div></div><div class="hdr">Contact</div><div class="group"><div class="row"><span>Email</span><b>${p[5]}</b></div><div class="row"><span>Mobile</span><b>${p[6]}</b></div></div>`;document.querySelectorAll("[data-pax]").forEach(c=>c.setAttribute("aria-current",c.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(c=>c.onclick=()=>show(c.dataset.pax));show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");dr.onclick=e=>{if(e.target===dr)dr.classList.remove("open")};
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b)));
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin N · Daylight Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root{--bg:#F6F7F9;--card:#FFFFFF;--ink:#0F1729;--ink-2:#475467;--faint:#98A2B3;--line:#EAECF0;--line-2:#D0D5DD;--blue:#1A56DB;--blue-50:#EBF2FF;--teal:#0E9384;--green:#067647;--green-50:#ECFDF3;--amber:#B54708;--amber-50:#FFFAEB;--red:#B42318;--red-50:#FEF3F2}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .app{display:grid;grid-template-columns:1fr;min-height:100vh}@media(min-width:960px){.app{grid-template-columns:248px 1fr}}
+  aside{background:var(--card);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:2px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;padding:0 8px 18px}
+  .logo span{width:30px;height:30px;border-radius:8px;background:var(--blue);display:grid;place-items:center;color:#fff}
+  aside a{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:8px;color:var(--ink-2);text-decoration:none;font-weight:500}
+  aside a:hover{background:var(--bg);color:var(--ink)}aside a[aria-current]{background:var(--blue-50);color:var(--blue)}
+  aside a .n{margin-left:auto;font-size:12px;font-weight:600;background:var(--red-50);color:var(--red);border-radius:999px;padding:0 8px}
+  .me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px;border-top:1px solid var(--line)}
+  .me i{width:32px;height:32px;border-radius:50%;background:#DCE7FE;color:var(--blue);display:grid;place-items:center;font-style:normal;font-weight:700}
+  .me small{display:block;color:var(--faint)}
+  main{padding:24px clamp(16px,3vw,32px) 60px;min-width:0}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0}.top p{color:var(--ink-2);margin:4px 0 0}
+  .btns{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;font:600 14px Inter;border:1px solid var(--blue);background:var(--blue);color:#fff;padding:9px 14px;border-radius:8px;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+  .btn.sec{background:var(--card);color:var(--ink);border-color:var(--line-2)}
+  .seg{display:inline-flex;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:var(--card)}
+  .seg button{font:600 13px Inter;border:0;background:none;padding:8px 12px;color:var(--ink-2);cursor:pointer}.seg button+button{border-left:1px solid var(--line-2)}.seg button[aria-pressed=true]{background:var(--bg);color:var(--ink)}
+  .note{display:inline-block;font-size:12px;font-weight:600;background:var(--amber-50);color:var(--amber);padding:3px 10px;border-radius:999px;margin-bottom:16px}
+  .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .kpi{padding:18px}.kpi span{color:var(--ink-2);font-weight:500}.kpi b{display:block;font-size:28px;font-weight:700;letter-spacing:-.02em;margin:6px 0}
+  .delta{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px}.d-up{background:var(--green-50);color:var(--green)}.d-dn{background:var(--red-50);color:var(--red)}
+  .kpi small{color:var(--faint);margin-left:6px}
+  .charts{display:grid;gap:16px;grid-template-columns:1fr;margin-bottom:20px}@media(min-width:1100px){.charts{grid-template-columns:1.6fr 1fr}}
+  .ch{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 0;gap:10px;flex-wrap:wrap}
+  h2{font-size:16px;font-weight:600;margin:0}.ch p{color:var(--ink-2);margin:2px 0 0;font-size:13px}
+  .legend{display:flex;gap:14px;font-size:13px;color:var(--ink-2)}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .chart{padding:8px 18px 14px}.chart svg{display:block;width:100%;height:auto}
+  .axis{font:500 11px "JetBrains Mono";fill:var(--faint)}
+  .grid2{display:grid;gap:16px;grid-template-columns:1fr}@media(min-width:1180px){.grid2{grid-template-columns:1.6fr 1fr}}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:12px;font-weight:600;color:var(--ink-2);text-align:left;padding:12px 18px;background:#F9FAFB;border-bottom:1px solid var(--line)}
+  td{padding:14px 18px;border-bottom:1px solid var(--line)}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#FCFCFD}
+  .r{text-align:right;font-variant-numeric:tabular-nums}.mono{font:500 12px "JetBrains Mono";color:var(--ink-2)}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px}.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .b-ok{background:var(--green-50);color:var(--green)}.b-warn{background:var(--amber-50);color:var(--amber)}.b-bad{background:var(--red-50);color:var(--red)}.b-n{background:#F2F4F7;color:var(--ink-2)}
+  .who{display:flex;align-items:center;gap:10px}.who i{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:12px}.who small{display:block;color:var(--faint)}
+  tr[data-pax]{cursor:pointer}tr[aria-selected=true]{background:var(--blue-50)!important}
+  .profile{padding:20px}.profile .who i{width:48px;height:48px;font-size:16px}.profile h3{font-size:18px;margin:0}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.facts div{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.facts span{font-size:12px;color:var(--faint)}.facts b{display:block;font-weight:600;font-size:14px}
+  .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(460px,100%);background:var(--card);border-left:1px solid var(--line);box-shadow:-24px 0 48px rgba(16,24,40,.12);transform:translateX(100%);transition:transform .2s;z-index:5;display:flex;flex-direction:column}
+  .drawer.open{transform:none}.dh{padding:20px;border-bottom:1px solid var(--line)}.dh p{color:var(--ink-2);margin:4px 0 0}.db{padding:4px 20px 20px;overflow:auto;flex:1}.df{padding:16px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+  label{display:block;font-weight:500;margin:14px 0 6px}
+  .drawer input,.drawer select,.drawer textarea{width:100%;font:inherit;border:1px solid var(--line-2);border-radius:8px;padding:9px 12px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+  .drawer input:focus,.drawer select:focus,.drawer textarea:focus{outline:none;border-color:#84ADFF;box-shadow:0 0 0 4px #E0EAFF}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="ship" viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.4 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.9 5.3 2.8 7.8"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/></symbol>
+  <symbol id="tix" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></symbol>
+  <symbol id="users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+  <symbol id="ref" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+</defs></svg>
+<div class="app">
+  <aside aria-label="Admin">
+    <div class="logo"><span><svg class="i"><use href="#ship"/></svg></span>Ship Booking</div>
+    <a href="#"><svg class="i"><use href="#grid"/></svg>Dashboard</a>
+    <a href="#"><svg class="i"><use href="#cal"/></svg>Sailings</a>
+    <a href="#" aria-current="page"><svg class="i"><use href="#ship"/></svg>Ferries</a>
+    <a href="#"><svg class="i"><use href="#tix"/></svg>Bookings</a>
+    <a href="#"><svg class="i"><use href="#users"/></svg>Passengers</a>
+    <a href="#"><svg class="i"><use href="#ref"/></svg>Refunds<span class="n">3</span></a>
+    <a href="#"><svg class="i"><use href="#msg"/></svg>Support<span class="n">7</span></a>
+    <a href="#"><svg class="i"><use href="#chart"/></svg>Reports</a>
+    <div class="me"><i>AD</i><div><b>Admin</b><small>admin@example.com</small></div></div>
+  </aside>
+  <main>
+    <div class="top">
+      <div><h1>Ferries and passengers</h1><p>How the fleet and today's sailings are doing.</p></div>
+      <div class="btns"><div class="seg" role="group" aria-label="Period"><button aria-pressed="false">Today</button><button aria-pressed="true">7 days</button><button aria-pressed="false">30 days</button></div><button class="btn sec"><svg class="i"><use href="#dl"/></svg>Export</button><button class="btn" id="add"><svg class="i"><use href="#plus"/></svg>Add ferry</button></div>
+    </div>
+    <span class="note">Example data · fictional ferries and passengers</span>
+    <div class="cards">
+      <div class="card kpi"><span>Passengers</span><b>3,912</b><span class="delta d-up">↑ 8.5%</span><small>vs previous 7 days</small></div>
+      <div class="card kpi"><span>Revenue</span><b>₹18,42,600</b><span class="delta d-up">↑ 12.1%</span><small>vs previous 7 days</small></div>
+      <div class="card kpi"><span>Average load</span><b>71%</b><span class="delta d-dn">↓ 3 pts</span><small>vs previous 7 days</small></div>
+      <div class="card kpi"><span>Refunds</span><b>₹22,480</b><span class="delta d-dn">↑ 2 refunds</span><small>vs previous 7 days</small></div>
+    </div>
+    <div class="charts">
+      <section class="card"><div class="ch"><div><h2>Passengers per day</h2><p>Last 7 days, both routes</p></div><div class="legend"><span><i style="background:#1A56DB"></i>Mumbai–Mandwa</span><span><i style="background:#0E9384"></i>Port Blair–Havelock</span></div></div>
+        <div class="chart"><svg viewBox="0 0 600 220" role="img" aria-label="Passengers per day: Mumbai–Mandwa rising from 300 to 380, Port Blair–Havelock from 180 to 232">
+          <g stroke="#EAECF0"><path d="M40 20H590M40 70H590M40 120H590M40 170H590"/></g>
+          <g class="axis"><text x="0" y="24">600</text><text x="0" y="74">400</text><text x="0" y="124">200</text><text x="12" y="174">0</text>
+            <text x="48" y="200">Sat</text><text x="135" y="200">Sun</text><text x="222" y="200">Mon</text><text x="309" y="200">Tue</text><text x="396" y="200">Wed</text><text x="483" y="200">Thu</text><text x="560" y="200">Fri</text></g>
+          <path d="M60 95 L147 80 L234 104 L321 98 L408 90 L495 82 L572 75 L572 170 L60 170Z" fill="#1A56DB" opacity=".08"/>
+          <path d="M60 95 L147 80 L234 104 L321 98 L408 90 L495 82 L572 75" fill="none" stroke="#1A56DB" stroke-width="2.5"/>
+          <path d="M60 125 L147 118 L234 130 L321 126 L408 122 L495 116 L572 112" fill="none" stroke="#0E9384" stroke-width="2.5"/>
+          <circle cx="572" cy="75" r="4" fill="#1A56DB"/><circle cx="572" cy="112" r="4" fill="#0E9384"/>
+        </svg></div></section>
+      <section class="card"><div class="ch"><div><h2>Load by ferry today</h2><p>Places sold or held</p></div></div>
+        <div class="chart"><svg viewBox="0 0 320 220" role="img" aria-label="Load today: Demo Star 62 percent, Demo Wave 88 percent, Example Breeze out of service">
+          <g class="axis"><text x="0" y="40">MV Demo Star</text><text x="0" y="100">MV Demo Wave</text><text x="0" y="160">MV Example Breeze</text></g>
+          <rect x="0" y="48" width="300" height="14" rx="7" fill="#F2F4F7"/><rect x="0" y="48" width="186" height="14" rx="7" fill="#1A56DB"/><text class="axis" x="300" y="40" text-anchor="end">62%</text>
+          <rect x="0" y="108" width="300" height="14" rx="7" fill="#F2F4F7"/><rect x="0" y="108" width="264" height="14" rx="7" fill="#1A56DB"/><text class="axis" x="300" y="100" text-anchor="end">88%</text>
+          <rect x="0" y="168" width="300" height="14" rx="7" fill="#F2F4F7"/><text class="axis" x="300" y="160" text-anchor="end">Maintenance</text>
+        </svg></div></section>
+    </div>
+    <div class="grid2">
+      <section class="card"><div class="ch" style="padding-bottom:14px"><div><h2>Passengers · 06:30 Phoenix Bay → Havelock</h2><p>4 passengers · 2 bookings</p></div></div>
+        <table><thead><tr><th>Passenger</th><th>Booking</th><th class="r">Age</th><th>Ticket</th></tr></thead><tbody>
+          <tr data-pax="0" tabindex="0" aria-selected="true"><td><div class="who"><i style="background:#DCE7FE;color:#1A56DB">AR</i><div>Asha Rao<small>asha@example.com</small></div></div></td><td class="mono">SBKH46K99Z</td><td class="r">34</td><td><span class="badge b-ok">Valid</span></td></tr>
+          <tr data-pax="1" tabindex="0"><td><div class="who"><i style="background:#DCE7FE;color:#1A56DB">KR</i><div>Kiran Rao<small>asha@example.com</small></div></div></td><td class="mono">SBKH46K99Z</td><td class="r">8</td><td><span class="badge b-ok">Valid</span></td></tr>
+          <tr data-pax="2" tabindex="0"><td><div class="who"><i style="background:#D1FADF;color:#067647">MI</i><div>Meera Iyer<small>meera@example.com</small></div></div></td><td class="mono">SB7QW2MZ4D</td><td class="r">61</td><td><span class="badge b-n">Boarded</span></td></tr>
+          <tr data-pax="3" tabindex="0"><td><div class="who"><i style="background:#FEE4E2;color:#B42318">RD</i><div>Rohan Das<small>rohan@example.com</small></div></div></td><td class="mono">SBP3XH8K2N</td><td class="r">27</td><td><span class="badge b-bad">Unpaid</span></td></tr>
+        </tbody></table></section>
+      <section class="card profile" id="detail" aria-live="polite"></section>
+    </div>
+  </main>
+</div>
+<form class="drawer" id="drawer" aria-label="Add a ferry" onsubmit="return false">
+  <div class="dh"><h2 style="font-size:18px">Add a ferry</h2><p>It appears in the fleet once saved. Add sailings for it afterwards.</p></div>
+  <div class="db">
+    <label for="f1">Ferry name</label><input id="f1" placeholder="MV …">
+    <div class="row2"><div><label for="f2">Operator</label><select id="f2"><option>Demo Ferries</option><option>Example Lines</option></select></div><div><label for="f3">IMO number</label><input id="f3" placeholder="Optional"></div></div>
+    <div class="row2"><div><label for="f4">Seating</label><select id="f4"><option>By capacity</option><option>Numbered seats</option></select></div><div><label for="f5">Type</label><input id="f5" placeholder="Catamaran"></div></div>
+    <label for="f6">Classes and capacity</label><textarea id="f6" rows="3">Deck · 120
+Seater · 60</textarea>
+  </div>
+  <div class="df"><button class="btn sec" type="button" id="close">Cancel</button><button class="btn">Save ferry</button></div>
+</form>
+<script>
+const people=[["Asha Rao","AR","#DCE7FE","#1A56DB","SBKH46K99Z","34 · Female","+91 98000 00000","Deck","₹975 paid","Valid"],["Kiran Rao","KR","#DCE7FE","#1A56DB","SBKH46K99Z","8 · Male","+91 98000 00000","Deck","₹975 paid","Valid"],["Meera Iyer","MI","#D1FADF","#067647","SB7QW2MZ4D","61 · Female","+91 98111 11111","Cabin seat 07","₹1,547.50 paid","Boarded 06:12"],["Rohan Das","RD","#FEE4E2","#B42318","SBP3XH8K2N","27 · Male","+91 98222 22222","Deck","Unpaid · hold 21:40","None"]];
+const d=document.getElementById("detail");
+function show(i){const p=people[i];d.innerHTML=`<div class="who"><i style="background:${p[2]};color:${p[3]}">${p[1]}</i><div><h3>${p[0]}</h3><small>${p[5]}</small></div></div><div class="facts"><div><span>Booking</span><b class="mono">${p[4]}</b></div><div><span>Mobile</span><b>${p[6]}</b></div><div><span>Class</span><b>${p[7]}</b></div><div><span>Ticket</span><b>${p[9]}</b></div><div style="grid-column:1/-1"><span>Payment</span><b>${p[8]}</b></div></div><div class="acts"><button class="btn">Open booking</button><button class="btn sec">Reissue ticket</button></div>`;document.querySelectorAll("[data-pax]").forEach(r=>r.setAttribute("aria-selected",r.dataset.pax==i))}
+document.querySelectorAll("[data-pax]").forEach(r=>{r.onclick=()=>show(r.dataset.pax);r.onkeydown=e=>{if(e.key==="Enter")show(r.dataset.pax)}});show(0);
+const dr=document.getElementById("drawer");document.getElementById("add").onclick=()=>{dr.classList.add("open");dr.querySelector("input").focus()};document.getElementById("close").onclick=()=>dr.classList.remove("open");
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b)));
+</script>
+</body>
+</html>
