@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.common import TimeStampedModel
@@ -42,6 +43,10 @@ class OperatorMembership(TimeStampedModel):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["operator", "user"], name="uniq_operator_member")]
+
+    def clean(self):
+        if self.user_id and self.user.role != "operator":
+            raise ValidationError({"user": "Only users with the Operator role can be operator members."})
 
     def __str__(self):
         return f"{self.user} @ {self.operator}"

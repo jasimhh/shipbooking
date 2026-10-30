@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, Q
 
@@ -32,6 +33,10 @@ class Route(TimeStampedModel):
             models.CheckConstraint(condition=~Q(origin=F("destination")), name="route_ports_differ"),
             models.UniqueConstraint(fields=["operator", "origin", "destination"], name="uniq_operator_route"),
         ]
+
+    def clean(self):
+        if self.origin_id and self.origin_id == self.destination_id:
+            raise ValidationError({"destination": "Destination must be different from the origin."})
 
     def __str__(self):
         return f"{self.origin.code} → {self.destination.code}"

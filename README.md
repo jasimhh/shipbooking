@@ -2,7 +2,7 @@
 
 Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 3 of 10** done: schema, public site, and accounts (register, email confirmation, sign-in with lockout, password reset/change, profile, roles and operator-scoped permissions). Booking and payment come in Phases 5 and 6.
+Status: **Phase 4 of 10** done: schema, public site, accounts and roles, and operations management (ports, routes, vessels, seats, sailings, fares, capacity) for platform admins and operator staff. Booking and payment come in Phases 5 and 6.
 
 ## Setup (Windows)
 
@@ -29,6 +29,23 @@ Help-centre guides, the About page, FAQs and service announcements are edited in
 - Roles: passenger, operator, support staff, administrator. Setting a user's role to administrator also gives them access to `/admin/`. Role and access changes made in the admin are written to the audit log.
 - Operator staff are linked to operators through **Operator memberships**, with per-member "can edit schedules" and "can view manifests" switches. `apps/accounts/permissions.py` has the server-side checks every protected view must use: `role_required`, `operators_for`, `can_edit_schedules`, `can_view_manifest`.
 - Not built: two-factor sign-in (optional in the spec) and changing your email address (needs re-confirmation; currently via support).
+
+## Operations management
+
+**Platform admins** use `/admin/`:
+- Operators (verify or suspend with an action), their staff memberships, ports, routes, vessels with cabin classes and seats ("Create numbered seats" action for assigned-seating vessels), and sailings with their fares.
+- Sailings go live with the **Approve and publish** action. A sailing can't be published without fares, after departure, or for an unverified operator; a live sailing saved without fares drops back to draft.
+- Every create, edit and delete in these screens, including fare rows, is written to the audit log.
+
+**Operator staff** use `/operator/` (same sign-in as the main site):
+- They only ever see their own operator's vessels, routes and sailings. Vessels and routes are view-only.
+- Staff with "can edit schedules" can create sailings and fares as drafts and submit them for approval. Only platform admins publish.
+- On a live sailing they can only report a delay or cancellation and add a note; times, route and vessel are locked.
+- Staff can't delete anything; cancel instead.
+
+Rules checked on every save: route and vessel belong to the same operator; a vessel can't be on two sailings at overlapping times (cancelled ones don't count); arrival after departure; booking closes before departure; a fare's cabin class belongs to the sailing's vessel; fare capacity defaults to the cabin class, can't exceed it, and can't drop below places already held or sold.
+
+Not built yet: creating repeating sailings in bulk (each sailing is added one at a time) and passenger lists (Phase 8, once bookings exist).
 
 ## Tests
 
