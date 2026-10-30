@@ -1,0 +1,54 @@
+/* Django admin in the Ship Booking "Blueprint harbour" design. Night = admin "dark", day = admin "light". */
+html, html[data-theme="dark"], html[data-theme="auto"] {
+  color-scheme: dark;
+  --primary: #123156; --secondary: #0C2541; --accent: #FFC845; --primary-fg: #EAF3FB;
+  --body-fg: #EAF3FB; --body-bg: #0F2C4C; --body-quiet-color: #9DB8D3; --body-medium-color: #C9DAEA; --body-loud-color: #FFFFFF;
+  --header-color: #9DB8D3; --header-branding-color: #FFC845; --header-bg: #0C2541; --header-link-color: #EAF3FB;
+  --breadcrumbs-fg: #9DB8D3; --breadcrumbs-link-fg: #FFC845; --breadcrumbs-bg: #123156;
+  --link-fg: #FFC845; --link-hover-color: #FFE08A; --link-selected-fg: #FFC845;
+  --hairline-color: #24456B; --border-color: #2E4E72; --error-fg: #FF8E80;
+  --message-debug-bg: #123156; --message-info-bg: #12365E; --message-success-bg: #12382F; --message-warning-bg: #3A2F10; --message-error-bg: #3E1D25;
+  --darkened-bg: #0C2541; --selected-bg: #1B3D63; --selected-row: #33301A;
+  --button-fg: #1A1300; --button-bg: #FFC845; --button-hover-bg: #F5B71E; --default-button-bg: #FFC845; --default-button-hover-bg: #F5B71E;
+  --close-button-bg: #9DB8D3; --close-button-hover-bg: #C9DAEA; --delete-button-bg: #FF8E80; --delete-button-hover-bg: #FFB0A6;
+  --object-tools-fg: #1A1300; --object-tools-bg: #9DB8D3; --object-tools-hover-bg: #FFC845;
+  --grid: rgba(173, 214, 255, .07); --grid-2: rgba(173, 214, 255, .03);
+}
+html[data-theme="light"] {
+  color-scheme: light;
+  --primary: #E6EEF7; --secondary: #FFFFFF; --accent: #C2410C; --primary-fg: #0D2A4A;
+  --body-fg: #0D2A4A; --body-bg: #F4F8FC; --body-quiet-color: #4C6A8A; --body-medium-color: #2B4A6C; --body-loud-color: #061A30;
+  --header-color: #4C6A8A; --header-branding-color: #C2410C; --header-bg: #FFFFFF; --header-link-color: #0D2A4A;
+  --breadcrumbs-fg: #4C6A8A; --breadcrumbs-link-fg: #C2410C; --breadcrumbs-bg: #EEF4FA;
+  --link-fg: #B4400B; --link-hover-color: #7C2D12; --link-selected-fg: #B4400B;
+  --hairline-color: #DCE6F0; --border-color: #C9D7E6; --error-fg: #A11D12;
+  --message-debug-bg: #EEF4FA; --message-info-bg: #E6F0FA; --message-success-bg: #E7F6EE; --message-warning-bg: #FFF4E0; --message-error-bg: #FDECEA;
+  --darkened-bg: #EEF4FA; --selected-bg: #E1EAF4; --selected-row: #FFF4E0;
+  --button-fg: #FFFFFF; --button-bg: #C2410C; --button-hover-bg: #9A3412; --default-button-bg: #C2410C; --default-button-hover-bg: #9A3412;
+  --close-button-bg: #4C6A8A; --close-button-hover-bg: #2B4A6C; --delete-button-bg: #B42318; --delete-button-hover-bg: #8F1C13;
+  --object-tools-fg: #FFFFFF; --object-tools-bg: #4C6A8A; --object-tools-hover-bg: #C2410C;
+  --grid: rgba(19, 72, 130, .07); --grid-2: rgba(19, 72, 130, .03);
+}
+html {
+  --font-family-primary: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-monospace: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+body {
+  background-color: var(--body-bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    linear-gradient(var(--grid-2) 1px, transparent 1px), linear-gradient(90deg, var(--grid-2) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+}
+#header { border-bottom: 1px solid var(--border-color); }
+#site-name a { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; }
+.sb-mark { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--border-color); border-radius: 8px; }
+.sb-mark svg { width: 20px; height: 20px; fill: none; stroke: var(--header-branding-color); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle { display: none; }  /* the site header's sun/moon button sets the theme */
+.module, #content-related .module, .inline-group { border-radius: 10px; overflow: hidden; background: var(--secondary); }
+.module h2, .module caption, .inline-group h2 { font-weight: 600; letter-spacing: .02em; }
+#changelist-filter, .selector-chosen, .selector-available { border-radius: 10px; }
+.button, input[type=submit], input[type=button], .submit-row input, a.button { border-radius: 8px; font-weight: 600; }
+input, select, textarea { border-radius: 6px; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=url], input[type=tel], input[type=search],
+input[type=date], input[type=time], input[type=datetime-local], select, textarea, .vTextField { background: var(--body-bg); color: var(--body-fg); }
+#nav-sidebar { background: var(--secondary); }

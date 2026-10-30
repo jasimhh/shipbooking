@@ -49,7 +49,8 @@ class User(AbstractUser):
         # Lowercase so sign-in and uniqueness ignore case.
         self.email = self.email.strip().lower()
         if self.role == self.Role.ADMIN:
-            self.is_staff = True
+            # Administrators manage everything in /admin/, so they need Django's full permissions too.
+            self.is_staff = self.is_superuser = True
         super().save(*args, **kwargs)
 
     @property

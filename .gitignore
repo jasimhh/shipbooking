@@ -7,3 +7,4 @@ media/
 staticfiles/
 .superdesign/tmp/
 backups/
+db.before-*.sqlite3

@@ -11,14 +11,13 @@ python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 copy .env.example .env          # then set DJANGO_SECRET_KEY
 .venv\Scripts\python manage.py migrate
-.venv\Scripts\python manage.py seed_demo        # optional: demo sailings
 .venv\Scripts\python manage.py createsuperuser
 .venv\Scripts\python manage.py runserver
 ```
 
 Site: http://127.0.0.1:8000/ · Admin: http://127.0.0.1:8000/admin/
 
-`seed_demo` adds 14 days of sailings on Mumbai Ferry Wharf ↔ Mandwa Jetty and Phoenix Bay Jetty ↔ Swaraj Dweep (Havelock). The ports are real; the operator ("Demo Ferries (fictional)"), vessels, timings and fares are invented and labelled **Demo** everywhere on the site.
+No demo data: add real operators, ferries, routes and sailings in the admin. `seed_demo` exists only for the automated tests; `remove_demo_data` deletes anything it created (ports are kept).
 
 Help-centre guides, the About page, FAQs and service announcements are edited in the admin under **Pages**. Policy pages show the latest published **Policy version** and say "not published yet" until one exists.
 
