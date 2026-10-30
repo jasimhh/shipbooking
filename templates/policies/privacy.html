@@ -1,0 +1,32 @@
+<h2>Who we are</h2>
+<p>Ship Booking is run by {% include "policies/_fact.html" with value=business.legal_entity_name label="Legal entity name" %}. Ship Booking acts as {% if platform_role_label %}{{ platform_role_label }}{% else %}<span class="not-configured">Platform role: not yet configured</span>{% endif %}. Sailings are run by the ferry operators named on each booking.</p>
+<h2>What we collect</h2>
+<ul>
+<li><strong>Account:</strong> email address, password (stored only as a secure hash), optional name and phone number.</li>
+<li><strong>Bookings:</strong> contact email and phone for the trip, and for each passenger their name, age and gender (gender is optional and can be "prefer not to say").</li>
+<li><strong>Payments:</strong> amounts, status and the payment reference from Razorpay. We never see or store card numbers, CVV, UPI PINs or bank passwords; you enter those on Razorpay's checkout.</li>
+<li><strong>Support:</strong> messages you send us and our replies.</li>
+<li><strong>Technical:</strong> IP address on security-sensitive actions (kept in the audit log), and the cookies described in the <a href="{% url 'pages:policy' 'cookies' %}">Cookie Policy</a>.</li>
+</ul>
+<h2>Why we use it</h2>
+<ul><li>To make and manage your booking, issue tickets and let crew check passengers on board.</li>
+<li>To take payment and send refunds.</li><li>To tell you about your booking, schedule changes, cancellations and refunds.</li>
+<li>To answer support requests and complaints.</li><li>To keep the service secure and prevent fraud.</li></ul>
+<h2>Who we share it with</h2>
+<ul><li>The ferry operator running your sailing gets the passenger list for that sailing only.</li>
+<li>Razorpay processes your payment.</li><li>Our email provider delivers booking emails.</li>
+<li>Authorities, where the law requires it.</li></ul>
+<p>We do not sell personal data.</p>
+<h2>How long we keep it</h2>
+<p>See the <a href="{% url 'pages:policy' 'retention' %}">Data Retention Policy</a>.</p>
+<h2>Your rights</h2>
+<p>In the <a href="{% url 'compliance:privacy' %}">Privacy centre</a> you can download your data, ask us to correct or delete it, withdraw consent, or raise a grievance.</p>
+<h2>Children</h2>
+<p>Accounts are for adults. A child's details are only collected as a passenger on a booking made by an adult.</p>
+<h2>Security</h2>
+<p>Passwords are hashed, pages are served over HTTPS in production, staff access is limited by role, and access to passenger lists is logged.</p>
+<h2>Contact</h2>
+<ul><li>Operated by: {% include "policies/_fact.html" with value=business.legal_entity_name label="Legal entity name" %}</li><li>Address: {% include "policies/_fact.html" with value=business.registered_address label="Registered address" %}</li><li>Email: {% include "policies/_fact.html" with value=business.support_email label="Support email" %}</li><li>Phone: {% include "policies/_fact.html" with value=business.support_phone label="Support phone" %}</li>
+<li>You can also use the <a href="{% url 'pages:contact' %}">contact form</a>.</li></ul>
+<h2>Grievances</h2>
+<p>Grievance officer: {% include "policies/_fact.html" with value=business.grievance_officer_name label="Grievance officer" %}, {% include "policies/_fact.html" with value=business.grievance_officer_email label="Grievance officer email" %}. See the <a href="{% url 'pages:policy' 'grievance' %}">Grievance Redressal Policy</a>.</p>

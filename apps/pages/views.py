@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import F, Min
@@ -198,7 +199,17 @@ def policy(request, policy_type):
         .order_by("-effective_from")
         .first()
     )
+    from apps.bookings.cancellation import current_policy
+
+    cancellation = current_policy()
     return render(request, "pages/policy.html", {
         "title": PolicyVersion.PolicyType(policy_type).label,
         "version": version,
+        # Shown only until an approved version is published; facts come from settings, never invented.
+        "draft_template": f"policies/{policy_type}.html",
+        "cancellation_rules": cancellation.cancellation_rules.order_by("-min_hours_before_departure") if cancellation else [],
+        "hold_minutes": settings.INVENTORY_HOLD_MINUTES,
+        "session_hours": settings.SESSION_COOKIE_AGE // 3600,
+        "consent_days": settings.COOKIE_CONSENT_DAYS,
+        "retention": settings.RETENTION,
     })

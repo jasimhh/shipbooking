@@ -1,0 +1,20 @@
+<h2>About these terms</h2>
+<p>These terms apply when you use Ship Booking, run by {% include "policies/_fact.html" with value=business.legal_entity_name label="Legal entity name" %}, {% include "policies/_fact.html" with value=business.registered_address label="Registered address" %}. Ship Booking acts as {% if platform_role_label %}{{ platform_role_label }}{% else %}<span class="not-configured">Platform role: not yet configured</span>{% endif %}.</p>
+<h2>Accounts</h2>
+<p>You must give accurate details and keep your password private. One person per account. We may suspend accounts used for fraud or abuse (see the <a href="{% url 'pages:policy' 'acceptable_use' %}">Acceptable Use Policy</a>).</p>
+<h2>Booking</h2>
+<p>When you reserve, places are held for {{ hold_minutes }} minutes while you pay. A booking is confirmed only after the payment has been verified on our server; until then it is not a ticket.</p>
+<h2>Fares and payment</h2>
+<p>Prices are in Indian rupees and include the taxes and fees shown before you pay. See the <a href="{% url 'pages:policy' 'payment' %}">Payment Policy</a>.</p>
+<h2>Tickets and boarding</h2>
+<p>Show your e-ticket (PDF or QR code) and photo ID if the operator asks. Follow the operator's boarding times and safety rules.</p>
+<h2>Changes and cancellations by the operator</h2>
+<p>Sailings can be delayed or cancelled for weather, safety or operational reasons. We tell you as soon as we know. See the <a href="{% url 'pages:policy' 'cancellation' %}">Cancellation Policy</a> and <a href="{% url 'pages:policy' 'refund' %}">Refund Policy</a>.</p>
+<h2>Responsibilities</h2>
+<p>The operator is responsible for the voyage itself. We are responsible for the booking service.</p>
+<h2>Complaints and disputes</h2>
+<p>Contact support first; if unresolved, use the <a href="{% url 'pages:policy' 'grievance' %}">grievance process</a>.</p>
+<p class="not-configured">Governing law and jurisdiction: to be set by legal review.</p>
+<h2>Contact</h2>
+<ul><li>Operated by: {% include "policies/_fact.html" with value=business.legal_entity_name label="Legal entity name" %}</li><li>Address: {% include "policies/_fact.html" with value=business.registered_address label="Registered address" %}</li><li>Email: {% include "policies/_fact.html" with value=business.support_email label="Support email" %}</li><li>Phone: {% include "policies/_fact.html" with value=business.support_phone label="Support phone" %}</li>
+<li>You can also use the <a href="{% url 'pages:contact' %}">contact form</a>.</li></ul>

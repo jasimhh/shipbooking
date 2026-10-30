@@ -1,0 +1,12 @@
+<h2>Essential cookies (always on)</h2>
+<table class="simple"><thead><tr><th scope="col">Name</th><th scope="col">Purpose</th><th scope="col">Lasts</th></tr></thead><tbody>
+<tr><td><code>sessionid</code></td><td>Keeps you signed in</td><td>{{ session_hours }} hours</td></tr>
+<tr><td><code>csrftoken</code></td><td>Protects forms from being submitted by other sites</td><td>1 year</td></tr>
+<tr><td><code>cookie_consent</code></td><td>Remembers your cookie choices</td><td>{{ consent_days }} days</td></tr>
+<tr><td><code>messages</code></td><td>Shows one-off notices such as "Booking confirmed"</td><td>Until shown</td></tr>
+</tbody></table>
+<p>On the payment step, Razorpay's checkout sets its own cookies to process the payment securely.</p>
+<h2>Optional cookies</h2>
+<p>Ship Booking does not use analytics or marketing cookies today. If we add them, they will be listed here and will only load after you allow them.</p>
+<h2>Your choices</h2>
+<p>Change your choices at any time in <a href="{% url 'compliance:cookies' %}">Cookie settings</a>. We keep a record of each choice as proof of consent.</p>

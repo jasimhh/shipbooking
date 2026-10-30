@@ -18,7 +18,7 @@ from django.views.decorators.http import require_POST
 from apps.accounts.models import User
 from apps.accounts.permissions import can_view_manifest
 from apps.bookings.models import Booking, BookingPassenger, CancellationRequest
-from apps.compliance.models import AuditLog
+from apps.compliance.models import AuditLog, PrivacyRequest
 from apps.fleet.models import CabinClass, Route, Vessel
 from apps.operators.models import Operator
 from apps.payments.models import PaymentTransaction, Refund
@@ -157,6 +157,10 @@ def _alerts(user, ops, now, sailings):
             total = refunds.aggregate(t=Sum("amount"))["t"]
             alerts.append({"level": "warn", "icon": "card", "title": f"{refunds.count()} refund(s) to send",
                            "detail": f"Total ₹{total:,.2f}", "url": reverse("admin:payments_refund_changelist")})
+        waiting = PrivacyRequest.objects.filter(status__in=[PrivacyRequest.Status.RECEIVED, PrivacyRequest.Status.IN_PROGRESS]).count()
+        if waiting:
+            alerts.append({"level": "warn", "icon": "msg", "title": f"{waiting} privacy request(s) open",
+                           "detail": "Access, correction or deletion requests", "url": reverse("admin:compliance_privacyrequest_changelist")})
     return alerts[:20]
 
 

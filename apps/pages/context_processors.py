@@ -12,6 +12,7 @@ PLATFORM_ROLES = {
 def site(request):
     return {
         "business": settings.BUSINESS,
+        "site_url": settings.SITE_URL,
         "platform_role_label": PLATFORM_ROLES.get(settings.BUSINESS["platform_role"], ""),
         "policy_types": PolicyVersion.PolicyType.choices,
     }

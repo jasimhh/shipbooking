@@ -5,18 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Ship Booking{% endblock %}</title>
   <meta name="description" content="{% block description %}Search and book ship and ferry journeys in India. Prices in INR.{% endblock %}">
-  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+  <link rel="canonical" href="{{ site_url }}{{ request.path }}">
   <meta property="og:site_name" content="Ship Booking">
   <meta property="og:title" content="{% block og_title %}Ship Booking{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Search and book ship and ferry journeys in India. Prices in INR.{% endblock %}">
+  <meta property="og:url" content="{{ site_url }}{{ request.path }}">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_IN">
   {% block robots %}{% endblock %}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  {# ponytail: Google-hosted font; self-host Inter in Phase 9 so no visitor IP goes to a third party. #}
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
   <meta name="theme-color" content="#07121F">
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
   <script src="{% static 'js/site.js' %}" defer></script>
+  {% comment %}Optional tracking goes ONLY inside these blocks, so it never loads before consent.{% endcomment %}
+  {% if consent.analytics %}{% block analytics_scripts %}{% endblock %}{% endif %}
+  {% if consent.marketing %}{% block marketing_scripts %}{% endblock %}{% endif %}
 </head>
 <body>
   {% include "includes/icons.html" %}
@@ -88,6 +91,8 @@
             <li><a href="{% url 'pages:contact' %}">Contact us</a></li>
             <li><a href="{% url 'pages:service_updates' %}">Service updates</a></li>
             <li><a href="{% url 'pages:policy' 'grievance' %}">Grievance redressal</a></li>
+            <li><a href="{% url 'compliance:privacy' %}">Privacy centre</a></li>
+            <li><a href="{% url 'compliance:cookies' %}?next={{ request.path|urlencode }}">Cookie settings</a></li>
             <li><a href="{% url 'pages:about' %}">About Ship Booking</a></li>
           </ul>
         </div>
@@ -111,5 +116,19 @@
       <div class="footer-bottom">Ship Booking · Prices in Indian rupees (INR)</div>
     </div>
   </footer>
+
+  {% if not consent.decided and url_name != "cookies" %}
+  <section class="cookie-banner" aria-labelledby="cookie-banner-title">
+    <h2 id="cookie-banner-title">Cookie choices</h2>
+    <p>We use essential cookies to keep you signed in and protect forms. Optional analytics and marketing cookies stay off unless you allow them. <a href="{% url 'pages:policy' 'cookies' %}">Cookie Policy</a></p>
+    <form method="post" action="{% url 'compliance:save_cookies' %}" class="btn-row">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <button class="btn btn-secondary" type="submit" name="choice" value="reject">Reject optional</button>
+      <a class="btn btn-secondary" href="{% url 'compliance:cookies' %}?next={{ request.path|urlencode }}">Customise</a>
+      <button class="btn btn-primary" type="submit" name="choice" value="accept">Accept all</button>
+    </form>
+  </section>
+  {% endif %}
 </body>
 </html>{% endwith %}

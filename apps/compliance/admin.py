@@ -1,10 +1,10 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils import timezone
 
 from apps.bookings.models import CancellationRule
 
 from .models import AuditLog, ConsentRecord, CookiePreference, PolicyVersion, PrivacyRequest
-
-admin.site.register([CookiePreference, ConsentRecord, PrivacyRequest])
+from .privacy import StillTravelling, anonymise_user
 
 
 def _label(obj):
@@ -65,3 +65,70 @@ class PolicyVersionAdmin(AuditedAdmin):
     list_display = ["policy_type", "version", "effective_from", "is_published", "approved_by"]
     list_filter = ["policy_type", "is_published"]
     inlines = [CancellationRuleInline]
+
+
+class ReadOnlyAdmin(admin.ModelAdmin):
+    """Consent evidence: viewable, never edited by hand."""
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ConsentRecord)
+class ConsentRecordAdmin(ReadOnlyAdmin):
+    list_display = ["created_at", "user", "anonymous_id", "purpose", "granted", "policy_version"]
+    list_filter = ["purpose", "granted"]
+    search_fields = ["user__email", "anonymous_id"]
+
+
+@admin.register(CookiePreference)
+class CookiePreferenceAdmin(ReadOnlyAdmin):
+    list_display = ["updated_at", "user", "anonymous_id", "analytics", "marketing"]
+    list_filter = ["analytics", "marketing"]
+    search_fields = ["user__email", "anonymous_id"]
+
+
+@admin.register(PrivacyRequest)
+class PrivacyRequestAdmin(AuditedAdmin):
+    list_display = ["created_at", "email", "request_type", "status", "resolved_at"]
+    list_filter = ["request_type", "status"]
+    search_fields = ["email", "details"]
+    readonly_fields = ["user", "email", "request_type", "details", "created_at", "resolved_at"]
+    fields = readonly_fields + ["status", "resolution_note"]
+    actions = ["mark_in_progress", "anonymise_accounts"]
+
+    def has_add_permission(self, request):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        if obj.status in (PrivacyRequest.Status.COMPLETED, PrivacyRequest.Status.REJECTED) and not obj.resolved_at:
+            obj.resolved_at = timezone.now()
+        super().save_model(request, obj, form, change)
+
+    @admin.action(description="Mark as in progress")
+    def mark_in_progress(self, request, queryset):
+        for req in queryset.filter(status=PrivacyRequest.Status.RECEIVED):
+            req.status = PrivacyRequest.Status.IN_PROGRESS
+            req.save()
+            AuditLog.record(request.user, "privacyrequest.updated", req, {"status": req.status}, request)
+
+    @admin.action(description="Delete (anonymise) the account for selected deletion requests")
+    def anonymise_accounts(self, request, queryset):
+        for req in queryset.filter(request_type=PrivacyRequest.RequestType.DELETION, user__isnull=False):
+            try:
+                anonymise_user(req.user, request.user, request)
+            except StillTravelling as exc:
+                self.message_user(request, f"{req.email}: {exc}", messages.ERROR)
+                continue
+            req.email = req.user.email
+            req.status, req.resolved_at = PrivacyRequest.Status.COMPLETED, timezone.now()
+            req.resolution_note = req.resolution_note or "Account deleted. Booking amounts and references kept for financial records."
+            req.save()
+            AuditLog.record(request.user, "privacyrequest.updated", req, {"status": req.status}, request)
+            self.message_user(request, "Account anonymised.", messages.SUCCESS)

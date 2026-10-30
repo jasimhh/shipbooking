@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cookie settings · Ship Booking{% endblock %}
+{% block og_title %}Cookie settings{% endblock %}
+{% block description %}Choose which optional cookies Ship Booking may use. Essential cookies are always on.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Cookie settings</h1><p>Essential cookies keep you signed in and protect forms. Everything else is off unless you turn it on, and you can change your mind at any time.</p></div></div>
+<div class="container section">
+  <form class="form-stack narrow" method="post" action="{% url 'compliance:save_cookies' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="card consent-option">
+      <label class="check"><input type="checkbox" checked disabled> <strong>Essential</strong> <span class="badge badge-ok">Always on</span></label>
+      <p class="small muted">Sign-in session, form protection (CSRF) and remembering these choices. Payment pages also load Razorpay, which sets its own cookies to process the payment.</p>
+    </div>
+    <div class="card consent-option">
+      <label class="check"><input type="checkbox" name="analytics"{% if consent.analytics %} checked{% endif %}> <strong>Analytics</strong></label>
+      <p class="small muted">Counting visits so we can improve the site. Ship Booking does not use any analytics service yet; if one is added it will only load after you agree here.</p>
+    </div>
+    <div class="card consent-option">
+      <label class="check"><input type="checkbox" name="marketing"{% if consent.marketing %} checked{% endif %}> <strong>Marketing</strong></label>
+      <p class="small muted">Measuring adverts and offers. None are used today; they will only load after you agree here.</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" type="submit" name="choice" value="custom">Save choices</button>
+      <button class="btn btn-secondary" type="submit" name="choice" value="accept">Accept all</button>
+      <button class="btn btn-secondary" type="submit" name="choice" value="reject">Reject optional</button>
+    </div>
+    <p class="small muted">More detail in the <a href="{% url 'pages:policy' 'cookies' %}">Cookie Policy</a>.</p>
+  </form>
+</div>
+{% endblock %}

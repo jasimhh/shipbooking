@@ -1,0 +1,14 @@
+<h2>Cancelling a confirmed booking</h2>
+<p>Open the booking under Account → Bookings and choose "Request cancellation", with a reason. You can do this until departure. Reservations that are still waiting for payment can be cancelled straight away and nothing is charged.</p>
+<h2>How much is refunded</h2>
+{% if cancellation_rules %}
+<table class="simple"><thead><tr><th scope="col">Cancelled at least</th><th scope="col">Refund</th></tr></thead><tbody>
+{% for rule in cancellation_rules %}<tr><td>{{ rule.min_hours_before_departure }} hours before departure</td><td>{{ rule.refund_percent }}% of the amount paid</td></tr>{% endfor %}
+</tbody></table>
+{% else %}
+<p class="not-configured">Refund bands have not been approved by the operators yet. Until they are, each request is reviewed by our team and you are told the amount before anything is final.</p>
+{% endif %}
+<h2>If the operator cancels</h2>
+<p>Bookings on a sailing cancelled by the operator are cancelled for you and refunded in full. You are notified by email.</p>
+<h2>Process</h2>
+<p>You will see the status of your request on the booking page and by email. Refunds go back to the original payment method; see the <a href="{% url 'pages:policy' 'refund' %}">Refund Policy</a>.</p>

@@ -1,0 +1,13 @@
+<h2>How payment works</h2>
+<p>Payments are processed by Razorpay. The methods offered (such as cards, UPI and net banking) are those shown on Razorpay's checkout. We never see or store card numbers, CVV, UPI PINs or bank passwords.</p>
+<h2>Prices</h2>
+<p>All prices are in Indian rupees (INR). The total, including taxes and fees, is shown before you pay and is calculated on our server from the published fare.</p>
+<h2>When a booking is confirmed</h2>
+<p>Only after our server has verified the payment with Razorpay. A "success" message in your browser alone does not confirm a booking.</p>
+<h2>Failed or interrupted payments</h2>
+<p>If payment fails, your places stay held until the hold expires ({{ hold_minutes }} minutes) so you can try again. If money left your account but the booking was not confirmed, our automatic payment check (every few minutes) finds it and either confirms the booking or refunds you.</p>
+<h2>Duplicate charges</h2>
+<p>Each payment is recorded once, even if Razorpay notifies us several times. If you see two charges, contact support.</p>
+<h2>Contact</h2>
+<ul><li>Operated by: {% include "policies/_fact.html" with value=business.legal_entity_name label="Legal entity name" %}</li><li>Address: {% include "policies/_fact.html" with value=business.registered_address label="Registered address" %}</li><li>Email: {% include "policies/_fact.html" with value=business.support_email label="Support email" %}</li><li>Phone: {% include "policies/_fact.html" with value=business.support_phone label="Support phone" %}</li>
+<li>You can also use the <a href="{% url 'pages:contact' %}">contact form</a>.</li></ul>

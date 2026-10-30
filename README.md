@@ -132,6 +132,16 @@ Operator staff, support staff and admins get a **Staff** button in the header. W
 - Weather and sea show "Not connected" until a marine weather service is added.
 - Night/day theme toggle, remembered per browser.
 
+## Privacy, consent and policies
+
+- **Policy pages** (`/policies/<type>/`): until an approved version is published in the admin (Compliance → Policy versions), each page shows a marked **draft** describing how the site works today. Business facts come from `BUSINESS_*` in `.env` and show "not yet configured" when empty; cancellation refund bands come only from the published cancellation policy. Drafts live in `templates/policies/`. They are not legal advice: get Indian legal review (DPDP Act 2023 and Rules 2025, Consumer Protection (E-Commerce) Rules, IT Act, CERT-In, RBI) before launch.
+- **Cookie banner**: Accept all, Reject optional, Customise (`/privacy/cookies/`). Works without JavaScript. Each choice is saved as a consent record. The site uses no optional cookies today; any analytics or marketing script must go inside the `analytics_scripts` / `marketing_scripts` blocks in `base.html`, which only render after consent.
+- **Privacy centre** (`/privacy/`): signed-in people can download their data as JSON and ask for access, correction, deletion or consent withdrawal (5 requests a day). Staff handle requests in the admin (Compliance → Privacy requests); the "Delete (anonymise)" action removes names and contact details but keeps amounts and references, and refuses while the person has upcoming trips. Open requests show as alerts on the harbour page.
+- **Retention**: `python manage.py apply_retention` (run daily) removes names from unpaid/failed reservations, clears old notification text and deletes old cookie choices of visitors without an account. Periods are `RETENTION_*` in `.env`; confirm them with legal review.
+- **SEO**: `/sitemap.xml` (public pages only, no demo sailings), `/robots.txt`, canonical URLs from `SITE_URL`, Open Graph tags. Account, booking, payment, staff, admin and operator pages send `X-Robots-Tag: noindex`.
+- **Fonts** are self-hosted from `static/fonts/` (SIL Open Font License), so no visitor IP goes to a font CDN.
+- **Devices**: every page is checked at phone (375px), iPad portrait (768px), tablet/iPad landscape (1024px) and desktop widths with no sideways scrolling; wide tables scroll inside their own box.
+
 ## Tests
 
 ```bash
@@ -181,5 +191,7 @@ These are left blank on purpose (`.env`, `BUSINESS_*`) and must come from the bu
 - Platform role: intermediary, marketplace or operator
 - Real, authorised operators, vessels, ports, schedules and fares
 - Approved cancellation/refund terms (percentages, deadlines, timelines)
+- Legally reviewed policy texts to replace the drafts, and confirmed retention periods
+- `SITE_URL` set to the real domain (used in canonical links and the sitemap)
 - Razorpay account (test keys now, live keys only after the live-payment gate in the spec)
 - Indian legal/compliance review (DPDP Act 2023, Consumer Protection E-Commerce Rules, IT Act, CERT-In, RBI)

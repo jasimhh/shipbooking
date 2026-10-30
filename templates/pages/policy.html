@@ -3,15 +3,16 @@
 {% block og_title %}{{ title }}{% endblock %}
 {% block description %}Ship Booking {{ title }}.{% endblock %}
 {% block content %}
-<div class="page-header"><div class="container"><h1>{{ title }}</h1>{% if version %}<p>Version {{ version.version }}, effective {{ version.effective_from|date:"j F Y" }}</p>{% endif %}</div></div>
+<div class="page-header"><div class="container"><h1>{{ title }}</h1>{% if version %}<p>Version {{ version.version }}, effective {{ version.effective_from|date:"j F Y" }}</p>{% else %}<p><span class="badge badge-warn">Draft</span> Not yet legally reviewed or in force</p>{% endif %}</div></div>
 <div class="container section">
   <article class="prose narrow">
     {% if version %}
       {{ version.body|linebreaks }}
     {% else %}
-      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
-        <p>This policy has not been published yet. It will be published after legal review and before bookings open.</p></div>
-      <p>Questions in the meantime? <a href="{% url 'pages:contact' %}">Contact us</a>.</p>
+      <div class="alert alert-warning draft-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <p>This is a working draft describing how the site works today. It will be replaced by an approved version after legal review and before bookings open. Items marked "not yet configured" are waiting for verified business details.</p></div>
+      {% include draft_template %}
+      <p class="small muted">Questions? <a href="{% url 'pages:contact' %}">Contact us</a>.</p>
     {% endif %}
   </article>
 </div>

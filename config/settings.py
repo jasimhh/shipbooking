@@ -56,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.pages.seo.NoIndexPrivateMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -71,6 +72,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.pages.context_processors.site",
+                "apps.compliance.views.consent",
             ],
         },
     },
@@ -198,3 +200,11 @@ BUSINESS = {
     # One of: intermediary, marketplace, operator. Must be stated accurately on public pages.
     "platform_role": env("BUSINESS_PLATFORM_ROLE", ""),
 }
+
+# Retention periods in days. These are business decisions: confirm them with legal review before launch.
+RETENTION = {
+    "abandoned_booking_days": int(env("RETENTION_ABANDONED_BOOKING_DAYS", "30")),
+    "notification_days": int(env("RETENTION_NOTIFICATION_DAYS", "180")),
+    "anonymous_cookie_days": int(env("RETENTION_ANONYMOUS_COOKIE_DAYS", "365")),
+}
+COOKIE_CONSENT_DAYS = int(env("COOKIE_CONSENT_DAYS", "365"))

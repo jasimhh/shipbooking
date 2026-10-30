@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Harbour master · Ship Booking</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
   <link rel="stylesheet" href="{% static 'css/harbour.css' %}">
   <script>try { if (localStorage.getItem("harbour-theme") === "day") document.documentElement.dataset.theme = "day"; } catch (e) {}</script>
 </head>
@@ -17,7 +16,7 @@
   <section class="mapwrap gridbg" aria-label="Live map of sailings">
     <div id="map" role="img" aria-label="Map of the selected area with ports, routes and estimated ferry positions"></div>
     <div class="bar">
-      <span class="card live"><i aria-hidden="true"></i><span class="mono" id="clock"></span> IST</span>
+      <span class="card live"><i aria-hidden="true"></i><span class="mono" id="clockTime"></span> IST</span>
       <div class="card seg" role="group" aria-label="Area" id="regions"></div>
       <span class="sp"></span>
       <button class="iconbtn" id="theme" type="button" aria-label="Switch to light whiteprint"><svg class="i"><use href="#sun"/></svg></button>

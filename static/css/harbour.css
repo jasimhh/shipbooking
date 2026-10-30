@@ -84,3 +84,6 @@ a.alert:hover{background:var(--panel-2)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:700px){.weather{left:14px;right:auto;top:112px}.zoom,.legend{display:none}.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:0}.stat:nth-child(-n+2){border-bottom:1px solid var(--rule)}.row2{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.search:focus-within{box-shadow:0 0 0 2px var(--accent)}
+.modal input:focus-visible,.modal select:focus-visible,.modal textarea:focus-visible{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}

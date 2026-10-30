@@ -33,11 +33,16 @@
   const region = () => D.regions[S.region];
   const sailing = () => region()?.sailings.find((s) => s.id === S.sailing);
 
+  const RANK = { at_sea: 0, boarding: 1, scheduled: 2, arrived: 3, cancelled: 4 };
+  const bestSailing = (list) => [...list].sort((a, b) => RANK[live(a).state] - RANK[live(b).state])[0];
   function pickDefaultSailing() {
-    const list = region()?.sailings || [];
-    const rank = { at_sea: 0, boarding: 1, scheduled: 2, arrived: 3, cancelled: 4 };
-    const best = [...list].sort((a, b) => rank[live(a).state] - rank[live(b).state])[0];
+    const best = bestSailing(region()?.sailings || []);
     S.sailing = best ? best.id : null;
+  }
+  // On first load open the area with the liveliest sailing (at sea, then boarding, then next to leave).
+  function pickDefaultRegion() {
+    const score = (r) => (r.sailings.length ? RANK[live(bestSailing(r.sailings)).state] : 9);
+    D.regions.forEach((r, i) => { if (score(r) < score(D.regions[S.region])) S.region = i; });
   }
 
   // ---- map ----
@@ -248,10 +253,11 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
   }
 
-  const tick = () => { $("clock").textContent = new Date(Date.now() + offset).toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }); };
+  const tick = () => { $("clockTime").textContent = new Date(Date.now() + offset).toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }); };
   tick();
   setInterval(() => { tick(); placeBoats(); ferryCard(); }, 30000);
 
+  if (D.regions.length) pickDefaultRegion();
   pickDefaultSailing();
   stats();
   renderAll();

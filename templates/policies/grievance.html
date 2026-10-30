@@ -1,0 +1,9 @@
+<h2>How to raise a grievance</h2>
+<ol><li>Contact support through the <a href="{% url 'pages:contact' %}">contact form</a> (choose "Grievance") or by email {% include "policies/_fact.html" with value=business.support_email label="Support email" %}. You get a reference number.</li>
+<li>If you are not satisfied with the answer, write to the grievance officer.</li></ol>
+<h2>Grievance officer</h2>
+<ul><li>Name: {% include "policies/_fact.html" with value=business.grievance_officer_name label="Grievance officer" %}</li><li>Email: {% include "policies/_fact.html" with value=business.grievance_officer_email label="Grievance officer email" %}</li><li>Address: {% include "policies/_fact.html" with value=business.registered_address label="Registered address" %}</li></ul>
+<h2>Timelines</h2>
+<p class="not-configured">Acknowledgement and resolution timelines: to be set by legal review in line with the applicable rules.</p>
+<h2>Privacy grievances</h2>
+<p>Privacy requests and grievances can also be raised from the <a href="{% url 'compliance:privacy' %}">Privacy centre</a>.</p>

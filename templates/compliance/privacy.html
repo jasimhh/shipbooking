@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Privacy centre · Ship Booking{% endblock %}
+{% block og_title %}Privacy centre{% endblock %}
+{% block description %}Download your data, ask for corrections or deletion, change cookie choices or raise a privacy grievance.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Privacy centre</h1><p>See what we hold about you, ask us to correct or delete it, and change your cookie choices.</p></div></div>
+<div class="container layout-sidebar">
+  <div class="form-stack">
+    {% if user.is_authenticated %}
+      <section class="card">
+        <h2>Download your data</h2>
+        <p>A file with your account, bookings, passengers, payments, support messages and consent choices.</p>
+        <a class="btn btn-secondary" href="{% url 'compliance:my_data' %}" download><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Download my data (JSON)</a>
+      </section>
+      <section class="card">
+        <h2>Make a request</h2>
+        <form class="form-stack" method="post" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-error" role="alert"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p>{{ form.non_field_errors|join:" " }}</p></div>{% endif %}
+          <div class="field">{{ form.request_type.as_field_group }}</div>
+          <div class="field">{{ form.details.as_field_group }}</div>
+          <p class="small muted">Deleting your account removes your name and contact details. Booking amounts and references are kept where the law requires financial records. We can't delete an account with upcoming trips until after travel or cancellation.</p>
+          <div><button class="btn btn-primary" type="submit">Send request</button></div>
+        </form>
+      </section>
+      {% if requests %}
+      <section>
+        <h2>Your requests</h2>
+        <ul class="request-list">
+          {% for r in requests %}
+            <li><span>{{ r.get_request_type_display }} · {{ r.created_at|date:"j M Y" }}</span><span class="badge {% if r.status == 'completed' %}badge-ok{% elif r.status == 'rejected' %}badge-bad{% else %}badge-warn{% endif %}">{{ r.get_status_display }}</span>
+              {% if r.resolution_note %}<p class="small muted" style="flex-basis:100%;margin:0">{{ r.resolution_note }}</p>{% endif %}</li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    {% else %}
+      <div class="alert alert-info"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <p><a href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}">Sign in</a> to download your data or make a request, so we know it's really you. No account? <a href="{% url 'pages:contact' %}">Contact us</a> with the email address you used.</p></div>
+    {% endif %}
+  </div>
+  <aside class="sidenav">
+    <h2>Privacy</h2>
+    <ul>
+      <li><a href="{% url 'compliance:cookies' %}">Cookie settings</a></li>
+      <li><a href="{% url 'pages:policy' 'privacy' %}">Privacy Policy</a></li>
+      <li><a href="{% url 'pages:policy' 'retention' %}">Data Retention Policy</a></li>
+      <li><a href="{% url 'pages:policy' 'grievance' %}">Grievance redressal</a></li>
+    </ul>
+    <h2 style="margin-top:20px">Grievance officer</h2>
+    <p class="small">{% if business.grievance_officer_name %}{{ business.grievance_officer_name }}{% if business.grievance_officer_email %}<br><a href="mailto:{{ business.grievance_officer_email }}">{{ business.grievance_officer_email }}</a>{% endif %}{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</p>
+  </aside>
+</div>
+{% endblock %}
