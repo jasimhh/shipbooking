@@ -20,8 +20,8 @@ class NoColon:
 class EmailLoginForm(NoColon, AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["username"].label = "Email"
-        self.fields["username"].widget = forms.EmailInput(attrs={"autocomplete": "email", "autofocus": True})
+        self.fields["username"].label = "Email or username"
+        self.fields["username"].widget = forms.TextInput(attrs={"autocomplete": "username", "autofocus": True})
 
 
 class RegistrationForm(NoColon, UserCreationForm):
