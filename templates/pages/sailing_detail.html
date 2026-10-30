@@ -27,6 +27,8 @@
       <div class="alert alert-info"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>This sailing is not open for booking.</p></div>
     {% endif %}
 
+    {% sailing_map schedule %}
+
     <h2>Journey</h2>
     <dl class="facts">
       <dt>Departs</dt><dd>{{ schedule.departure_at|date:"j M Y, H:i" }} from {{ schedule.route.origin }}</dd>

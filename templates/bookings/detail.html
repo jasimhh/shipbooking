@@ -13,6 +13,7 @@
 
 <div class="container layout-sidebar">
   <div>
+    {% if booking.status == "pending" or booking.status == "confirmed" %}{% sailing_map schedule %}{% endif %}
     {% if booking.status == "pending" %}
       <div class="alert alert-info" role="status">
         <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>

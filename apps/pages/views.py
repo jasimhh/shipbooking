@@ -16,6 +16,7 @@ from apps.schedules.models import Fare, Schedule
 from apps.support.models import SupportMessage, SupportTicket
 
 from .forms import ContactForm, SearchForm
+from .charts import area_charts
 from .models import FAQ, Announcement, ContentPage
 
 SORTS = {
@@ -52,10 +53,12 @@ def route_cards():
 
 
 def home(request):
+    cards = route_cards()
     return render(request, "pages/home.html", {
         "form": SearchForm(initial={"date": timezone.localdate(), "passengers": 1}),
         "announcements": Announcement.objects.current(),
-        "routes": route_cards(),
+        "routes": cards,
+        "maps": area_charts(cards),
     })
 
 

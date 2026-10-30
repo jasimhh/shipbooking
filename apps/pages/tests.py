@@ -13,6 +13,8 @@ from apps.fleet.models import Port
 from apps.schedules.models import Fare, Schedule
 from apps.support.models import SupportTicket
 
+from apps.staff import charts
+
 from .templatetags.site import duration, inr
 
 
@@ -54,6 +56,15 @@ class PublicPagesTest(TestCase):
         for url in urls:
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 200)
+
+    def test_route_maps_on_home_and_sailing_pages(self):
+        home = self.client.get(reverse("pages:home")).content.decode()
+        self.assertEqual(home.count('<figure class="chart">'), 2)  # Mumbai harbour and the Andaman Islands
+        self.assertIn("See sailings from Mumbai Ferry Wharf to Mandwa Jetty", home)
+        sailing = Schedule.objects.bookable().first()
+        page = self.client.get(reverse("pages:sailing", args=[sailing.pk])).content.decode()
+        self.assertIn(f'data-route="route-{charts.region_key(sailing.route.origin)}-{sailing.route.pk}"', page)
+        self.assertIn(f'id="route-{charts.region_key(sailing.route.origin)}-{sailing.route.pk}"', page)
 
     def test_home_route_cards_use_live_sailings(self):
         routes = self.client.get(reverse("pages:home")).context["routes"]

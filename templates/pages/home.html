@@ -33,7 +33,8 @@
 <section class="section">
   <div class="container">
     <h2>Routes</h2>
-    <p class="muted" style="margin-bottom:32px">The next sailing on each route and the lowest fare currently on sale.</p>
+    <p class="muted" style="margin-bottom:24px">Where we sail, the next sailing on each route and the lowest fare currently on sale.</p>
+    <div class="chart-grid">{% for chart in maps %}{% include "pages/_chart.html" %}{% endfor %}</div>
     <div class="route-cards">
       {% for r in routes %}{% with s=r.next route=r.route %}
         <article class="route-card">

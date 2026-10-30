@@ -1,0 +1,38 @@
+{% load site %}{% with k=chart.key %}
+<figure class="chart{% if chart.sailing %} chart-live{% endif %}">
+  <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="chart-{{ k }}-title">
+    <title id="chart-{{ k }}-title">Map of {{ chart.label }}{% if chart.sailing %} showing the route from {{ chart.sailing.route.origin.name }} to {{ chart.sailing.route.destination.name }}{% else %} with {{ chart.routes|length }} route{{ chart.routes|length|pluralize }}{% endif %}</title>
+    {% if chart.art %}
+      <g class="chart-land">{% for d in chart.art.land %}<path d="{{ d }}"/>{% endfor %}</g>
+      {% for p in chart.art.places %}<text class="chart-place" x="{{ p.1 }}" y="{{ p.2 }}">{{ p.0 }}</text>{% endfor %}
+      {% for p in chart.art.depths %}<text class="chart-depth" x="{{ p.0 }}" y="{{ p.1 }}">{{ p.2 }}</text>{% endfor %}
+      {% for p in chart.art.lights %}<g class="chart-light" transform="translate({{ p.0 }} {{ p.1 }})"><path d="M0 -10 L5 4 H-5Z"/><circle r="14"/></g>{% endfor %}
+    {% endif %}
+    {% for r in chart.routes %}
+      {% if r.card %}<a href="{% url 'pages:search' %}?origin={{ r.route.origin.code }}&amp;destination={{ r.route.destination.code }}&amp;date={{ r.card.next.departure_at|date:'Y-m-d' }}&amp;passengers=1" aria-label="See sailings from {{ r.route.origin.name }} to {{ r.route.destination.name }}">{% endif %}
+      <path id="route-{{ k }}-{{ r.route.pk }}" class="chart-route{% if r.on %} on{% endif %}" d="{{ r.path }}"/>
+      <path class="chart-hit" d="{{ r.path }}"/>
+      {% if r.card %}</a>
+      {# Decorative ferry drifting along the route and back #}
+      <g class="chart-boat" aria-hidden="true"><animateMotion dur="{{ forloop.counter|add:13 }}s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#route-{{ k }}-{{ r.route.pk }}"/></animateMotion>{% include "pages/_boat.svg" %}</g>
+      {% endif %}
+    {% endfor %}
+    {% for p in chart.ports %}
+      <g class="chart-port"><circle cx="{{ p.x }}" cy="{{ p.y }}" r="8"/>
+        <text x="{% if p.left %}{{ p.x|add:-16 }}{% else %}{{ p.x|add:16 }}{% endif %}" y="{{ p.y|add:24 }}"{% if p.left %} text-anchor="end"{% endif %}>{{ p.name }}</text>
+        {% if p.coord %}<text class="chart-coord" x="{% if p.left %}{{ p.x|add:-16 }}{% else %}{{ p.x|add:16 }}{% endif %}" y="{{ p.y|add:40 }}"{% if p.left %} text-anchor="end"{% endif %}>{{ p.coord }}</text>{% endif %}</g>
+    {% endfor %}
+    {% if chart.sailing %}{% with s=chart.sailing %}
+      <g class="chart-boat live" hidden data-live data-route="route-{{ k }}-{{ s.route.pk }}" data-dep="{{ s.departure_at|date:'c' }}" data-arr="{{ s.arrival_at|date:'c' }}" data-status="{{ s.status }}" aria-hidden="true">{% include "pages/_boat.svg" %}</g>
+    {% endwith %}{% endif %}
+    <g class="chart-compass" transform="translate(60 110)" aria-hidden="true"><circle r="26"/><circle r="20" stroke-dasharray="1 4"/><path d="M0 -34 L5 0 L0 34 L-5 0Z"/><text x="-4" y="-38">N</text></g>
+  </svg>
+  <figcaption>
+    {% if chart.sailing %}
+      <span class="chart-status" data-live-text>Ferry position is estimated from the timetable.</span>
+    {% else %}
+      <span>{{ chart.label }}</span><span class="muted">Tap a route to see its sailings</span>
+    {% endif %}
+  </figcaption>
+</figure>
+{% endwith %}

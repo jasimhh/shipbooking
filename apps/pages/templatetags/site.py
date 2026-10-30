@@ -29,3 +29,11 @@ def duration(delta):
     if not hours:
         return f"{minutes} min"
     return f"{hours} h" + (f" {minutes} min" if minutes else "")
+
+
+@register.inclusion_tag("pages/_chart.html")
+def sailing_map(schedule):
+    """Route map for one sailing, with the ferry's estimated position."""
+    from apps.pages.charts import sailing_chart
+
+    return {"chart": sailing_chart(schedule)}
