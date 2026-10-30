@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Frequently asked questions · Ship Booking{% endblock %}
+{% block og_title %}Frequently asked questions{% endblock %}
+{% block description %}Answers to common questions about booking ship and ferry journeys.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'pages:help' %}">Help centre</a></nav><h1>Frequently asked questions</h1></div></div>
+<div class="container section narrow">
+  {% for f in faqs %}
+    <details class="faq"><summary>{{ f.question }}</summary><p>{{ f.answer|linebreaksbr }}</p></details>
+  {% empty %}
+    <p>No questions published yet.</p>
+  {% endfor %}
+  <p style="margin-top:32px">Still have a question? <a href="{% url 'pages:contact' %}">Contact support</a>.</p>
+</div>
+{% endblock %}

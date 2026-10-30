@@ -1,0 +1,85 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{{ schedule.route.origin.name }} to {{ schedule.route.destination.name }}, {{ schedule.departure_at|date:"j M Y H:i" }} · Ship Booking{% endblock %}
+{% block og_title %}{{ schedule.route.origin.name }} to {{ schedule.route.destination.name }}{% endblock %}
+{% block description %}{{ schedule.vessel.name }} sailing from {{ schedule.route.origin.name }} to {{ schedule.route.destination.name }} on {{ schedule.departure_at|date:"j F Y" }}.{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% if search_query %}<a href="{% url 'pages:search' %}?{{ search_query }}">Back to results</a>{% else %}<a href="{% url 'pages:home' %}">Search</a>{% endif %}
+    </nav>
+    <h1>{{ schedule.route.origin.name }} <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="visually-hidden">to</span> {{ schedule.route.destination.name }}</h1>
+    <p>{{ schedule.departure_at|date:"l, j F Y" }} · {{ schedule.vessel.name }} · {{ schedule.route.operator.name }}
+      {% if schedule.route.operator.is_demo %}<span class="badge badge-demo">Demo data</span>{% endif %}</p>
+  </div>
+</div>
+
+<div class="container layout-sidebar">
+  <div>
+    {% if schedule.route.operator.is_demo %}
+      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>This is a fictional demo sailing. The ports are real, but the operator, vessel, timings and fares are invented.</p></div>
+    {% endif %}
+    {% if schedule.status == "cancelled" %}
+      <div class="alert alert-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>This sailing is cancelled.</strong> {{ schedule.status_note }}</p></div>
+    {% elif schedule.status == "delayed" %}
+      <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>This sailing is delayed.</strong> {{ schedule.status_note }}</p></div>
+    {% elif not is_bookable %}
+      <div class="alert alert-info"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><p>This sailing is not open for booking.</p></div>
+    {% endif %}
+
+    <h2>Journey</h2>
+    <dl class="facts">
+      <dt>Departs</dt><dd>{{ schedule.departure_at|date:"j M Y, H:i" }} from {{ schedule.route.origin }}</dd>
+      <dt>Arrives</dt><dd>{{ schedule.arrival_at|date:"j M Y, H:i" }} at {{ schedule.route.destination }}</dd>
+      <dt>Duration</dt><dd>{{ schedule.duration|duration }}</dd>
+      <dt>Vessel</dt><dd>{{ schedule.vessel.name }}{% if schedule.vessel.vessel_type %} ({{ schedule.vessel.vessel_type }}){% endif %}</dd>
+      <dt>Operator</dt><dd>{{ schedule.route.operator.name }}</dd>
+      <dt>Seating</dt><dd>{{ schedule.vessel.get_seating_mode_display }}</dd>
+    </dl>
+
+    <h2 style="margin-top:40px">Fares</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Class</th><th scope="col" class="num">Fare</th><th scope="col" class="num">Taxes and fees</th><th scope="col" class="num">Total per passenger</th><th scope="col" class="num">Places left</th></tr></thead>
+        <tbody>
+          {% for f in fares %}
+            <tr>
+              <th scope="row">{{ f.cabin_class.name }}{% if f.fare_rules %}<div class="small muted" style="font-weight:400">{{ f.fare_rules }}</div>{% endif %}</th>
+              <td class="num">{{ f.base_fare|inr }}</td>
+              <td class="num">{{ f.tax_amount|add:f.fee_amount|inr }}</td>
+              <td class="num"><strong>{{ f.unit_total|inr }}</strong></td>
+              <td class="num">{{ f.available }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">No fares published for this sailing.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted" style="margin-top:12px">Booking opens in a later release. The final total and cancellation terms are shown before payment.</p>
+
+    {% if schedule.vessel.facilities %}
+      <h2 style="margin-top:40px">Facilities on board</h2>
+      <p>{{ schedule.vessel.facilities|linebreaksbr }}</p>
+    {% endif %}
+
+    <h2 style="margin-top:40px">Boarding at {{ schedule.route.origin.name }}</h2>
+    {% if schedule.route.origin.boarding_instructions %}
+      <p>{{ schedule.route.origin.boarding_instructions|linebreaksbr }}</p>
+    {% else %}
+      <p class="muted">The operator has not provided port-specific boarding instructions. See the general <a href="{% url 'pages:guide' 'boarding' %}">boarding instructions</a>.</p>
+    {% endif %}
+  </div>
+
+  <aside class="sidenav" aria-label="Passenger guidance">
+    <h2>Passenger guidance</h2>
+    <ul>
+      <li><a href="{% url 'pages:guide' 'boarding' %}">Boarding instructions</a></li>
+      <li><a href="{% url 'pages:guide' 'luggage' %}">Luggage rules</a></li>
+      <li><a href="{% url 'pages:guide' 'travel-requirements' %}">Travel requirements</a></li>
+      <li><a href="{% url 'pages:guide' 'safety' %}">Safety information</a></li>
+      <li><a href="{% url 'pages:policy' 'cancellation' %}">Cancellation Policy</a></li>
+    </ul>
+  </aside>
+</div>
+{% endblock %}

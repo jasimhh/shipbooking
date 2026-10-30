@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Service updates · Ship Booking{% endblock %}
+{% block og_title %}Service updates{% endblock %}
+{% block description %}Delays, cancellations and schedule changes for ship and ferry sailings.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Service updates</h1><p>Disruptions and schedule changes for the next 14 days. Passengers with bookings are also notified directly.</p></div></div>
+<div class="container section narrow">
+  {% for a in announcements %}
+    <div class="alert {% if a.level == 'disruption' %}alert-warning{% else %}alert-info{% endif %}">
+      <svg class="icon" aria-hidden="true"><use href="#i-{% if a.level == 'disruption' %}alert{% else %}info{% endif %}"/></svg>
+      <div><p><strong>{{ a.title }}</strong></p><p>{{ a.body|linebreaksbr }}</p></div>
+    </div>
+  {% endfor %}
+
+  <h2>Changed sailings</h2>
+  {% if changed %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Sailing</th><th scope="col">Scheduled departure</th><th scope="col">Status</th></tr></thead>
+        <tbody>
+          {% for s in changed %}
+            <tr>
+              <td><a href="{% url 'pages:sailing' s.pk %}">{{ s.route.origin.name }} to {{ s.route.destination.name }}</a><div class="small muted">{{ s.vessel.name }}</div></td>
+              <td>{{ s.departure_at|date:"j M Y, H:i" }}</td>
+              <td><span class="badge {% if s.status == 'cancelled' %}badge-bad{% else %}badge-warn{% endif %}">{{ s.get_status_display }}</span>{% if s.status_note %}<div class="small">{{ s.status_note }}</div>{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>All sailings in the next 14 days are running as scheduled.</p>
+  {% endif %}
+</div>
+{% endblock %}

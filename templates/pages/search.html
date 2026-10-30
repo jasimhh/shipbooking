@@ -1,0 +1,96 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{% if origin %}{{ origin.name }} to {{ destination.name }}, {{ date|date:"j M Y" }}{% else %}Search sailings{% endif %} · Ship Booking{% endblock %}
+{% block og_title %}Search sailings{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="search-band">
+  <div class="container">
+    {% include "includes/search_form.html" %}
+  </div>
+</div>
+
+<div class="container">
+  {% if origin %}
+    <div class="results-header">
+      <div>
+        <h1>{{ origin.name }} <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="visually-hidden">to</span> {{ destination.name }}</h1>
+        <p class="muted" style="margin:4px 0 0">{{ date|date:"l, j F Y" }} · {{ passengers }} passenger{{ passengers|pluralize }}</p>
+      </div>
+      <form class="filters" method="get" action="{% url 'pages:search' %}">
+        <input type="hidden" name="origin" value="{{ origin.code }}">
+        <input type="hidden" name="destination" value="{{ destination.code }}">
+        <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
+        <input type="hidden" name="passengers" value="{{ passengers }}">
+        <div class="field">
+          <label for="f-time">Departure time</label>
+          <select id="f-time" name="time">
+            <option value="">Any time</option>
+            {% for key, label in time_windows.items %}<option value="{{ key }}"{% if key == time %} selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-sort">Sort by</label>
+          <select id="f-sort" name="sort">
+            {% for key, label in sorts.items %}<option value="{{ key }}"{% if key == sort %} selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-secondary" type="submit">Apply</button>
+      </form>
+    </div>
+
+    <p class="visually-hidden" role="status">{{ results|length }} sailing{{ results|length|pluralize }} found</p>
+    {% if results %}
+      <ul class="result-list">
+        {% for r in results %}{% with s=r.schedule %}
+          <li class="result">
+            <div>
+              <div class="times">
+                <span>{{ s.departure_at|time:"H:i" }}</span>
+                <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="visually-hidden">arrives</span>
+                <span>{{ s.arrival_at|time:"H:i" }}{% if s.arrival_at|date:"Ymd" != s.departure_at|date:"Ymd" %} <span class="small muted">+1 day</span>{% endif %}</span>
+              </div>
+              <div class="meta">
+                {{ s.vessel.name }} · {{ s.route.operator.name }}
+                {% if s.route.operator.is_demo %}<span class="badge badge-demo">Demo</span>{% endif %}
+                {% if s.status == "delayed" %}<span class="badge badge-warn">Delayed</span>{% endif %}
+              </div>
+            </div>
+            <div class="meta"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg> {{ s.duration|duration }}</div>
+            <div>
+              <div class="small muted">From</div>
+              <div class="price">{{ r.from_price|inr }}</div>
+              <div class="small">
+                {% if not r.bookable %}<span class="badge badge-bad">Not enough places</span>
+                {% elif r.available <= 10 %}<span class="badge badge-warn">{{ r.available }} left</span>
+                {% else %}<span class="badge badge-ok">Available</span>{% endif %}
+              </div>
+            </div>
+            <a class="btn btn-primary" href="{% url 'pages:sailing' s.pk %}?{{ request.GET.urlencode }}">View sailing<span class="visually-hidden">, departs {{ s.departure_at|time:"H:i" }}</span></a>
+          </li>
+        {% endwith %}{% endfor %}
+      </ul>
+    {% else %}
+      <div class="tile" style="margin:8px 0 48px">
+        <h2 style="font-size:1.2rem">No sailings found</h2>
+        {% if time %}
+          <p>No sailings match the selected departure time. Try "Any time".</p>
+        {% elif other_dates %}
+          <p>There are no bookable sailings on this date. Sailings are available on:</p>
+          <p style="display:flex;flex-wrap:wrap;gap:8px">
+            {% for d in other_dates %}
+              <a class="btn btn-secondary" href="?origin={{ origin.code }}&amp;destination={{ destination.code }}&amp;date={{ d|date:'Y-m-d' }}&amp;passengers={{ passengers }}">{{ d|date:"D j M" }}</a>
+            {% endfor %}
+          </p>
+        {% else %}
+          <p>There are no bookable sailings on this route at the moment. Check <a href="{% url 'pages:service_updates' %}">service updates</a> or try another route.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% else %}
+    <div style="padding:32px 0 48px">
+      <h1 style="font-size:1.5rem">Check your search</h1>
+      <p class="muted">Some details need fixing. The fields with problems are marked above.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

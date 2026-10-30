@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Help centre · Ship Booking{% endblock %}
+{% block og_title %}Help centre{% endblock %}
+{% block description %}Guides to booking, boarding, luggage, travel requirements and safety.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Help centre</h1><p>Guides for planning and taking your journey.</p></div></div>
+<div class="container section">
+  <div class="grid">
+    {% for g in guides %}
+      <a class="tile" href="{% url 'pages:guide' g.slug %}"><h3>{{ g.title }}</h3><p>{{ g.summary }}</p></a>
+    {% endfor %}
+    <a class="tile" href="{% url 'pages:faq' %}"><h3>Frequently asked questions</h3><p>Quick answers to common questions.</p></a>
+    <a class="tile" href="{% url 'pages:service_updates' %}"><h3>Service updates</h3><p>Delays, cancellations and schedule changes.</p></a>
+  </div>
+  <p style="margin-top:32px">Can't find what you need? <a href="{% url 'pages:contact' %}">Contact support</a>.</p>
+</div>
+{% endblock %}

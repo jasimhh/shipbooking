@@ -1,0 +1,8 @@
+<form class="search-form" action="{% url 'pages:search' %}" method="get" novalidate>
+  {% if form.non_field_errors %}<div class="alert alert-error" style="grid-column:1/-1">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="field">{{ form.origin.as_field_group }}</div>
+  <div class="field">{{ form.destination.as_field_group }}</div>
+  <div class="field">{{ form.date.as_field_group }}</div>
+  <div class="field">{{ form.passengers.as_field_group }}</div>
+  <button class="btn btn-primary" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Search sailings</button>
+</form>

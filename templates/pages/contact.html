@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Contact us · Ship Booking{% endblock %}
+{% block og_title %}Contact Ship Booking{% endblock %}
+{% block description %}Contact Ship Booking support about a booking, payment, cancellation or complaint.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Contact us</h1><p>Send a message about a booking, payment, cancellation or anything else. You'll get a reference number to quote in follow-ups.</p></div></div>
+<div class="container layout-sidebar">
+  <form class="form-stack narrow" method="post" novalidate>
+    {% csrf_token %}
+    {% if form.errors %}<div class="alert alert-error" role="alert"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p>Please fix the fields marked below.</p></div>{% endif %}
+    <div class="field">{{ form.email.as_field_group }}</div>
+    <div class="field">{{ form.category.as_field_group }}</div>
+    <div class="field">{{ form.booking_reference.as_field_group }}</div>
+    <div class="field">{{ form.subject.as_field_group }}</div>
+    <div class="field">{{ form.message.as_field_group }}</div>
+    <div class="hp" aria-hidden="true"><label for="{{ form.website.id_for_label }}">Leave this empty</label>{{ form.website }}</div>
+    <p class="small muted">We use these details only to answer your message. See the <a href="{% url 'pages:policy' 'privacy' %}">Privacy Policy</a>.</p>
+    <div><button class="btn btn-primary" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>Send message</button></div>
+  </form>
+  <aside class="sidenav">
+    <h2>Other ways to reach us</h2>
+    <dl class="facts" style="grid-template-columns:1fr">
+      <dt>Email</dt><dd>{% if business.support_email %}<a href="mailto:{{ business.support_email }}">{{ business.support_email }}</a>{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</dd>
+      <dt>Phone</dt><dd>{% if business.support_phone %}{{ business.support_phone }}{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</dd>
+      <dt>Grievance officer</dt><dd>{% if business.grievance_officer_name %}{{ business.grievance_officer_name }}{% if business.grievance_officer_email %}, <a href="mailto:{{ business.grievance_officer_email }}">{{ business.grievance_officer_email }}</a>{% endif %}{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</dd>
+    </dl>
+    <p class="small" style="margin-top:16px"><a href="{% url 'pages:policy' 'grievance' %}">Grievance Redressal Policy</a></p>
+  </aside>
+</div>
+{% endblock %}

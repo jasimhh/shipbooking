@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }} · Ship Booking{% endblock %}
+{% block og_title %}{{ page.title }}{% endblock %}
+{% block description %}{{ page.summary }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    {% if page.section == "guide" %}<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'pages:help' %}">Help centre</a></nav>{% endif %}
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.summary }}</p>
+  </div>
+</div>
+<div class="container layout-sidebar">
+  <article class="prose narrow">
+    {{ page.body|safe }}
+    {% if page.slug == "about" %}
+      <h2>Business details</h2>
+      <dl class="facts">
+        <dt>Legal entity</dt><dd>{% if business.legal_entity_name %}{{ business.legal_entity_name }}{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</dd>
+        <dt>Registered address</dt><dd>{% if business.registered_address %}{{ business.registered_address }}{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</dd>
+        <dt>Our role</dt><dd>{% if platform_role_label %}Ship Booking acts as {{ platform_role_label }}.{% else %}<span class="not-configured">Not yet configured</span>{% endif %}</dd>
+      </dl>
+    {% endif %}
+    <p class="small muted" style="margin-top:40px">Last updated {{ page.updated_at|date:"j F Y" }}</p>
+  </article>
+  {% if page.section == "guide" %}
+  <aside class="sidenav" aria-label="Help centre guides">
+    <h2>Guides</h2>
+    <ul>
+      {% for g in guides %}<li><a href="{% url 'pages:guide' g.slug %}"{% if g.pk == page.pk %} aria-current="page"{% endif %}>{{ g.title }}</a></li>{% endfor %}
+    </ul>
+  </aside>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "existing-ui",
+      "projectId": "660b140a-ab83-4aa3-b5cb-7677793e51cb",
+      "baselineDraftId": "66ba3b8f-1e35-402f-9c38-44fac090fae0",
+      "activeDraftId": "66ba3b8f-1e35-402f-9c38-44fac090fae0",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [],
+      "brandAssets": {},
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        ".superdesign/tmp/home.rendered.html",
+        "static/css/site.css",
+        ".superdesign/tmp/variation-rules.md"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "a55ec4e7091929e5f33b18f6b29d84f2a9a6bd53bc7a4392008d8e55f0bbad6a",
+        ".superdesign/tmp/home.rendered.html": "76cafae0f81f3f96d10dd1d31e4317fd059496ef7017971dc25fb11b0067c37c",
+        "static/css/site.css": "0af4cd9006817ec76c2e79bb95dc250ba724126b1b4d5fee8f1d4cabf51b7a50",
+        ".superdesign/tmp/variation-rules.md": "f3ddc1cd5835215f8dde06bd46908e8777af20afc9c5d94f2adb9b93a6fd54b9"
+      },
+      "components": [],
+      "drafts": {
+        "66ba3b8f-1e35-402f-9c38-44fac090fae0": {
+          "title": "Current home (reproduction)",
+          "visualDirection": "baseline",
+          "currentVersion": 1
+        },
+        "54101555-69d5-4c3c-926d-e07331b2153f": {
+          "title": "Split Hero",
+          "visualDirection": "A: split hero with routes",
+          "parentDraftId": "66ba3b8f-1e35-402f-9c38-44fac090fae0",
+          "currentVersion": 1
+        },
+        "618a621a-43e5-4775-9cd7-5e141be5088f": {
+          "title": "Departures Board",
+          "visualDirection": "B: port departures board",
+          "parentDraftId": "66ba3b8f-1e35-402f-9c38-44fac090fae0",
+          "currentVersion": 1
+        },
+        "24a41a10-297b-450a-9bfb-d94c31d2308b": {
+          "title": "Calm Journey Planner",
+          "visualDirection": "C: calm journey planner",
+          "parentDraftId": "66ba3b8f-1e35-402f-9c38-44fac090fae0",
+          "currentVersion": 1
+        },
+        "3406bb94-9c02-443c-a321-68960f7205d9": {
+          "title": "App-like mobile-first search",
+          "visualDirection": "D: app-like mobile-first",
+          "parentDraftId": "66ba3b8f-1e35-402f-9c38-44fac090fae0",
+          "currentVersion": 1
+        }
+      }
+    }
+  }
+}
