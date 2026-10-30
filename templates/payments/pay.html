@@ -1,0 +1,64 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}Pay for {{ booking.reference }} · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+{% include "bookings/_header.html" with schedule=booking.schedule step=3 %}
+<div class="container layout-sidebar">
+  <div>
+    <div class="alert alert-info" role="status"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+      <p>Your places are held for <strong><span data-countdown="{{ booking.hold.expires_at|date:'c' }}">{{ booking.hold.expires_at|timeuntil }}</span></strong> more.</p></div>
+
+    {% if not_configured %}
+      <div class="card">
+        <h2>Payment isn't set up yet</h2>
+        <p class="muted">The Razorpay test keys haven't been added to this site, so payment can't start. An administrator needs to add <code>RAZORPAY_KEY_ID</code> and <code>RAZORPAY_KEY_SECRET</code> (test mode) to the server settings.</p>
+        <a class="btn btn-secondary" href="{% url 'bookings:detail' booking.reference %}">Back to booking</a>
+      </div>
+    {% else %}
+      <div class="card">
+        <h2>Pay securely with Razorpay</h2>
+        <p class="muted">You'll choose UPI, card, net banking or wallet in Razorpay's secure window. Ship Booking never sees your card, UPI PIN or bank details.</p>
+        <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+          <p><strong>Test mode.</strong> No real money is taken. Use Razorpay's test card or test UPI details.</p></div>
+        <button class="btn btn-primary" type="button" id="pay-button">Pay {{ booking.total_amount|inr }}</button>
+        <noscript><p class="small">Payment needs JavaScript to open Razorpay's secure window.</p></noscript>
+      </div>
+      <form id="return-form" method="post" action="{% url 'payments:return' booking.reference %}" hidden>{% csrf_token %}
+        <input name="razorpay_payment_id"><input name="razorpay_order_id"><input name="razorpay_signature">
+      </form>
+      <form id="failed-form" method="post" action="{% url 'payments:failed' booking.reference %}" hidden>{% csrf_token %}
+        <input name="razorpay_order_id" value="{{ checkout.order_id }}"><input name="reason">
+      </form>
+      {{ checkout|json_script:"checkout-options" }}
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script>
+        (() => {
+          const options = JSON.parse(document.getElementById("checkout-options").textContent);
+          const send = (formId, values) => {
+            const form = document.getElementById(formId);
+            Object.entries(values).forEach(([k, v]) => { form.elements[k].value = v; });
+            form.submit();
+          };
+          options.theme = { color: "#0F2133" };
+          options.handler = (r) => send("return-form", r);
+          const button = document.getElementById("pay-button");
+          button.addEventListener("click", () => {
+            const rzp = new Razorpay(options);
+            rzp.on("payment.failed", (r) => send("failed-form", { reason: (r.error && r.error.description) || "Payment failed" }));
+            rzp.open();
+          });
+        })();
+      </script>
+    {% endif %}
+  </div>
+  <aside class="sidenav">
+    <h2>Booking {{ booking.reference }}</h2>
+    <dl class="price-lines">
+      <div><dt>Fares × {{ booking.passenger_count }}</dt><dd>{{ booking.base_amount|inr }}</dd></div>
+      <div><dt>Taxes</dt><dd>{{ booking.tax_amount|inr }}</dd></div>
+      <div><dt>Fees</dt><dd>{{ booking.fee_amount|inr }}</dd></div>
+      <div class="total"><dt>Total</dt><dd>{{ booking.total_amount|inr }}</dd></div>
+    </dl>
+  </aside>
+</div>
+{% endblock %}

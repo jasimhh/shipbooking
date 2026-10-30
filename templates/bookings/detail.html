@@ -24,9 +24,12 @@
       </div>
       <div class="card" style="margin-bottom:32px">
         <h2>Payment</h2>
-        <p class="muted">Online payment is being set up and arrives in the next release (test mode only, no real money). Your reservation reference is <strong>{{ booking.reference }}</strong>.</p>
-        <button class="btn btn-primary" type="button" disabled>Pay {{ booking.total_amount|inr }}</button>
+        <p class="muted">Pay now to confirm your booking. Your reservation reference is <strong>{{ booking.reference }}</strong>.</p>
+        <a class="btn btn-primary" href="{% url 'payments:pay' booking.reference %}">Pay {{ booking.total_amount|inr }}</a>
       </div>
+    {% elif booking.status == "confirmed" %}
+      <div class="alert alert-success"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+        <p><strong>Booking confirmed.</strong> Payment received{% if booking.confirmed_at %} on {{ booking.confirmed_at|date:"j M Y, H:i" }}{% endif %}. Keep your reference <strong>{{ booking.reference }}</strong>; e-tickets arrive in the next release.</p></div>
     {% elif booking.status == "expired" %}
       <div class="alert alert-warning"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p>This reservation expired before payment and the places were released. <a href="{% url 'pages:sailing' schedule.pk %}">Book again</a></p></div>
     {% elif booking.status == "cancelled" %}

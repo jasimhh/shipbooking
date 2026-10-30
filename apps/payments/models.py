@@ -71,6 +71,7 @@ class Refund(TimeStampedModel):
         CancellationRequest, on_delete=models.PROTECT, null=True, blank=True, related_name="refunds"
     )
     amount = models.DecimalField(**MONEY)
+    reason = models.CharField(max_length=255, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING, db_index=True)
     gateway_refund_id = models.CharField(max_length=64, unique=True, null=True, blank=True)
     failure_reason = models.CharField(max_length=255, blank=True)

@@ -181,6 +181,8 @@ RAZORPAY_WEBHOOK_SECRET = env("RAZORPAY_WEBHOOK_SECRET", "")
 PAYMENTS_LIVE_MODE = env_bool("PAYMENTS_LIVE_MODE", False)
 if PAYMENTS_LIVE_MODE and RAZORPAY_KEY_ID.startswith("rzp_test_"):
     raise ImproperlyConfigured("PAYMENTS_LIVE_MODE is on but a Razorpay test key is configured.")
+if not PAYMENTS_LIVE_MODE and RAZORPAY_KEY_ID.startswith("rzp_live_"):
+    raise ImproperlyConfigured("A live Razorpay key is configured but PAYMENTS_LIVE_MODE is off. Use test keys.")
 
 # Business facts that must be supplied and verified before launch. Empty = shown as "not yet configured".
 BUSINESS = {

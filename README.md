@@ -2,7 +2,7 @@
 
 Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 5 of 10** done: public site, accounts and roles, operations management, and booking up to the payment step (choose class and passengers, enter details, review the price, reserve with a timed hold). Test-mode payment comes in Phase 6.
+Status: **Phase 6 of 10** done: public site, accounts and roles, operations management, booking with timed holds, and Razorpay payments in test mode (verified server-side, webhooks, reconciliation). E-tickets come in Phase 7.
 
 ## Setup (Windows)
 
@@ -64,6 +64,25 @@ How inventory stays correct (`apps/bookings/services.py`):
 - Demo sailings can't be booked if live payments are ever switched on.
 
 Not built yet: choosing your own seat (seats are assigned automatically), guest checkout without an account, and booking look-up by reference for people without an account (Phase 7, with tickets).
+
+## Payments (Razorpay, test mode)
+
+### Setup
+1. Create a Razorpay account and switch the dashboard to **Test Mode**.
+2. **Account & Settings → API Keys → Generate Test Key.** Put the key id (`rzp_test_...`) and secret in `.env` as `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`.
+3. **Account & Settings → Webhooks → Add New Webhook**: URL `https://<your-domain>/payments/webhooks/razorpay/`, choose a secret and put it in `.env` as `RAZORPAY_WEBHOOK_SECRET`, and select the events `payment.captured`, `payment.failed`, `payment.authorized` and `order.paid`. (Razorpay can't reach `localhost`; for local testing use a tunnel such as ngrok, or rely on the checkout return and `reconcile_payments`.)
+4. Restart the server. Pay with Razorpay's test card or test UPI details from their documentation.
+
+Leave `PAYMENTS_LIVE_MODE=false`. The app refuses to start with a live key while live mode is off, or a test key while it's on.
+
+### How a payment is confirmed
+- **Pay** creates a Razorpay order on the server for the booking's server-calculated total (in paise) and opens Razorpay Checkout. Reloading reuses the same order.
+- When Checkout finishes, the browser posts the result back. The server checks Razorpay's signature, then fetches the payment from Razorpay's API and checks that the order, amount and currency match. Authorized payments are captured. Only then is the booking confirmed and its hold converted.
+- **Webhooks** run the same confirmation, so a closed browser tab doesn't lose a payment. Every webhook must carry a valid signature; each event is stored once by its id, so repeats do nothing.
+- `python manage.py reconcile_payments` (run every few minutes from cron) asks Razorpay about orders still waiting and settles any that were paid. Admins can also run **Check selected orders with Razorpay** on Payment transactions.
+- If money arrives after the reservation was released, the booking is **not** confirmed and a full refund is queued for an admin (Payments → Refunds). Processing refunds through Razorpay comes in Phase 7.
+- Failed payments are recorded; the passenger can try again with a fresh order while the places are still held.
+- Only Razorpay ids and statuses are stored. Card numbers, CVVs, UPI PINs and bank passwords never reach this server.
 
 ## Tests
 
