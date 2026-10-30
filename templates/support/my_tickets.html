@@ -10,7 +10,7 @@
   {% if tickets %}
     <div class="table-wrap"><table>
       <thead><tr><th scope="col">Reference</th><th scope="col">Subject</th><th scope="col">Status</th><th scope="col">Updated</th></tr></thead>
-      <tbody>{% for t in tickets %}<tr><td><a href="{% url 'support:ticket' t.reference %}">{{ t.reference }}</a></td><td>{{ t.subject }}</td><td>{{ t.get_status_display }}</td><td>{{ t.updated_at|date:"j M Y" }}</td></tr>{% endfor %}</tbody>
+      <tbody>{% for t in tickets %}<tr><td><a href="{% url 'support:ticket' t.reference %}">{{ t.reference }}</a></td><td>{{ t.subject }}{% if not t.user_id %} <span class="badge badge-warn" title="Sent from the contact form with your email address by someone who was not signed in">Sent without signing in</span>{% endif %}</td><td>{{ t.get_status_display }}</td><td>{{ t.updated_at|date:"j M Y" }}</td></tr>{% endfor %}</tbody>
     </table></div>
   {% else %}
     <div class="card"><p class="muted" style="margin:0">You haven't contacted support yet.</p></div>

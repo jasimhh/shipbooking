@@ -1,0 +1,10 @@
+# /etc/systemd/system/ship-booking-job@apply_retention.timer  (remove personal data past its retention period)
+[Unit]
+Description=Ship Booking: remove personal data past its retention period
+
+[Timer]
+OnCalendar=*-*-* 02:30
+Persistent=true
+
+[Install]
+WantedBy=timers.target

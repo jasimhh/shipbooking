@@ -90,7 +90,7 @@ class SchemaRulesTest(TestCase):
         )
         Refund.objects.create(payment=pay, amount=300)
         Refund.objects.create(payment=pay, amount=100, status="failed")
-        self.assertEqual(pay.refundable_amount(), 200)
+        self.assertEqual(pay.refundable_amount(), 100)  # a failed refund is retried in place, so it stays committed
         pay.status = "failed"
         self.assertEqual(pay.refundable_amount(), 0)
 

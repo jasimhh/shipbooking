@@ -1,8 +1,8 @@
 # Ship Booking
 
-Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
+Ship and ferry booking platform prototype for India (INR). Django, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 8 of 10** done: everything up to the staff area (role-based dashboards, passenger lists, reports with CSV export, support desk) and passenger support conversations. Legal pages, cookie consent, accessibility and SEO come in Phase 9.
+Status: **all 10 phases done** (prototype). Live payments stay off. Deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · Admin guide: [docs/ADMIN.md](docs/ADMIN.md) · Machine endpoints: [docs/API.md](docs/API.md).
 
 ## Setup (Windows)
 
@@ -141,6 +141,13 @@ Operator staff, support staff and admins get a **Staff** button in the header. W
 - **SEO**: `/sitemap.xml` (public pages only, no demo sailings), `/robots.txt`, canonical URLs from `SITE_URL`, Open Graph tags. Account, booking, payment, staff, admin and operator pages send `X-Robots-Tag: noindex`.
 - **Fonts** are self-hosted from `static/fonts/` (SIL Open Font License), so no visitor IP goes to a font CDN.
 - **Devices**: every page is checked at phone (375px), iPad portrait (768px), tablet/iPad landscape (1024px) and desktop widths with no sideways scrolling; wide tables scroll inside their own box.
+
+## Security and operations (Phase 10)
+
+- Rate limits on sign-in (per email and per IP), registration, password reset, contact form, booking lookup and reservations. Counters are shared by all workers (database cache; run `manage.py createcachetable`). Behind Nginx set `TRUSTED_PROXY_HEADER=HTTP_X_REAL_IP`.
+- Content Security Policy, HSTS, secure cookies, versioned static files when `DJANGO_DEBUG=false`. `/healthz` for uptime checks, JSON logs (`LOG_FORMAT=json`), crash emails to `DJANGO_ADMINS`.
+- Booking lookup uses POST (no emails in URLs). Only crew and admins can mark passengers boarded. Failed refunds are retried in place, never paid twice.
+- `deploy/` has Gunicorn, Nginx and systemd files (site + scheduled jobs) and `backup.sh` / `restore-check.sh`. A local restore drill passed.
 
 ## Tests
 

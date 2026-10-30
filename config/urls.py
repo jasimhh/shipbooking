@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from apps.operators.portal import operator_site
-from apps.pages.seo import robots_txt, sitemap_xml
+from apps.pages.seo import health, robots_txt, sitemap_xml
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -10,6 +10,7 @@ urlpatterns = [
     path("staff/", include("apps.staff.urls")),
     path("privacy/", include("apps.compliance.urls")),
     path("robots.txt", robots_txt),
+    path("healthz", health, name="health"),
     path("sitemap.xml", sitemap_xml, name="sitemap"),
     path("account/support/", include("apps.support.urls")),
     path("account/", include("apps.accounts.urls")),

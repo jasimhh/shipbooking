@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.db import connection
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.utils.html import escape
 
@@ -40,3 +41,16 @@ def sitemap_xml(request):
     return HttpResponse('<?xml version="1.0" encoding="UTF-8"?>\n'
                         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>',
                         content_type="application/xml")
+
+
+def health(request):
+    """For uptime monitors: 200 when the app can reach the database, 503 when it can't. Reveals nothing else."""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        status, code = "ok", 200
+    except Exception:
+        status, code = "database unavailable", 503
+    response = JsonResponse({"status": status}, status=code)
+    response["Cache-Control"] = "no-store"
+    return response

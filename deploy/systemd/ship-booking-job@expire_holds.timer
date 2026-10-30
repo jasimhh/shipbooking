@@ -1,0 +1,10 @@
+# /etc/systemd/system/ship-booking-job@expire_holds.timer  (release places held by unpaid reservations)
+[Unit]
+Description=Ship Booking: release places held by unpaid reservations
+
+[Timer]
+OnCalendar=*:*:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

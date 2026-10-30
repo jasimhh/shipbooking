@@ -1,0 +1,18 @@
+# /etc/systemd/system/ship-booking.service
+[Unit]
+Description=Ship Booking (Gunicorn)
+After=network.target
+
+[Service]
+User=shipbooking
+Group=shipbooking
+WorkingDirectory=/srv/ship-booking/app
+EnvironmentFile=/srv/ship-booking/app/.env
+ExecStart=/srv/ship-booking/venv/bin/gunicorn config.wsgi:application -c deploy/gunicorn.conf.py
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

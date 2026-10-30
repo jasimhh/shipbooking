@@ -32,3 +32,25 @@ document.querySelectorAll("[data-countdown]").forEach((el) => {
   };
   tick();
 });
+
+// Night (blueprint) / day (whiteprint) switch, remembered per browser.
+document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+  const sync = () => {
+    const day = document.documentElement.dataset.theme === "day";
+    button.setAttribute("aria-pressed", String(day));
+    button.querySelector("use").setAttribute("href", day ? "#i-moon" : "#i-sun");
+  };
+  button.addEventListener("click", () => {
+    const day = document.documentElement.dataset.theme !== "day";
+    document.documentElement.dataset.theme = day ? "day" : "night";
+    try { localStorage.setItem("harbour-theme", day ? "day" : "night"); } catch (e) {}
+    sync();
+  });
+  sync();
+});
+
+// Confirmation before destructive form posts, and print buttons (no inline handlers, so CSP can block inline script).
+document.querySelectorAll("form[data-confirm]").forEach((form) => {
+  form.addEventListener("submit", (e) => { if (!confirm(form.dataset.confirm)) e.preventDefault(); });
+});
+document.querySelectorAll("[data-print]").forEach((button) => button.addEventListener("click", () => window.print()));

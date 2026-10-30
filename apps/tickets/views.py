@@ -50,7 +50,9 @@ def verify(request, token):
 @require_POST
 def board(request, token):
     ticket = get_object_or_404(Ticket, verification_token=token)
-    if not _can_check(request.user, ticket):
+    # Support staff can check a ticket, but only crew (manifest access) and admins mark passengers boarded.
+    support_only = request.user.role == User.Role.SUPPORT and not request.user.is_platform_admin
+    if support_only or not _can_check(request.user, ticket):
         raise PermissionDenied
     if ticket.booking.status == Booking.Status.CONFIRMED and services.mark_boarded(ticket):
         AuditLog.record(request.user, "ticket.boarded", ticket, {}, request)

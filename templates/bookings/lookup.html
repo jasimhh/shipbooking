@@ -5,10 +5,11 @@
 {% block content %}
 <div class="page-header"><div class="container"><h1>Find a booking</h1><p>Check a booking's status with its reference and the email it was booked with.</p></div></div>
 <div class="container section narrow">
-  <form method="get" class="card form-stack" style="margin-bottom:32px">
+  <form method="post" class="card form-stack" style="margin-bottom:32px">
+    {% csrf_token %}
     <div class="passenger-grid">
-      <div class="field"><label for="ref">Booking reference</label><input id="ref" name="reference" value="{{ request.GET.reference }}" placeholder="SB…" required autocomplete="off"></div>
-      <div class="field"><label for="em">Email used to book</label><input id="em" name="email" type="email" value="{{ request.GET.email }}" required autocomplete="email"></div>
+      <div class="field"><label for="ref">Booking reference</label><input id="ref" name="reference" value="{{ request.POST.reference }}" placeholder="SB…" required autocomplete="off"></div>
+      <div class="field"><label for="em">Email used to book</label><input id="em" name="email" type="email" value="{{ request.POST.email }}" required autocomplete="email"></div>
     </div>
     <div><button class="btn btn-primary" type="submit">Find booking</button></div>
   </form>

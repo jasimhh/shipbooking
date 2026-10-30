@@ -81,7 +81,7 @@
       <div class="total"><dt>Total</dt><dd>{{ booking.total_amount|inr }}</dd></div>
     </dl>
     {% if booking.status == "pending" %}
-      <form method="post" action="{% url 'bookings:cancel' booking.reference %}" onsubmit="return confirm('Cancel this reservation and release the places?')">{% csrf_token %}
+      <form method="post" action="{% url 'bookings:cancel' booking.reference %}" data-confirm="Cancel this reservation and release the places?">{% csrf_token %}
         <button class="btn btn-secondary" type="submit" style="width:100%">Cancel reservation</button>
       </form>
     {% endif %}

@@ -13,11 +13,15 @@ def make_reference(prefix, length=8):
 
 
 def client_ip(request):
-    # ponytail: trusts REMOTE_ADDR; behind Nginx set it from the proxy header (Phase 10).
-    return request.META.get("REMOTE_ADDR", "")
+    """Behind Nginx set TRUSTED_PROXY_HEADER=HTTP_X_REAL_IP. Nginx overwrites that header, so clients can't fake it."""
+    from django.conf import settings
+
+    header = settings.TRUSTED_PROXY_HEADER
+    return (request.META.get(header, "").strip() if header else "") or request.META.get("REMOTE_ADDR", "")
 
 
-# ponytail: counters live in the per-process cache; use a shared cache (Redis) with several app servers.
+# Counters live in settings.CACHES (a database table by default, shared by every worker).
+# ponytail: database cache; switch CACHES to Redis if rate-limit traffic ever gets heavy.
 def is_rate_limited(key, limit):
     return cache.get(key, 0) >= limit
 
@@ -33,3 +37,4 @@ class TimeStampedModel(models.Model):
 
     class Meta:
         abstract = True
+

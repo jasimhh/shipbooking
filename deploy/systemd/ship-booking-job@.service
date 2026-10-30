@@ -1,0 +1,12 @@
+# /etc/systemd/system/ship-booking-job@.service
+# Runs one management command, e.g. ship-booking-job@expire_holds. Started by the matching .timer.
+[Unit]
+Description=Ship Booking job: %i
+
+[Service]
+Type=oneshot
+User=shipbooking
+Group=shipbooking
+WorkingDirectory=/srv/ship-booking/app
+EnvironmentFile=/srv/ship-booking/app/.env
+ExecStart=/srv/ship-booking/venv/bin/python manage.py %i

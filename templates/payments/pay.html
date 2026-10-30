@@ -31,7 +31,7 @@
       </form>
       {{ checkout|json_script:"checkout-options" }}
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-      <script>
+      <script nonce="{{ csp_nonce }}">
         (() => {
           const options = JSON.parse(document.getElementById("checkout-options").textContent);
           const send = (formId, values) => {
@@ -39,7 +39,7 @@
             Object.entries(values).forEach(([k, v]) => { form.elements[k].value = v; });
             form.submit();
           };
-          options.theme = { color: "#0F2133" };
+          options.theme = { color: "#0F2C4C" };
           options.handler = (r) => send("return-form", r);
           const button = document.getElementById("pay-button");
           button.addEventListener("click", () => {

@@ -5,7 +5,7 @@
 {% block staff %}
 <p style="display:flex;flex-wrap:wrap;gap:12px">
   <a class="btn btn-secondary" href="?format=csv">Download CSV</a>
-  <button class="btn btn-secondary" type="button" onclick="window.print()">Print</button>
+  <button class="btn btn-secondary" type="button" data-print>Print</button>
 </p>
 <p class="small muted">Contains personal data. Every view and download is logged. Don't share it outside your operations team.</p>
 {% if rows %}

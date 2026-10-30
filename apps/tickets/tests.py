@@ -92,10 +92,10 @@ class LookupTest(ConfirmedBookingCase):
     def test_lookup_needs_reference_and_email(self):
         self.client.logout()
         url = reverse("bookings:lookup")
-        found = self.client.get(url, {"reference": self.booking.reference.lower(), "email": "PAX@example.com"})
+        found = self.client.post(url, {"reference": self.booking.reference.lower(), "email": "PAX@example.com"})
         self.assertEqual(found.context["booking"], self.booking)
         self.assertNotContains(found, "Passenger 0")  # no names on the public page
-        self.assertIsNone(self.client.get(url, {"reference": self.booking.reference, "email": "x@example.com"}).context["booking"])
+        self.assertIsNone(self.client.post(url, {"reference": self.booking.reference, "email": "x@example.com"}).context["booking"])
 
 
 class CancellationTest(ConfirmedBookingCase):

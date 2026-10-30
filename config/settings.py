@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.csp import CSP
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,7 +35,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
     "apps.accounts",
     "apps.operators",
     "apps.fleet",
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -69,6 +70,7 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+                "django.template.context_processors.csp",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.pages.context_processors.site",
@@ -103,7 +105,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": env("SQLITE_PATH", "") or str(BASE_DIR / "db.sqlite3"),
             "ATOMIC_REQUESTS": True,
         }
     }
@@ -139,6 +141,15 @@ MAILERS = {
         "BACKEND": env("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"),
     },
 }
+if MAILERS["default"]["BACKEND"].endswith("smtp.EmailBackend"):
+    MAILERS["default"]["OPTIONS"] = {
+        "host": env("EMAIL_HOST"),
+        "port": int(env("EMAIL_PORT", "587")),
+        "username": env("EMAIL_HOST_USER", ""),
+        "password": env("EMAIL_HOST_PASSWORD", ""),
+        "use_tls": env_bool("EMAIL_USE_TLS", True),
+        "timeout": 10,
+    }
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "no-reply@localhost")
 # Absolute links in emails and on e-ticket QR codes.
 SITE_URL = env("SITE_URL", "http://localhost:8000").rstrip("/")
@@ -151,6 +162,24 @@ CSRF_COOKIE_SAMESITE = "Lax"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"  # Razorpay may open bank/UPI pop-ups
+
+# Content Security Policy. Scripts only from this site and Razorpay checkout; the one inline script
+# (payment page) carries a per-request nonce. Inline style attributes are allowed (low risk, used widely).
+RAZORPAY_HOSTS = ["https://checkout.razorpay.com", "https://api.razorpay.com", "https://*.razorpay.com"]
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "script-src": [CSP.SELF, CSP.NONCE, *RAZORPAY_HOSTS],
+    "style-src": [CSP.SELF, CSP.UNSAFE_INLINE],
+    "img-src": [CSP.SELF, "data:", *RAZORPAY_HOSTS],
+    "font-src": [CSP.SELF],
+    "connect-src": [CSP.SELF, *RAZORPAY_HOSTS],
+    "frame-src": RAZORPAY_HOSTS,
+    "frame-ancestors": [CSP.NONE],
+    "form-action": [CSP.SELF, *RAZORPAY_HOSTS],
+    "base-uri": [CSP.SELF],
+    "object-src": [CSP.NONE],
+}
 
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
@@ -159,19 +188,30 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # Versioned file names (site.abc123.css) so browsers never keep a stale stylesheet after a deploy.
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"},
+    }
 
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 25,
-}
+# People emailed the full traceback when a page crashes in production ("Name <email>,Name <email>").
+ADMINS = [a.strip() for a in env("DJANGO_ADMINS", "").split(",") if a.strip()]
+SERVER_EMAIL = env("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {"plain": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"}},
-    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
+    "formatters": {
+        "plain": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"},
+        "json": {"()": "config.logging.JsonFormatter"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": env("LOG_FORMAT", "plain")},
+        "mail_admins": {"class": "django.utils.log.AdminEmailHandler", "level": "ERROR", "filters": ["prod_only"]},
+    },
+    "filters": {"prod_only": {"()": "django.utils.log.RequireDebugFalse"}},
     "root": {"handlers": ["console"], "level": env("LOG_LEVEL", "INFO")},
+    "loggers": {"django.request": {"handlers": ["console", "mail_admins"], "level": "ERROR", "propagate": False}},
 }
 
 # Booking platform
@@ -208,3 +248,9 @@ RETENTION = {
     "anonymous_cookie_days": int(env("RETENTION_ANONYMOUS_COOKIE_DAYS", "365")),
 }
 COOKIE_CONSENT_DAYS = int(env("COOKIE_CONSENT_DAYS", "365"))
+
+# Real client IP header set by the reverse proxy (e.g. HTTP_X_REAL_IP). Empty = use REMOTE_ADDR (no proxy).
+TRUSTED_PROXY_HEADER = env("TRUSTED_PROXY_HEADER", "")
+
+# Shared by every worker so rate limits hold across processes. Create with: manage.py createcachetable
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.db.DatabaseCache", "LOCATION": "cache_table"}}

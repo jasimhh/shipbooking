@@ -77,6 +77,11 @@ def review(request, pk):
     fare = get_object_or_404(Fare.objects.select_related("cabin_class"), pk=draft["fare"], schedule=schedule)
 
     if request.method == "POST":
+        key = f"reserve-rate:{request.user.pk}"
+        if is_rate_limited(key, RESERVATIONS_PER_HOUR):
+            messages.error(request, "You've started a lot of reservations in the last hour. Please try again later.")
+            return redirect("bookings:details", pk=pk)
+        record_attempt(key, 3600)
         try:
             booking = services.reserve(request.user, fare.pk, draft["passengers"], draft["contact_email"], draft["contact_phone"])
         except services.BookingError as e:
@@ -135,12 +140,13 @@ def request_cancel(request, reference):
 
 
 LOOKUP_LIMIT_PER_HOUR = 10
+RESERVATIONS_PER_HOUR = 10  # booking emails go to the contact address typed in, so cap how often
 
 
 def lookup(request):
     """Public booking check by reference and contact email. Shows status only, no passenger names."""
     booking, searched = None, False
-    if request.GET.get("reference"):
+    if request.method == "POST":  # POST keeps the email out of URLs and access logs
         key = f"lookup-rate:{client_ip(request)}"
         if is_rate_limited(key, LOOKUP_LIMIT_PER_HOUR):
             messages.error(request, "Too many look-ups from your network. Please try again in an hour.")
@@ -148,8 +154,8 @@ def lookup(request):
         record_attempt(key, 3600)
         searched = True
         booking = Booking.objects.select_related("schedule__route__origin", "schedule__route__destination").filter(
-            reference=request.GET["reference"].strip().upper(),
-            contact_email__iexact=request.GET.get("email", "").strip(),
+            reference=request.POST.get("reference", "").strip().upper(),
+            contact_email__iexact=request.POST.get("email", "").strip(),
         ).first()
     return render(request, "bookings/lookup.html", {"booking": booking, "searched": searched})
 

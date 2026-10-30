@@ -14,7 +14,8 @@
   <meta property="og:locale" content="en_IN">
   {% block robots %}{% endblock %}
   <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
-  <meta name="theme-color" content="#07121F">
+  <meta name="theme-color" content="#0F2C4C">
+  <script src="{% static 'js/theme.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
   <script src="{% static 'js/site.js' %}" defer></script>
   {% comment %}Optional tracking goes ONLY inside these blocks, so it never loads before consent.{% endcomment %}
@@ -42,6 +43,7 @@
         </ul>
       </nav>
       <div class="nav-actions">
+        <button class="btn btn-secondary btn-icon" type="button" data-theme-toggle aria-label="Light theme" title="Switch between dark blueprint and light whiteprint"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></button>
         {% if user.is_authenticated %}
           {% if user.is_platform_admin or user.role == "support" or user.role == "operator" %}<a class="btn btn-secondary" href="{% url 'staff:dashboard' %}">Staff</a>{% endif %}
           <a class="btn btn-secondary" href="{% url 'accounts:dashboard' %}">Account</a>

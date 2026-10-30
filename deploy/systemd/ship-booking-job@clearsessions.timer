@@ -1,0 +1,10 @@
+# /etc/systemd/system/ship-booking-job@clearsessions.timer  (delete expired sign-in sessions)
+[Unit]
+Description=Ship Booking: delete expired sign-in sessions
+
+[Timer]
+OnCalendar=*-*-* 03:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -19,7 +19,11 @@ from .forms import (
 from .models import User
 
 LOGIN_FAILURE_LIMIT = 5
+LOGIN_FAILURES_PER_IP = 50  # stops one address spraying a common password across many accounts
 LOGIN_WINDOW_SECONDS = 15 * 60
+REGISTRATIONS_PER_IP_HOUR = 10
+RESETS_PER_IP_HOUR = 10
+RESETS_PER_EMAIL_HOUR = 3
 RESEND_LIMIT_PER_HOUR = 3
 
 
@@ -47,7 +51,11 @@ def register(request):
     if request.user.is_authenticated:
         return redirect("accounts:dashboard")
     form = RegistrationForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
+    key = f"register-rate:{client_ip(request)}"
+    if request.method == "POST" and is_rate_limited(key, REGISTRATIONS_PER_IP_HOUR):
+        form.add_error(None, "Too many new accounts from your network. Please try again in an hour.")
+    elif request.method == "POST" and form.is_valid():
+        record_attempt(key, 3600)
         user = form.save()
         send_verification_email(request, user)
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
@@ -121,8 +129,11 @@ class LoginView(auth_views.LoginView):
         email = self.request.POST.get("username", "").strip().lower()
         return f"login-fail:{client_ip(self.request)}:{email}"
 
+    def ip_key(self):
+        return f"login-fail-ip:{client_ip(self.request)}"
+
     def post(self, request, *args, **kwargs):
-        if is_rate_limited(self.rate_key(), LOGIN_FAILURE_LIMIT):
+        if is_rate_limited(self.rate_key(), LOGIN_FAILURE_LIMIT) or is_rate_limited(self.ip_key(), LOGIN_FAILURES_PER_IP):
             form = self.get_form()
             form.errors.clear()
             form.add_error(None, "Too many unsuccessful attempts. Please wait 15 minutes or reset your password.")
@@ -131,6 +142,7 @@ class LoginView(auth_views.LoginView):
 
     def form_invalid(self, form):
         record_attempt(self.rate_key(), LOGIN_WINDOW_SECONDS)
+        record_attempt(self.ip_key(), LOGIN_WINDOW_SECONDS)
         return super().form_invalid(form)
 
 
@@ -162,7 +174,23 @@ def profile(request):
     })
 
 
-password_reset = auth_views.PasswordResetView.as_view(
+class RateLimitedPasswordReset(auth_views.PasswordResetView):
+    """Stops the reset form being used to flood someone's inbox."""
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get("email", "").strip().lower()
+        keys = [(f"reset-ip:{client_ip(request)}", RESETS_PER_IP_HOUR), (f"reset-email:{email}", RESETS_PER_EMAIL_HOUR)]
+        if any(is_rate_limited(k, limit) for k, limit in keys):
+            form = self.get_form()
+            form.errors.clear()
+            form.add_error(None, "Too many reset requests. Please check your inbox or try again in an hour.")
+            return self.render_to_response(self.get_context_data(form=form), status=429)
+        for k, _ in keys:
+            record_attempt(k, 3600)
+        return super().post(request, *args, **kwargs)
+
+
+password_reset = RateLimitedPasswordReset.as_view(
     form_class=ResetForm,
     template_name="accounts/form_page.html",
     email_template_name="accounts/email/password_reset.txt",

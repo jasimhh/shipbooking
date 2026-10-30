@@ -6,7 +6,7 @@ from django.core import mail
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -174,3 +174,24 @@ class PermissionsTest(TestCase):
         entry = AuditLog.objects.get(action="user.access_changed")
         self.assertEqual(entry.changes["role"], ["passenger", "support"])
         self.assertEqual(entry.actor, self.admin)
+
+
+class AbuseLimitTest(TestCase):
+    def test_password_reset_capped_per_email(self):
+        url = reverse("accounts:password_reset")
+        codes = [self.client.post(url, {"email": "victim@example.com"}).status_code for _ in range(4)]
+        self.assertEqual(codes[-1], 429)
+        self.assertEqual(len(mail.outbox), 0)  # no such account, but the cap applies all the same
+
+    def test_login_failures_capped_per_ip_across_accounts(self):
+        url = reverse("accounts:login")
+        for i in range(50):
+            self.client.post(url, {"username": f"user{i}@example.com", "password": "Password123"})
+        self.assertEqual(self.client.post(url, {"username": "new@example.com", "password": "x"}).status_code, 429)
+
+    @override_settings(TRUSTED_PROXY_HEADER="HTTP_X_REAL_IP")
+    def test_client_ip_from_trusted_proxy_header(self):
+        from apps.common import client_ip
+
+        request = RequestFactory().get("/", HTTP_X_REAL_IP="203.0.113.9", REMOTE_ADDR="127.0.0.1")
+        self.assertEqual(client_ip(request), "203.0.113.9")

@@ -1,0 +1,10 @@
+# /etc/systemd/system/ship-booking-job@reconcile_payments.timer  (settle payments Razorpay took but we did not hear about)
+[Unit]
+Description=Ship Booking: settle payments Razorpay took but we did not hear about
+
+[Timer]
+OnCalendar=*:0/5
+Persistent=true
+
+[Install]
+WantedBy=timers.target

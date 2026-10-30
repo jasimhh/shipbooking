@@ -33,7 +33,8 @@ class PaymentTransaction(TimeStampedModel):
     def refundable_amount(self):
         if self.status != self.Status.CAPTURED:
             return 0
-        committed = self.refunds.exclude(status=Refund.Status.FAILED).aggregate(s=Sum("amount"))["s"] or 0
+        # Failed refunds still count: they are retried in place, so queueing a fresh one could pay out twice.
+        committed = self.refunds.aggregate(s=Sum("amount"))["s"] or 0
         return self.amount - committed
 
     def __str__(self):
