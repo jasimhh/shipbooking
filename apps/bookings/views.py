@@ -5,9 +5,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.compliance.models import PolicyVersion
+from apps.payments.models import Refund
 from apps.schedules.models import Fare, Schedule
 
-from . import services
+from apps.common import client_ip, is_rate_limited, record_attempt
+
+from . import cancellation, services
 from .forms import MAX_PASSENGERS, PassengerFormSet, TripForm
 from .models import Booking, BookingPassenger
 
@@ -105,7 +108,50 @@ def detail(request, reference):
     return render(request, "bookings/detail.html", {
         "booking": booking,
         "passengers": booking.passengers.select_related("seat__seat"),
+        "can_cancel": cancellation.can_request(booking),
+        "cancellations": booking.cancellation_requests.order_by("-created_at"),
+        "refunds": Refund.objects.filter(payment__booking=booking).order_by("-created_at"),
     })
+
+
+@login_required
+def request_cancel(request, reference):
+    booking = _own_booking(request, reference)
+    if not cancellation.can_request(booking):
+        messages.info(request, "This booking can't be cancelled online. Contact support if you need help.")
+        return redirect("bookings:detail", reference=reference)
+    policy, rule, amount = cancellation.quote(booking)
+    if request.method == "POST":
+        reason = request.POST.get("reason", "").strip()[:2000]
+        if not reason:
+            messages.error(request, "Please tell us briefly why you're cancelling.")
+        else:
+            cancellation.request_cancellation(booking, request.user, reason)
+            messages.success(request, "Cancellation requested. We'll email you the outcome.")
+            return redirect("bookings:detail", reference=reference)
+    return render(request, "bookings/cancel_request.html", {
+        "booking": booking, "policy": policy, "rule": rule, "amount": amount,
+    })
+
+
+LOOKUP_LIMIT_PER_HOUR = 10
+
+
+def lookup(request):
+    """Public booking check by reference and contact email. Shows status only, no passenger names."""
+    booking, searched = None, False
+    if request.GET.get("reference"):
+        key = f"lookup-rate:{client_ip(request)}"
+        if is_rate_limited(key, LOOKUP_LIMIT_PER_HOUR):
+            messages.error(request, "Too many look-ups from your network. Please try again in an hour.")
+            return render(request, "bookings/lookup.html", {}, status=429)
+        record_attempt(key, 3600)
+        searched = True
+        booking = Booking.objects.select_related("schedule__route__origin", "schedule__route__destination").filter(
+            reference=request.GET["reference"].strip().upper(),
+            contact_email__iexact=request.GET.get("email", "").strip(),
+        ).first()
+    return render(request, "bookings/lookup.html", {"booking": booking, "searched": searched})
 
 
 @login_required

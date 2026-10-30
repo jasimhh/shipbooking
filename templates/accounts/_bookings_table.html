@@ -1,0 +1,11 @@
+{% load site %}
+<div class="table-wrap" style="margin-bottom:32px"><table>
+  <thead><tr><th scope="col">Reference</th><th scope="col">Journey</th><th scope="col">Departs</th><th scope="col">Status</th><th scope="col" class="num">Total</th></tr></thead>
+  <tbody>{% for b in rows %}<tr>
+    <td><a href="{% url 'bookings:detail' b.reference %}">{{ b.reference }}</a></td>
+    <td>{{ b.schedule.route.origin.name }} to {{ b.schedule.route.destination.name }}</td>
+    <td>{{ b.schedule.departure_at|date:"j M Y, H:i" }}</td>
+    <td><span class="badge {% if b.status == 'confirmed' %}badge-ok{% elif b.status == 'pending' %}badge-warn{% else %}badge-bad{% endif %}">{{ b.get_status_display }}</span></td>
+    <td class="num">{{ b.total_amount|inr }}</td>
+  </tr>{% endfor %}</tbody>
+</table></div>

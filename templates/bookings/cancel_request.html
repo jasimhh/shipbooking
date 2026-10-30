@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}Cancel {{ booking.reference }} · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'bookings:detail' booking.reference %}">Back to booking</a></nav>
+  <h1>Cancel booking {{ booking.reference }}</h1>
+  <p>{{ booking.schedule.route.origin.name }} to {{ booking.schedule.route.destination.name }} · {{ booking.schedule.departure_at|date:"l j F Y, H:i" }}</p>
+</div></div>
+<div class="container section narrow">
+  <div class="card" style="margin-bottom:24px">
+    <h2>Refund</h2>
+    {% if amount is None %}
+      <p class="muted">Refund terms haven't been published yet. An administrator will review your request and decide any refund under the operator's terms.</p>
+    {% elif amount %}
+      <p>Under the <a href="{% url 'pages:policy' 'cancellation' %}">Cancellation Policy</a> (version {{ policy.version }}), cancelling now gives a refund of <strong>{{ amount|inr }}</strong> ({{ rule.refund_percent }}% of {{ booking.total_amount|inr }}).</p>
+      <p class="small muted">Refunds go back to your original payment method once the request is approved.</p>
+    {% else %}
+      <p>Under the <a href="{% url 'pages:policy' 'cancellation' %}">Cancellation Policy</a> (version {{ policy.version }}), no refund is due if you cancel now.</p>
+    {% endif %}
+  </div>
+  <form method="post" class="form-stack">{% csrf_token %}
+    <div class="field"><label for="reason">Why are you cancelling?</label>
+      <textarea id="reason" name="reason" rows="4" required maxlength="2000"></textarea></div>
+    <p class="small muted">Your booking stays valid until the request is approved.</p>
+    <div><button class="btn btn-primary" type="submit">Request cancellation</button></div>
+  </form>
+</div>
+{% endblock %}

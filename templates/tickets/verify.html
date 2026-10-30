@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Ticket check · Ship Booking{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container section narrow">
+  {% if result == "valid" %}
+    <div class="alert alert-success" role="status"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><p><strong>Valid ticket.</strong> Not yet boarded.</p></div>
+  {% elif result == "already_boarded" %}
+    <div class="alert alert-warning" role="status"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>Already boarded.</strong> This ticket was scanned and boarded before.</p></div>
+  {% elif result == "void" %}
+    <div class="alert alert-error" role="status"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>Not valid.</strong> This ticket was replaced or the booking is cancelled.</p></div>
+  {% else %}
+    <div class="alert alert-error" role="status"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>Unknown ticket.</strong></p></div>
+  {% endif %}
+
+  {% if ticket %}{% with b=ticket.booking s=ticket.booking.schedule %}
+    <h1 style="font-size:1.6rem">{{ b.reference }}</h1>
+    <dl class="facts" style="margin-bottom:24px">
+      <dt>Sailing</dt><dd>{{ s.route.origin.name }} to {{ s.route.destination.name }}</dd>
+      <dt>Departs</dt><dd>{{ s.departure_at|date:"j M Y, H:i" }}</dd>
+      <dt>Class</dt><dd>{{ b.fare_snapshot.cabin_class }}</dd>
+      <dt>Ticket</dt><dd>{{ ticket.number }} · {{ ticket.get_status_display }}</dd>
+    </dl>
+    <div class="table-wrap" style="margin-bottom:24px"><table>
+      <thead><tr><th scope="col">Passenger</th><th scope="col">Age</th><th scope="col">Seat</th></tr></thead>
+      <tbody>{% for p in passengers %}<tr><td>{{ p.full_name }}</td><td>{{ p.age }}</td><td>{% if p.seat and p.seat.active_schedule_id %}{{ p.seat.seat.number }}{% else %}—{% endif %}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% if result == "valid" %}
+      <form method="post" action="{% url 'tickets:board' ticket.verification_token %}">{% csrf_token %}
+        <button class="btn btn-primary" type="submit">Mark as boarded</button></form>
+    {% endif %}
+  {% endwith %}{% endif %}
+</div>
+{% endblock %}

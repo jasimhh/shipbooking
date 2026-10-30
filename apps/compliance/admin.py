@@ -1,8 +1,10 @@
 from django.contrib import admin
 
+from apps.bookings.models import CancellationRule
+
 from .models import AuditLog, ConsentRecord, CookiePreference, PolicyVersion, PrivacyRequest
 
-admin.site.register([PolicyVersion, CookiePreference, ConsentRecord, PrivacyRequest])
+admin.site.register([CookiePreference, ConsentRecord, PrivacyRequest])
 
 
 def _label(obj):
@@ -50,3 +52,16 @@ class AuditLogAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+class CancellationRuleInline(admin.TabularInline):
+    model = CancellationRule
+    extra = 0
+    verbose_name = "refund band (cancellation policies only)"
+
+
+@admin.register(PolicyVersion)
+class PolicyVersionAdmin(AuditedAdmin):
+    list_display = ["policy_type", "version", "effective_from", "is_published", "approved_by"]
+    list_filter = ["policy_type", "is_published"]
+    inlines = [CancellationRuleInline]

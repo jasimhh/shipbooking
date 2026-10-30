@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Find a booking · Ship Booking{% endblock %}
+{% block og_title %}Find a booking{% endblock %}
+{% block description %}Check the status of a Ship Booking reservation with your booking reference and email.{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Find a booking</h1><p>Check a booking's status with its reference and the email it was booked with.</p></div></div>
+<div class="container section narrow">
+  <form method="get" class="card form-stack" style="margin-bottom:32px">
+    <div class="passenger-grid">
+      <div class="field"><label for="ref">Booking reference</label><input id="ref" name="reference" value="{{ request.GET.reference }}" placeholder="SB…" required autocomplete="off"></div>
+      <div class="field"><label for="em">Email used to book</label><input id="em" name="email" type="email" value="{{ request.GET.email }}" required autocomplete="email"></div>
+    </div>
+    <div><button class="btn btn-primary" type="submit">Find booking</button></div>
+  </form>
+  {% if booking %}
+    <div class="card" role="status">
+      <h2>{{ booking.reference }}</h2>
+      <dl class="facts">
+        <dt>Status</dt><dd>{{ booking.get_status_display }}</dd>
+        <dt>Sailing</dt><dd>{{ booking.schedule.route.origin.name }} to {{ booking.schedule.route.destination.name }}</dd>
+        <dt>Departs</dt><dd>{{ booking.schedule.departure_at|date:"j M Y, H:i" }}</dd>
+        <dt>Sailing status</dt><dd>{{ booking.schedule.get_status_display }}</dd>
+        <dt>Passengers</dt><dd>{{ booking.passenger_count }}</dd>
+      </dl>
+      <p class="small muted" style="margin:16px 0 0">To download tickets or request a cancellation, <a href="{% url 'accounts:login' %}?next={% url 'bookings:detail' booking.reference %}">sign in</a> to the account that made the booking.</p>
+    </div>
+  {% elif searched %}
+    <div class="alert alert-warning" role="status"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+      <p>No booking matches that reference and email. Check both and try again.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

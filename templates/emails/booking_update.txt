@@ -1,0 +1,12 @@
+Hello,
+
+{{ message }}
+
+Booking: {{ booking.reference }}
+Sailing: {{ booking.schedule.route.origin.name }} to {{ booking.schedule.route.destination.name }}
+Departs: {{ booking.schedule.departure_at|date:"l j F Y, H:i" }}
+Passengers: {{ booking.passenger_count }}
+
+View your booking: {{ site_url }}{% url 'bookings:detail' booking.reference %}
+
+Ship Booking

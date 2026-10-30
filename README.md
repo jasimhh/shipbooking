@@ -2,7 +2,7 @@
 
 Ship and ferry booking platform prototype for India (INR). Django + DRF, Supabase Postgres (SQLite fallback for offline work), Razorpay in **test mode only**.
 
-Status: **Phase 6 of 10** done: public site, accounts and roles, operations management, booking with timed holds, and Razorpay payments in test mode (verified server-side, webhooks, reconciliation). E-tickets come in Phase 7.
+Status: **Phase 7 of 10** done: everything up to e-tickets with QR codes, ticket checks at the port, booking look-up, cancellations and refunds, and email notifications. Dashboards and reports come in Phase 8.
 
 ## Setup (Windows)
 
@@ -83,6 +83,25 @@ Leave `PAYMENTS_LIVE_MODE=false`. The app refuses to start with a live key while
 - If money arrives after the reservation was released, the booking is **not** confirmed and a full refund is queued for an admin (Payments → Refunds). Processing refunds through Razorpay comes in Phase 7.
 - Failed payments are recorded; the passenger can try again with a fresh order while the places are still held.
 - Only Razorpay ids and statuses are stored. Card numbers, CVVs, UPI PINs and bank passwords never reach this server.
+
+## Tickets, cancellations and notifications
+
+**E-tickets.** A ticket is issued the moment a payment is confirmed. Passengers download a PDF from their booking page. The QR code holds only a link with a random token (`/tickets/verify/<token>/`), never names or other personal data. Admins can **Reissue e-tickets** from Bookings; that voids the old QR code.
+
+**Checking tickets at the port.** Scanning the QR code opens a check page for signed-in operator staff (with "can view manifests" for that operator), support staff and admins. It shows Valid, Already boarded or Not valid, lists the passengers, and has a **Mark as boarded** button. Every scan is logged. Passengers and other operators get "no access".
+
+**Find a booking** (`/find-booking/`) lets anyone check a booking's status with its reference and the email it was booked with. It shows no passenger names and is limited to 10 look-ups an hour per network.
+
+**Cancellations and refunds.**
+- Refund amounts come only from the published cancellation policy. In the admin, open **Policy versions**, add the approved cancellation policy, and enter its refund bands (for example "24+ hours before departure: 75%"). The band with the most hours the passenger still meets applies. Nothing is hard-coded.
+- Passengers request a cancellation from a confirmed booking before departure and see the refund they'd get first. With no published bands, an admin decides the amount.
+- Admins **Approve** or **Reject** requests in Cancellation requests (and can adjust the amount before approving). Approving cancels the booking, releases its places and seats, voids its ticket and queues the refund.
+- Admins send queued refunds with **Send selected refunds to Razorpay** in Refunds. A refund can never exceed what's left of the payment. Razorpay's `refund.processed` and `refund.failed` webhooks update the status; add those two events to the webhook.
+- If an operator or admin **cancels a sailing**, every confirmed booking on it is cancelled and a full refund is queued automatically.
+
+**Notifications.** Passengers are emailed when places are reserved, payment fails, a booking is confirmed (with the ticket link), a sailing is delayed or cancelled, and when a cancellation is requested, approved or rejected or a refund is sent or fails. Every email is stored under Support → Notifications with its status, is sent only after the change is saved, and appears under "Recent messages" on the account page. To change wording, add a Notification template with the same key (for example `booking_confirmed`). Set `SITE_URL` so links in emails and QR codes point to the real site. SMS isn't connected.
+
+Not built yet: operator staff deciding cancellations (admins only for now), and choosing seats.
 
 ## Tests
 

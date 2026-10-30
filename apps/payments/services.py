@@ -13,6 +13,8 @@ from django.utils import timezone
 from apps.bookings.models import Booking
 from apps.bookings.services import set_status
 from apps.schedules.models import InventoryHold
+from apps.support.notifications import notify
+from apps.tickets import services as tickets
 
 from . import gateway
 from .models import GatewayEvent, PaymentTransaction, Refund
@@ -81,10 +83,12 @@ def _confirm(txn):
         booking.confirmed_at = timezone.now()
         booking.save(update_fields=["confirmed_at"])
         set_status(booking, Booking.Status.CONFIRMED, f"Payment {txn.gateway_payment_id} verified")
+        tickets.issue(booking)
+        notify("booking_confirmed", booking)
         return
     # ponytail: money arrived after the places were released; queue a full refund rather than re-taking places.
     if not txn.refunds.exists():
-        Refund.objects.create(payment=txn, amount=txn.amount, reason="Payment received after the reservation was released")
+        queue_refund(txn, txn.amount, "Payment received after the reservation was released")
     set_status(booking, booking.status, f"Payment {txn.gateway_payment_id} received after release; refund queued")
 
 
@@ -92,7 +96,58 @@ def record_failure(txn, reason):
     updated = PaymentTransaction.objects.filter(pk=txn.pk, status=T.CREATED).update(
         status=T.FAILED, failure_reason=reason[:255], updated_at=timezone.now()
     )
+    if updated and txn.booking.status == Booking.Status.PENDING:
+        notify("payment_failed", txn.booking)
     return bool(updated)
+
+
+@transaction.atomic
+def queue_refund(txn, amount, reason, by=None, cancellation_request=None):
+    """Create a pending refund, never more than what's left to refund on the payment."""
+    txn = PaymentTransaction.objects.select_for_update().get(pk=txn.pk)
+    if amount <= 0:
+        return None
+    if amount > txn.refundable_amount():
+        raise PaymentError(f"Refund of ₹{amount} is more than the ₹{txn.refundable_amount()} left on this payment.")
+    return Refund.objects.create(payment=txn, amount=amount, reason=reason[:255], initiated_by=by,
+                                 cancellation_request=cancellation_request)
+
+
+def send_refund(refund):
+    """Ask Razorpay to pay a pending refund back to the original payment method."""
+    R = Refund.Status
+    claimed = Refund.objects.filter(pk=refund.pk, status__in=[R.PENDING, R.FAILED]).update(status=R.PROCESSING)
+    if not claimed:
+        return refund
+    refund.refresh_from_db()
+    try:
+        result = gateway.refund(refund.payment.gateway_payment_id, gateway.to_paise(refund.amount), f"refund-{refund.pk}")
+    except Exception as e:  # SDK raises several error types; all mean "not sent"
+        refund.status, refund.failure_reason = R.FAILED, str(e)[:255]
+        refund.save(update_fields=["status", "failure_reason", "updated_at"])
+        notify("refund_failed", refund.payment.booking, refund=refund)
+        return refund
+    refund.gateway_refund_id = result.get("id")
+    refund.status = R.SUCCEEDED if result.get("status") == "processed" else R.PROCESSING
+    refund.save(update_fields=["gateway_refund_id", "status", "updated_at"])
+    if refund.status == R.SUCCEEDED:
+        notify("refund_processed", refund.payment.booking, refund=refund)
+    return refund
+
+
+def _refund_event(event_type, entity):
+    refund = Refund.objects.filter(gateway_refund_id=entity.get("id")).first()
+    if refund is None:
+        return "unknown refund"
+    if event_type == "refund.processed" and refund.status != Refund.Status.SUCCEEDED:
+        refund.status = Refund.Status.SUCCEEDED
+        refund.save(update_fields=["status", "updated_at"])
+        notify("refund_processed", refund.payment.booking, refund=refund)
+    elif event_type == "refund.failed" and refund.status != Refund.Status.FAILED:
+        refund.status, refund.failure_reason = Refund.Status.FAILED, "Reported failed by Razorpay"
+        refund.save(update_fields=["status", "failure_reason", "updated_at"])
+        notify("refund_failed", refund.payment.booking, refund=refund)
+    return event_type
 
 
 def handle_webhook(body, signature, event_id):
@@ -106,6 +161,12 @@ def handle_webhook(body, signature, event_id):
     )
     if not created and event.processed_at:
         return "duplicate"
+
+    if event.event_type.startswith("refund."):
+        outcome = _refund_event(event.event_type, payload.get("payload", {}).get("refund", {}).get("entity", {}))
+        event.processed_at = timezone.now()
+        event.save()
+        return outcome
 
     entity = payload.get("payload", {}).get("payment", {}).get("entity", {})
     txn = PaymentTransaction.objects.filter(gateway_order_id=entity.get("order_id")).first()

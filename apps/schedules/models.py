@@ -59,6 +59,13 @@ class Schedule(TimeStampedModel):
     EDITABLE = (Status.DRAFT, Status.PENDING_APPROVAL)
     LIVE = (Status.PUBLISHED, Status.DELAYED)
 
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        # Remember the stored status so a post_save handler can tell passengers about changes.
+        instance = super().from_db(db, field_names, values)
+        instance._loaded_status = instance.__dict__.get("status")
+        return instance
+
     def clean(self):
         errors = {}
         if self.route_id and self.vessel_id and self.route.operator_id != self.vessel.operator_id:

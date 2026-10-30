@@ -19,22 +19,19 @@
       </div>
     {% endif %}
 
-    <h2>Your bookings</h2>
-    {% if bookings %}
-      <div class="table-wrap" style="margin-bottom:40px"><table>
-        <thead><tr><th scope="col">Reference</th><th scope="col">Journey</th><th scope="col">Departs</th><th scope="col">Status</th><th scope="col" class="num">Total</th></tr></thead>
-        <tbody>{% for b in bookings %}<tr>
-          <td><a href="{% url 'bookings:detail' b.reference %}">{{ b.reference }}</a></td>
-          <td>{{ b.schedule.route.origin.name }} to {{ b.schedule.route.destination.name }}</td>
-          <td>{{ b.schedule.departure_at|date:"j M Y, H:i" }}</td>
-          <td><span class="badge {% if b.status == 'confirmed' %}badge-ok{% elif b.status == 'pending' %}badge-warn{% else %}badge-bad{% endif %}">{{ b.get_status_display }}</span></td>
-          <td class="num">{{ b.total_amount|inr }}</td>
-        </tr>{% endfor %}</tbody>
-      </table></div>
-    {% else %}
-      <div class="card" style="margin-bottom:40px">
-        <p class="muted" style="margin:0">You have no bookings yet. <a href="{% url 'pages:home' %}">Search sailings</a></p>
-      </div>
+    <h2>Upcoming journeys</h2>
+    {% if upcoming %}{% include "accounts/_bookings_table.html" with rows=upcoming %}{% else %}
+      <div class="card" style="margin-bottom:32px"><p class="muted" style="margin:0">No upcoming journeys. <a href="{% url 'pages:home' %}">Search sailings</a></p></div>
+    {% endif %}
+    {% if past %}<h2>Past journeys</h2>{% include "accounts/_bookings_table.html" with rows=past %}{% endif %}
+
+    {% if notifications %}
+      <h2>Recent messages</h2>
+      <ul class="card" style="list-style:none;padding:16px 24px;margin:0 0 40px">
+        {% for n in notifications %}<li style="padding:8px 0;{% if not forloop.last %}border-bottom:1px solid var(--line){% endif %}">
+          <strong>{{ n.subject }}</strong> <span class="small muted">· {{ n.created_at|date:"j M, H:i" }}</span>
+        </li>{% endfor %}
+      </ul>
     {% endif %}
 
     <h2>Your details</h2>

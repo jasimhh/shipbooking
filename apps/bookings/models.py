@@ -108,6 +108,31 @@ class BookingSeat(models.Model):
         self.save(update_fields=["active_schedule"])
 
 
+class CancellationRule(models.Model):
+    """One refund band of an approved cancellation policy, e.g. '48+ hours before departure: 90%'.
+
+    Entered by an admin from the business's approved terms. The band with the largest
+    min_hours_before_departure that the passenger still meets applies.
+    """
+
+    policy = models.ForeignKey(
+        "compliance.PolicyVersion", on_delete=models.CASCADE, related_name="cancellation_rules",
+        limit_choices_to={"policy_type": "cancellation"},
+    )
+    min_hours_before_departure = models.PositiveIntegerField()
+    refund_percent = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ["-min_hours_before_departure"]
+        constraints = [
+            models.UniqueConstraint(fields=["policy", "min_hours_before_departure"], name="uniq_rule_band"),
+            models.CheckConstraint(condition=Q(refund_percent__lte=100), name="refund_percent_max_100"),
+        ]
+
+    def __str__(self):
+        return f"{self.min_hours_before_departure}+ h before departure: {self.refund_percent}%"
+
+
 class CancellationRequest(TimeStampedModel):
     class Status(models.TextChoices):
         REQUESTED = "requested", "Requested"

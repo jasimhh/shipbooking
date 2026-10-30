@@ -68,9 +68,25 @@ class GatewayEventAdmin(ReadOnlyAdmin):
 
 @admin.register(Refund)
 class RefundAdmin(AuditedAdmin):
-    list_display = ["payment", "amount", "reason", "status", "created_at"]
+    list_display = ["payment", "amount", "reason", "status", "gateway_refund_id", "created_at"]
     list_filter = ["status"]
-    readonly_fields = ["payment", "cancellation_request", "amount", "reason", "gateway_refund_id", "initiated_by"]
+    readonly_fields = ["payment", "cancellation_request", "amount", "reason", "status", "gateway_refund_id", "failure_reason", "initiated_by"]
+    actions = ["send"]
 
     def has_add_permission(self, request):
         return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    @admin.action(description="Send selected refunds to Razorpay")
+    def send(self, request, queryset):
+        if not gateway.is_configured():
+            messages.error(request, "Razorpay keys aren't configured.")
+            return
+        for refund in queryset.filter(status__in=[Refund.Status.PENDING, Refund.Status.FAILED]):
+            result = services.send_refund(refund)
+            AuditLog.record(request.user, "refund.sent", result, {"status": result.status}, request)
+            if result.status == Refund.Status.FAILED:
+                messages.error(request, f"Refund {result.pk} failed: {result.failure_reason}")
+        messages.success(request, "Refunds sent. Statuses update when Razorpay confirms them.")

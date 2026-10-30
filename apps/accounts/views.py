@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.http import require_POST
@@ -137,7 +138,13 @@ class LoginView(auth_views.LoginView):
 def dashboard(request):
     memberships = request.user.operator_memberships.filter(is_active=True).select_related("operator")
     bookings = request.user.bookings.select_related("schedule__route__origin", "schedule__route__destination")
-    return render(request, "accounts/dashboard.html", {"memberships": memberships, "bookings": bookings[:20]})
+    now = timezone.now()
+    return render(request, "accounts/dashboard.html", {
+        "memberships": memberships,
+        "upcoming": bookings.filter(schedule__departure_at__gte=now).order_by("schedule__departure_at")[:20],
+        "past": bookings.filter(schedule__departure_at__lt=now).order_by("-schedule__departure_at")[:20],
+        "notifications": request.user.notifications.order_by("-created_at")[:5],
+    })
 
 
 @login_required

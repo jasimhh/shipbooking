@@ -32,6 +32,10 @@ def capture(payment_id, amount_paise):
     return client().payment.capture(payment_id, amount_paise, {"currency": "INR"})
 
 
+def refund(payment_id, amount_paise, receipt):
+    return client().payment.refund(payment_id, {"amount": amount_paise, "receipt": receipt, "notes": {"refund": receipt}})
+
+
 def order_payments(order_id):
     return client().order.payments(order_id).get("items", [])
 

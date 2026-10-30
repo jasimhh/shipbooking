@@ -15,6 +15,7 @@ from django.utils import timezone
 
 from apps.fleet.models import Seat, Vessel
 from apps.schedules.models import Fare, InventoryHold, Schedule
+from apps.support.notifications import notify
 
 from .models import Booking, BookingPassenger, BookingSeat, BookingStatusHistory
 
@@ -92,6 +93,7 @@ def reserve(user, fare_id, passengers, contact_email, contact_phone):
                 )
         except IntegrityError:
             raise BookingError("Those seats were just taken. Please try again.")
+    notify("booking_reserved", booking)
     return booking
 
 

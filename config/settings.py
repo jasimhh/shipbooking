@@ -137,6 +137,8 @@ MAILERS = {
     },
 }
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "no-reply@localhost")
+# Absolute links in emails and on e-ticket QR codes.
+SITE_URL = env("SITE_URL", "http://localhost:8000").rstrip("/")
 
 # Sessions and cookies
 SESSION_COOKIE_AGE = 60 * 60 * 8
