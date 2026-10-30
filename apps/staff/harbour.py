@@ -47,7 +47,8 @@ def harbour(request):
     ops = scope(user)
     today = timezone.localdate()
     day_start = timezone.make_aware(datetime.combine(today, time.min))
-    day_end = day_start + timedelta(days=1)
+    # Late at night, still show sailings leaving in the next few hours (e.g. 00:10 when it's 23:50).
+    day_end = max(day_start + timedelta(days=1), timezone.now() + timedelta(hours=3))
 
     routes = list(Route.objects.filter(operator__in=ops, is_active=True).select_related("origin", "destination"))
     sailings = list(with_occupancy(
