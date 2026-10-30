@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/harbour.css' %}">
   <script src="{% static 'js/theme.js' %}"></script>
 </head>
-<body>
+<body{% if user.is_platform_admin %} data-admin-url="{% url 'admin:index' %}"{% endif %}>
 {% include "staff/_harbour_icons.html" %}
 <a class="skip" href="#panel">Skip to operations panel</a>
 <div class="shell">
@@ -75,5 +75,6 @@
 
 {{ data|json_script:"harbour-data" }}
 <script src="{% static 'js/harbour.js' %}" defer></script>
+<script src="{% static 'js/shortcuts.js' %}" defer></script>
 </body>
 </html>

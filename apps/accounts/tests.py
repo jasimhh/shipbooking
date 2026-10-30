@@ -195,3 +195,15 @@ class AbuseLimitTest(TestCase):
 
         request = RequestFactory().get("/", HTTP_X_REAL_IP="203.0.113.9", REMOTE_ADDR="127.0.0.1")
         self.assertEqual(client_ip(request), "203.0.113.9")
+
+
+class AdminShortcutTest(TestCase):
+    def test_admin_button_only_for_admins(self):
+        admin = User.objects.create_user("boss@example.com", "harbour-lights-42", role=User.Role.ADMIN)
+        passenger = User.objects.create_user("pax2@example.com", "harbour-lights-42")
+        self.client.force_login(passenger)
+        self.assertNotContains(self.client.get("/"), "data-admin-url")
+        self.client.force_login(admin)
+        page = self.client.get("/")
+        self.assertContains(page, 'data-admin-url="/admin/"')
+        self.assertContains(page, '>Admin</a>')
