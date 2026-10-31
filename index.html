@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en-IN" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F4F8FC">
+  <title>Ship Booking — Ship and ferry journeys in India</title>
+  <meta name="description" content="Explore ship and ferry journeys in India. Ship Booking website prototype.">
+  <link rel="stylesheet" href="./static/css/fonts.css">
+  <link rel="stylesheet" href="./static/css/site.css">
+  <style>
+    .hero-chart{position:relative;overflow:hidden;padding:76px 0 54px;border-bottom:1px solid var(--line);background:
+      radial-gradient(ellipse at 82% 10%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 42%),
+      linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:auto,48px 48px,48px 48px}
+    .hero-copy{position:relative;z-index:1}
+    .hero-copy h1{max-width:13ch;margin:20px 0 14px}
+    .hero-copy h1 em{font-style:normal;color:var(--accent)}
+    .search-panel{position:relative;z-index:2;margin-top:32px}
+    .demo-note{margin:18px 0 0;padding:12px 16px;border:1px solid var(--warn-line);background:var(--warn-bg);color:var(--warn-text);border-radius:10px;font-size:.9rem}
+    .route-card{min-height:230px}
+    .route-card .price{color:var(--text)}
+    .site-footer{margin-top:0}
+    .theme-toggle{min-height:38px;padding:6px 12px}
+    .search-message{display:none;margin-top:16px}
+    .search-message.visible{display:block}
+    .demo-chip{display:inline-block;padding:4px 8px;border:1px solid var(--warn-line);border-radius:6px;color:var(--warn-text);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+    @media(max-width:640px){.hero-chart{padding-top:48px}.site-nav ul{gap:0}.site-nav a{padding:7px 8px;font-size:.85rem}.nav-actions{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">⚓</span>Ship Booking</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="#search" aria-current="page">Search</a></li>
+        <li><a href="#routes">Routes</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#help">Help</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-secondary theme-toggle" id="themeToggle" type="button">Switch theme</button>
+      <a class="btn btn-secondary" href="#help">Sign in</a>
+      <a class="btn btn-primary" href="#search">Find a ferry</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero-chart" id="search">
+    <div class="container hero-copy">
+      <span class="hero-label">Ship and ferry journeys in India</span>
+      <h1>Chart your <em>crossing.</em></h1>
+      <p class="lead">Explore routes, compare sample journey times and discover your next trip across the water.</p>
+      <div class="search-panel">
+        <form class="search-form" id="journeySearch">
+          <div class="field">
+            <label for="origin">From</label>
+            <select id="origin" required>
+              <option value="Kochi">Kochi</option><option value="Fort Kochi">Fort Kochi</option>
+              <option value="Vypin">Vypin</option><option value="Alappuzha">Alappuzha</option>
+              <option value="Kavaratti">Kavaratti</option><option value="Agatti">Agatti</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="destination">To</label>
+            <select id="destination" required>
+              <option value="Vypin">Vypin</option><option value="Fort Kochi">Fort Kochi</option>
+              <option value="Kochi">Kochi</option><option value="Alappuzha">Alappuzha</option>
+              <option value="Agatti">Agatti</option><option value="Kavaratti">Kavaratti</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="travelDate">Travel date</label>
+            <input id="travelDate" type="date" required>
+          </div>
+          <div class="field">
+            <label for="passengers">Passengers</label>
+            <select id="passengers"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+          </div>
+          <button class="btn btn-primary" type="submit">Search journeys</button>
+        </form>
+        <div class="alert alert-info search-message" id="searchMessage" role="status"></div>
+        <p class="demo-note"><strong>Prototype preview:</strong> This GitHub Pages edition is a static demonstration. Search results below are sample data; live schedules, reservations, accounts and payments are not connected.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="routes">
+    <div class="container">
+      <h2>Explore sample routes</h2>
+      <p class="muted" style="margin-bottom:24px">A preview of the route cards and journey information in Ship Booking.</p>
+      <div class="route-cards">
+        <article class="route-card">
+          <div class="route-card-top"><span>Kerala · Harbour route</span><span class="demo-chip">Sample</span></div>
+          <div><p class="small muted">Passenger ferry</p><div class="leg">
+            <div><div class="leg-time">08:30</div><div class="leg-port">Fort Kochi</div></div>
+            <div class="leg-track"><span>20 min</span></div>
+            <div class="leg-end"><div class="leg-time">08:50</div><div class="leg-port">Vypin</div></div>
+          </div></div>
+          <div class="route-card-bottom"><div><div class="small muted">Illustrative fare</div><div class="price">₹40</div></div><button class="btn btn-secondary sample-book" data-route="Fort Kochi → Vypin">View journey</button></div>
+        </article>
+        <article class="route-card">
+          <div class="route-card-top"><span>Kerala · Backwater route</span><span class="demo-chip">Sample</span></div>
+          <div><p class="small muted">Passenger ferry</p><div class="leg">
+            <div><div class="leg-time">10:00</div><div class="leg-port">Kochi</div></div>
+            <div class="leg-track"><span>1 hr 30 min</span></div>
+            <div class="leg-end"><div class="leg-time">11:30</div><div class="leg-port">Alappuzha</div></div>
+          </div></div>
+          <div class="route-card-bottom"><div><div class="small muted">Illustrative fare</div><div class="price">₹250</div></div><button class="btn btn-secondary sample-book" data-route="Kochi → Alappuzha">View journey</button></div>
+        </article>
+        <article class="route-card">
+          <div class="route-card-top"><span>Lakshadweep · Island route</span><span class="demo-chip">Sample</span></div>
+          <div><p class="small muted">Passenger vessel</p><div class="leg">
+            <div><div class="leg-time">07:00</div><div class="leg-port">Agatti</div></div>
+            <div class="leg-track"><span>2 hr</span></div>
+            <div class="leg-end"><div class="leg-time">09:00</div><div class="leg-port">Kavaratti</div></div>
+          </div></div>
+          <div class="route-card-bottom"><div><div class="small muted">Illustrative fare</div><div class="price">₹600</div></div><button class="btn btn-secondary sample-book" data-route="Agatti → Kavaratti">View journey</button></div>
+        </article>
+        <article class="route-card">
+          <div class="route-card-top"><span>Kerala · Harbour route</span><span class="demo-chip">Sample</span></div>
+          <div><p class="small muted">Passenger ferry</p><div class="leg">
+            <div><div class="leg-time">16:15</div><div class="leg-port">Vypin</div></div>
+            <div class="leg-track"><span>20 min</span></div>
+            <div class="leg-end"><div class="leg-time">16:35</div><div class="leg-port">Fort Kochi</div></div>
+          </div></div>
+          <div class="route-card-bottom"><div><div class="small muted">Illustrative fare</div><div class="price">₹40</div></div><button class="btn btn-secondary sample-book" data-route="Vypin → Fort Kochi">View journey</button></div>
+        </article>
+      </div>
+      <div class="alert alert-info" id="routeMessage" style="display:none;margin-top:18px" role="status"></div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="container">
+      <h2>How booking works</h2>
+      <p class="muted" style="margin-bottom:24px">Four simple steps from search to boarding.</p>
+      <ol class="steps-list">
+        <li><h3>Search</h3><p>Choose your departure port, destination, date and passenger count.</p></li>
+        <li><h3>Compare</h3><p>Review journey times, vessel details, fares and availability.</p></li>
+        <li><h3>Reserve</h3><p>Enter passenger details and review the total before confirming.</p></li>
+        <li><h3>Travel</h3><p>Keep your booking confirmation ready to show at the port.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="help">
+    <div class="container">
+      <h2>Before you travel</h2>
+      <div class="grid">
+        <article class="tile"><h3>Boarding</h3><p>Arrive at the terminal early and keep valid identification ready.</p></article>
+        <article class="tile"><h3>Luggage</h3><p>Check the vessel operator's luggage allowance before departure.</p></article>
+        <article class="tile"><h3>Travel requirements</h3><p>Some island routes may require permits and additional documents.</p></article>
+        <article class="tile"><h3>Service updates</h3><p>Check official operator announcements for delays and cancellations.</p></article>
+      </div>
+      <div class="card" style="margin-top:24px">
+        <h3>Need the full booking system?</h3>
+        <p class="muted">This GitHub Pages version is a frontend showcase only. The original Django project in the repository contains the backend features, but GitHub Pages cannot run Python or connect to its server-side database.</p>
+        <a class="btn btn-secondary" href="https://github.com/jasimhh/shipbooking">View source repository</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><h2>Ship Booking</h2><p>Ship and ferry journey discovery prototype for India.</p></div>
+      <div><h2>Explore</h2><ul><li><a href="#search">Search journeys</a></li><li><a href="#routes">Sample routes</a></li><li><a href="#how">How it works</a></li></ul></div>
+      <div><h2>Project</h2><ul><li><a href="https://github.com/jasimhh/shipbooking">GitHub repository</a></li><li><a href="https://github.com/jasimhh/shipbooking/blob/main/README.md">Project documentation</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">Ship Booking · Prototype preview · Prices shown are illustrative only</div>
+  </div>
+</footer>
+
+<script>
+  const dateInput = document.getElementById('travelDate');
+  const today = new Date();
+  dateInput.min = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0,10);
+  dateInput.value = dateInput.min;
+
+  document.getElementById('journeySearch').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const origin = document.getElementById('origin').value;
+    const destination = document.getElementById('destination').value;
+    const message = document.getElementById('searchMessage');
+    message.classList.add('visible');
+    if (origin === destination) {
+      message.textContent = 'Choose two different ports to explore a journey.';
+      return;
+    }
+    message.textContent = `Demo preview: ${origin} to ${destination} on ${dateInput.value}, for ${document.getElementById('passengers').value} passenger(s). Live sailing availability and reservations are not connected on this static page.`;
+  });
+
+  document.querySelectorAll('.sample-book').forEach(button => {
+    button.addEventListener('click', () => {
+      const message = document.getElementById('routeMessage');
+      message.style.display = 'flex';
+      message.textContent = `${button.dataset.route}: this is a sample route card. Booking is disabled in the GitHub Pages prototype.`;
+      message.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  });
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'day' ? 'night' : 'day';
+    root.dataset.theme = next;
+    document.getElementById('themeToggle').textContent = next === 'day' ? 'Switch theme' : 'Switch to light';
+  });
+</script>
+</body>
+</html>
