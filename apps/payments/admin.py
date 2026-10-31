@@ -81,10 +81,10 @@ class RefundAdmin(AuditedAdmin):
 
     @admin.action(description="Send selected refunds to Razorpay")
     def send(self, request, queryset):
-        if not gateway.is_configured():
-            messages.error(request, "Razorpay keys aren't configured.")
-            return
-        for refund in queryset.filter(status__in=[Refund.Status.PENDING, Refund.Status.FAILED]):
+        for refund in queryset.filter(status__in=[Refund.Status.PENDING, Refund.Status.FAILED]).select_related("payment"):
+            if refund.payment.gateway != "dummy" and not gateway.is_configured():
+                messages.error(request, "Razorpay keys aren't configured.")
+                return
             result = services.send_refund(refund)
             AuditLog.record(request.user, "refund.sent", result, {"status": result.status}, request)
             if result.status == Refund.Status.FAILED:

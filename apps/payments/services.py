@@ -4,6 +4,8 @@ reconciliation, and every step is safe to repeat."""
 
 import hashlib
 import json
+import os
+import uuid
 from datetime import timedelta
 
 from django.conf import settings
@@ -26,13 +28,43 @@ class PaymentError(Exception):
     pass
 
 
-def start_payment(booking):
-    """The gateway order to pay this booking, creating it on first use."""
+def dummy_mode():
+    """True when PAYMENT_GATEWAY=dummy. Never true while live payments are on."""
+    if settings.PAYMENTS_LIVE_MODE:
+        return False
+    name = getattr(settings, "PAYMENT_GATEWAY", None) or os.environ.get("PAYMENT_GATEWAY", "razorpay")
+    return name.strip().lower() == "dummy"
+
+
+def ensure_payable(booking):
+    """Raises PaymentError unless the booking is unpaid and its places are still held."""
     if booking.status != Booking.Status.PENDING:
         raise PaymentError("This booking isn't waiting for payment.")
     hold = InventoryHold.objects.filter(booking=booking, status=InventoryHold.Status.ACTIVE).first()
     if not hold or hold.expires_at <= timezone.now():
         raise PaymentError("Your reservation has expired. Please book again.")
+
+
+@transaction.atomic
+def pay_dummy(booking):
+    """Demo payment: no money moves. Marks the booking paid, confirms it and issues the tickets,
+    through the same confirmation step real payments use."""
+    if not dummy_mode():
+        raise PaymentError("Dummy payments are switched off.")
+    booking = Booking.objects.select_for_update().get(pk=booking.pk)
+    ensure_payable(booking)
+    txn = PaymentTransaction.objects.create(
+        booking=booking, gateway="dummy", gateway_order_id=f"dummy_order_{uuid.uuid4().hex}",
+        gateway_payment_id=f"dummy_pay_{uuid.uuid4().hex}", amount=booking.total_amount, currency=booking.currency,
+        status=T.CAPTURED, is_live=False, signature_verified=True, captured_at=timezone.now(),
+    )
+    _confirm(txn)
+    return txn
+
+
+def start_payment(booking):
+    """The gateway order to pay this booking, creating it on first use."""
+    ensure_payable(booking)
     if not gateway.is_configured():
         raise PaymentError("Online payment isn't configured yet.")
     existing = booking.payments.filter(status=T.CREATED, amount=booking.total_amount).first()
@@ -120,6 +152,12 @@ def send_refund(refund):
     if not claimed:
         return refund
     refund.refresh_from_db()
+    if refund.payment.gateway == "dummy":  # nothing was really paid, so nothing to send back
+        refund.gateway_refund_id = f"dummy_refund_{refund.pk}"
+        refund.status = R.SUCCEEDED
+        refund.save(update_fields=["gateway_refund_id", "status", "updated_at"])
+        notify("refund_processed", refund.payment.booking, refund=refund)
+        return refund
     try:
         result = gateway.refund(refund.payment.gateway_payment_id, gateway.to_paise(refund.amount), f"refund-{refund.pk}")
     except Exception as e:  # SDK raises several error types; all mean "not sent"

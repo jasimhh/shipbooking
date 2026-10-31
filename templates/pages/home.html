@@ -23,6 +23,35 @@
 </section>
 {% endif %}
 
+{% if ferries %}
+<section class="section" id="ferries">
+  <div class="container">
+    <h2>Ferries you can book</h2>
+    <p class="muted" style="margin-bottom:24px">Each ferry's next sailing and the lowest fare currently on sale.</p>
+    <div class="route-cards">
+      {% for f in ferries %}{% with s=f.next route=f.next.route %}
+        <article class="route-card">
+          <div class="route-card-top">
+            <span>{{ f.vessel.name }}</span>
+            {% if route.operator.is_demo %}<span class="badge badge-demo">Demo</span>{% elif not f.bookable %}<span class="badge">Timetable only</span>{% endif %}
+          </div>
+          <p class="small muted" style="margin:0 0 12px">{{ route.operator.name }} · {{ f.vessel.vessel_type }}</p>
+          <div class="leg">
+            <div><div class="leg-time">{{ s.departure_at|time:"H:i" }}</div><div class="leg-port">{{ route.origin.name }}</div></div>
+            <div class="leg-track"><span>{{ s.duration|duration }}</span></div>
+            <div class="leg-end"><div class="leg-time">{{ s.arrival_at|time:"H:i" }}</div><div class="leg-port">{{ route.destination.name }}</div></div>
+          </div>
+          <div class="route-card-bottom">
+            <div><div class="small muted">Next sailing {{ s.departure_at|date:"D j M" }}</div><div class="price"><small>from</small>{{ f.from_price|inr }}</div></div>
+            <a class="btn btn-secondary" href="{% url 'pages:sailing' s.pk %}">{% if f.bookable %}Book this ferry{% else %}View sailing{% endif %}<span class="visually-hidden"> on {{ f.vessel.name }}, {{ route.origin.name }} to {{ route.destination.name }}</span></a>
+          </div>
+        </article>
+      {% endwith %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 {% if routes %}
 <section class="section">
   <div class="container">

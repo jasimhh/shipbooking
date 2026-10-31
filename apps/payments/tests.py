@@ -181,3 +181,65 @@ class NotConfiguredTest(BookingSetup, TestCase):
         booking = self.reserve(1)
         response = self.client.get(reverse("payments:pay", args=[booking.reference]))
         self.assertContains(response, "Payment isn't set up yet")
+
+
+@override_settings(PAYMENT_GATEWAY="dummy", PAYMENTS_LIVE_MODE=False, RAZORPAY_KEY_ID="", RAZORPAY_KEY_SECRET="")
+class DummyPaymentTest(BookingSetup, TestCase):
+    def setUp(self):
+        self.make()
+        self.client.force_login(self.user)
+        self.booking = self.reserve(2)
+        self.url = reverse("payments:dummy_confirm", args=[self.booking.reference])
+
+    def status(self):
+        self.booking.refresh_from_db()
+        return self.booking.status
+
+    def test_pay_page_shows_dummy_page_without_razorpay_keys(self):
+        response = self.client.get(reverse("payments:pay", args=[self.booking.reference]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "payments/dummy.html")
+
+    def test_one_click_confirms_booking_and_keeps_places(self):
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse("bookings:detail", args=[self.booking.reference]))
+        self.assertEqual(self.status(), Booking.Status.CONFIRMED)
+        self.assertEqual(self.booking.hold.status, InventoryHold.Status.CONVERTED)
+        self.assertEqual(self.allocated(), 2)
+        txn = PaymentTransaction.objects.get()
+        self.assertEqual((txn.gateway, txn.status, txn.is_live), ("dummy", PaymentTransaction.Status.CAPTURED, False))
+
+    def test_double_click_does_not_pay_twice(self):
+        self.client.post(self.url)
+        self.client.post(self.url)
+        self.assertEqual(PaymentTransaction.objects.count(), 1)
+        self.assertEqual(self.booking.status_history.filter(to_status="confirmed").count(), 1)
+
+    def test_expired_reservation_cannot_be_paid(self):
+        expire_holds(now=timezone.now() + timedelta(minutes=16))
+        self.client.post(self.url)
+        self.assertEqual(self.status(), Booking.Status.EXPIRED)
+        self.assertFalse(PaymentTransaction.objects.exists())
+
+    def test_cannot_pay_someone_elses_booking(self):
+        other = self.reserve(1, user=self.other)
+        self.assertEqual(self.client.post(reverse("payments:dummy_confirm", args=[other.reference])).status_code, 404)
+
+    def test_get_is_not_allowed(self):
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+
+    @override_settings(PAYMENTS_LIVE_MODE=True)
+    def test_never_available_in_live_mode(self):
+        self.assertEqual(self.client.post(self.url).status_code, 404)
+        self.assertEqual(self.status(), Booking.Status.PENDING)
+
+    @override_settings(PAYMENT_GATEWAY="razorpay")
+    def test_off_unless_switched_on(self):
+        self.assertEqual(self.client.post(self.url).status_code, 404)
+        self.assertEqual(self.status(), Booking.Status.PENDING)
+
+    def test_refund_of_dummy_payment_completes_without_razorpay(self):
+        self.client.post(self.url)
+        txn = PaymentTransaction.objects.get()
+        refund = services.queue_refund(txn, txn.amount, "test")
+        self.assertEqual(services.send_refund(refund).status, Refund.Status.SUCCEEDED)

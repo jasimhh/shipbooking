@@ -11,7 +11,7 @@ from django.utils import timezone
 from apps.bookings.services import expire_holds
 from apps.common import client_ip, is_rate_limited, record_attempt
 from apps.compliance.models import PolicyVersion
-from apps.fleet.models import Route
+from apps.fleet.models import Route, Vessel
 from apps.schedules.models import Fare, Schedule
 from apps.support.models import SupportMessage, SupportTicket
 
@@ -52,11 +52,31 @@ def route_cards():
     return cards
 
 
+def ferry_cards():
+    """Each active ferry with its next sailing and lowest current fare, for the home page."""
+    cards = []
+    # ponytail: a few queries per ferry; fine for a small fleet, aggregate if there are dozens.
+    for vessel in Vessel.objects.filter(is_active=True).select_related("operator"):
+        sailings = Schedule.objects.listed().filter(vessel=vessel)
+        upcoming = sailings.select_related("route__operator", "route__origin", "route__destination").order_by("departure_at").first()
+        if not upcoming:
+            continue
+        from_price = Fare.objects.filter(schedule__in=sailings).aggregate(
+            p=Min(F("base_fare") + F("tax_amount") + F("fee_amount"))
+        )["p"]
+        cards.append({
+            "vessel": vessel, "next": upcoming, "from_price": from_price,
+            "bookable": Schedule.objects.bookable().filter(pk=upcoming.pk).exists(),
+        })
+    return sorted(cards, key=lambda c: (not c["bookable"], c["next"].departure_at))
+
+
 def home(request):
     cards = route_cards()
     return render(request, "pages/home.html", {
         "form": SearchForm(initial={"date": timezone.localdate(), "passengers": 1}),
         "announcements": Announcement.objects.current(),
+        "ferries": ferry_cards(),
         "routes": cards,
         "maps": area_charts(cards),
     })

@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -22,6 +22,14 @@ def pay(request, reference):
     expire_holds()
     booking = get_object_or_404(Booking.objects.select_related("schedule__route__origin", "schedule__route__destination", "hold"),
                                 reference=reference, user=request.user)
+    if services.dummy_mode():
+        try:
+            services.ensure_payable(booking)
+        except services.PaymentError as e:
+            if booking.status != Booking.Status.CONFIRMED:
+                messages.error(request, str(e))
+            return redirect("bookings:detail", reference=reference)
+        return render(request, "payments/dummy.html", {"booking": booking})
     try:
         txn = services.start_payment(booking)
     except services.PaymentError as e:
@@ -43,6 +51,25 @@ def pay(request, reference):
             "notes": {"booking": booking.reference},
         },
     })
+
+
+@login_required
+@require_POST
+def dummy_confirm(request, reference):
+    """The dummy payment's single button: confirms the booking with no money involved."""
+    if not services.dummy_mode():
+        raise Http404
+    expire_holds()
+    booking = get_object_or_404(Booking, reference=reference, user=request.user)
+    if booking.status == Booking.Status.CONFIRMED:  # double click or back button
+        return redirect("bookings:detail", reference=reference)
+    try:
+        services.pay_dummy(booking)
+    except services.PaymentError as e:
+        messages.error(request, str(e))
+        return redirect("bookings:detail", reference=reference)
+    messages.success(request, f"Payment received. Booking {booking.reference} is confirmed.")
+    return redirect("bookings:detail", reference=reference)
 
 
 @login_required

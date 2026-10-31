@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}Payment · {{ booking.reference }}{% endblock %}
+{% block content %}
+<section class="stack" style="max-width:32rem;margin:2rem auto;">
+  <h1>Payment</h1>
+  <p><strong>Demo payment.</strong> No money is taken and no card details are needed.</p>
+  <dl>
+    <dt>Booking</dt><dd>{{ booking.reference }}</dd>
+    <dt>Journey</dt><dd>{{ booking.schedule.route.origin.name }} to {{ booking.schedule.route.destination.name }}</dd>
+    <dt>Total</dt><dd>{{ booking.total_amount|inr }}</dd>
+  </dl>
+  <form method="post" action="{% url 'payments:dummy_confirm' booking.reference %}">
+    {% csrf_token %}
+    <button type="submit" class="btn">Pay {{ booking.total_amount|inr }}</button>
+  </form>
+</section>
+{% endblock %}

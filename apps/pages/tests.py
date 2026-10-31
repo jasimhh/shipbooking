@@ -66,6 +66,14 @@ class PublicPagesTest(TestCase):
         self.assertIn(f'data-route="route-{charts.region_key(sailing.route.origin)}-{sailing.route.pk}"', page)
         self.assertIn(f'id="route-{charts.region_key(sailing.route.origin)}-{sailing.route.pk}"', page)
 
+    def test_home_lists_ferries_with_next_sailing(self):
+        ferries = self.client.get(reverse("pages:home")).context["ferries"]
+        self.assertTrue(ferries)
+        for card in ferries:
+            self.assertEqual(card["next"].vessel, card["vessel"])
+            self.assertTrue(card["bookable"])  # demo operator is verified
+        self.assertContains(self.client.get(reverse("pages:home")), "Book this ferry")
+
     def test_home_route_cards_use_live_sailings(self):
         routes = self.client.get(reverse("pages:home")).context["routes"]
         self.assertEqual(len(routes), 4)
